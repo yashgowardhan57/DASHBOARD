@@ -1,0 +1,38 @@
+<%- include('partials/header') %>
+
+<main class="main-body">
+  <div class="container">
+    
+    <!-- Category Header Banner -->
+    <div class="category-header">
+      <div class="category-breadcrumb">
+        <a href="/">Front Page</a> &gt; <span><%= categoryName %></span>
+      </div>
+      <h1 class="category-page-title"><%= categoryName %> Desk</h1>
+      <p class="category-page-desc">
+        Comprehensive coverage, developments, and investigations published by our <%= categoryName %> correspondents.
+      </p>
+      <div class="category-stats-badge">
+        Showing <%= articles.length %> <%= articles.length === 1 ? 'Dispatch' : 'Dispatches' %> in archive
+      </div>
+    </div>
+
+    <!-- Category Articles Grid -->
+    <% if (articles.length > 0) { %>
+      <div class="news-cards-grid" style="margin-top: 2rem;">
+        <% articles.forEach(function(article) { %>
+          <%- include('partials/news-card', { article: article }) %>
+        <% }); %>
+      </div>
+    <% } else { %>
+      <div class="empty-state-card">
+        <h3>No Dispatches Found</h3>
+        <p>No articles currently filed under the <%= categoryName %> section.</p>
+        <a href="/" class="btn-read-lead">&larr; Return to Front Page</a>
+      </div>
+    <% } %>
+
+  </div>
+</main>
+
+<%- include('partials/footer') %>

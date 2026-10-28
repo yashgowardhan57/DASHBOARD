@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Aurum — Pure Cashmere Trench Coat. Luxury tailoring crafted from Grade-A Mongolian fibers." />
+  <title>Pure Cashmere Trench Coat — Aurum Luxury Retail</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/ecommerce.css" />
+</head>
+<body>
+  <!-- Back to Practical Hub -->
+  <a href="/index.html" class="back-to-hub" aria-label="Back to Practical Hub">
+    &larr; Back to Hub
+  </a>
+  <script>
+    if (window.location.protocol === 'file:') {
+      document.querySelectorAll('.back-to-hub, .footer-hub-link').forEach(function(el) {
+        el.href = '../dashboard/index.html';
+      });
+    }
+  </script>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-container">
+      <a href="index.html" class="brand-logo">AURUM</a>
+      <nav class="header-nav">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="catalog.html" class="nav-link">Catalog</a>
+        <a href="catalog.html" class="nav-link">New Arrivals</a>
+        <a href="catalog.html" class="nav-link">Collections</a>
+        <a href="catalog.html" class="nav-link">About</a>
+      </nav>
+      <div class="header-actions">
+        <a href="catalog.html" class="header-icon-btn" aria-label="Search">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+        </a>
+        <a href="catalog.html" class="header-icon-btn" aria-label="Bag">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
+          <span class="cart-count">1</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Product Detail Section -->
+  <section class="detail-section">
+    <div class="container">
+      <div class="detail-grid">
+        
+        <!-- Gallery -->
+        <div class="detail-gallery">
+          <div class="detail-main-img">
+            <img src="images/coat.jpg" alt="Pure Cashmere Overcoat" id="mainProductImg" />
+            <span class="detail-badge-pill">Artisan Edition</span>
+          </div>
+          <div class="detail-thumbnails">
+            <div class="detail-thumb active"><img src="images/detail-thumb-1.jpg" alt="Overcoat angle 1" /></div>
+            <div class="detail-thumb"><img src="images/detail-thumb-2.jpg" alt="Fabric closeup" /></div>
+            <div class="detail-thumb"><img src="images/detail-thumb-3.jpg" alt="Stitching craftsmanship" /></div>
+            <div class="detail-thumb"><img src="images/detail-thumb-4.jpg" alt="Interior lining" /></div>
+          </div>
+        </div>
+
+        <!-- Details & Purchasing -->
+        <div class="detail-info">
+          <div class="detail-breadcrumb">
+            <a href="index.html">Home</a> &gt; <a href="catalog.html">Outerwear</a> &gt; <span>Pure Cashmere Trench</span>
+          </div>
+
+          <h1 class="detail-title">Pure Cashmere Overcoat</h1>
+          <div class="detail-rating">
+            <span class="detail-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+            <span>4.9 (48 Verified Clients)</span>
+          </div>
+
+          <div class="detail-price-box">
+            <span class="detail-current-price">$1,850</span>
+            <span class="detail-original-price">$2,200</span>
+            <span class="detail-discount-tag">&minus;16% OFF</span>
+          </div>
+
+          <!-- Color Swatches (Pure CSS Radio Selection) -->
+          <div class="selector-group">
+            <div class="selector-label-row">
+              <span>Color Selection:</span>
+              <span style="font-weight: 400; color: var(--gold-muted);">Camel Ivory</span>
+            </div>
+            <div class="color-swatches">
+              <input type="radio" name="color" id="color1" class="color-radio" checked />
+              <label for="color1" class="color-swatch-label" style="background: #C4A47C;" title="Camel Ivory"></label>
+
+              <input type="radio" name="color" id="color2" class="color-radio" />
+              <label for="color2" class="color-swatch-label" style="background: #2C1810;" title="Deep Espresso"></label>
+
+              <input type="radio" name="color" id="color3" class="color-radio" />
+              <label for="color3" class="color-swatch-label" style="background: #1A1A24;" title="Midnight Obsidian"></label>
+
+              <input type="radio" name="color" id="color4" class="color-radio" />
+              <label for="color4" class="color-swatch-label" style="background: #8B7355;" title="Driftwood Taupe"></label>
+            </div>
+          </div>
+
+          <!-- Size Selector (Pure CSS Radio Selection) -->
+          <div class="selector-group">
+            <div class="selector-label-row">
+              <span>Size (IT/EU):</span>
+              <a href="#size-guide" style="font-size: 0.75rem; text-decoration: underline; color: var(--gold-muted);">Sizing Guide</a>
+            </div>
+            <div class="size-pills">
+              <input type="radio" name="size" id="size38" class="size-radio" />
+              <label for="size38" class="size-pill-label">38</label>
+
+              <input type="radio" name="size" id="size40" class="size-radio" checked />
+              <label for="size40" class="size-pill-label">40</label>
+
+              <input type="radio" name="size" id="size42" class="size-radio" />
+              <label for="size42" class="size-pill-label">42</label>
+
+              <input type="radio" name="size" id="size44" class="size-radio" />
+              <label for="size44" class="size-pill-label">44</label>
+
+              <input type="radio" name="size" id="size46" class="size-radio" />
+              <label for="size46" class="size-pill-label">46</label>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-buttons-row">
+            <a href="catalog.html" class="btn-bag">
+              Add to Shopping Bag &bull; $1,850
+            </a>
+            <button type="button" class="btn-fav" aria-label="Save to Wishlist">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- HTML/CSS Pure Accordion -->
+          <div class="accordion-box">
+            <details class="accordion-item" open>
+              <summary class="accordion-summary">Design &amp; Silhouette</summary>
+              <div class="accordion-content">
+                Meticulously hand-cut in Florence from double-faced Mongolian cashmere. Features horn buttons, belted waist cinch, broad storm flap, and silk-lined raglan sleeves designed for effortless layering over tailored knitwear.
+              </div>
+            </details>
+
+            <details class="accordion-item">
+              <summary class="accordion-summary">Materials &amp; Provenance</summary>
+              <div class="accordion-content">
+                100% Grade-A Mongolian Cashmere (420 GSM). Lining: 100% Mulberry Silk. Horn buttons ethically sourced. Dry clean only by luxury garment specialists.
+              </div>
+            </details>
+
+            <details class="accordion-item">
+              <summary class="accordion-summary">Complimentary White-Glove Shipping</summary>
+              <div class="accordion-content">
+                Delivered in our signature cedar preservation box with garment bag and horn hanger. Express worldwide shipping included with complimentary 30-day returns.
+              </div>
+            </details>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Luxury Pieces -->
+  <section class="section" style="background: var(--beige); padding: 4rem 0;">
+    <div class="container">
+      <div class="section-header" style="text-align: center; margin-bottom: 2.5rem;">
+        <p class="section-label">Curated Ensembles</p>
+        <h2 class="section-title">Complementary Pieces</h2>
+      </div>
+
+      <div class="products-grid">
+        <article class="product-card">
+          <div class="product-image">
+            <div class="product-img-placeholder" style="background: linear-gradient(135deg, #DFD5C4, #C4B5A0);"><span class="product-emoji">&#129532;</span></div>
+          </div>
+          <div class="product-info">
+            <p class="product-brand">Aurum Knitwear</p>
+            <h3 class="product-name">Silk-Cashmere Turtleneck</h3>
+            <div class="product-pricing">
+              <span class="product-price">$620</span>
+            </div>
+            <a href="product-detail.html" class="btn-shop" style="margin-top:0.75rem; display:block; text-align:center; padding:0.5rem 1rem; font-size:0.75rem;">View Piece</a>
+          </div>
+        </article>
+
+        <article class="product-card">
+          <div class="product-image">
+            <div class="product-img-placeholder" style="background: linear-gradient(135deg, #C4B5A0, #A89882);"><span class="product-emoji">&#128092;</span></div>
+          </div>
+          <div class="product-info">
+            <p class="product-brand">Aurum Leathercraft</p>
+            <h3 class="product-name">Structured Saddle Tote</h3>
+            <div class="product-pricing">
+              <span class="product-price">$1,450</span>
+            </div>
+            <a href="product-detail.html" class="btn-shop" style="margin-top:0.75rem; display:block; text-align:center; padding:0.5rem 1rem; font-size:0.75rem;">View Piece</a>
+          </div>
+        </article>
+
+        <article class="product-card">
+          <div class="product-image">
+            <div class="product-img-placeholder" style="background: linear-gradient(135deg, #D4C5B2, #A89882);"><span class="product-emoji">&#128094;</span></div>
+          </div>
+          <div class="product-info">
+            <p class="product-brand">Aurum Footwear</p>
+            <h3 class="product-name">Calfskin Chelsea Boot</h3>
+            <div class="product-pricing">
+              <span class="product-price">$890</span>
+            </div>
+            <a href="product-detail.html" class="btn-shop" style="margin-top:0.75rem; display:block; text-align:center; padding:0.5rem 1rem; font-size:0.75rem;">View Piece</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-logo-footer">AURUM</div>
+          <p>Purveyors of exceptional tailoring and artisanal luxury goods since 1928.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Boutique</h4>
+          <a href="catalog.html">New Arrivals</a>
+          <a href="catalog.html">Ready-to-Wear</a>
+          <a href="catalog.html">Fine Leather</a>
+          <a href="catalog.html">Footwear</a>
+        </div>
+        <div class="footer-col">
+          <h4>Client Services</h4>
+          <a href="product-detail.html">White Glove Shipping</a>
+          <a href="product-detail.html">Bespoke Inquiries</a>
+          <a href="product-detail.html">Garment Care</a>
+          <a href="product-detail.html">Returns &amp; Exchanges</a>
+        </div>
+        <div class="footer-col">
+          <h4>The House</h4>
+          <a href="index.html">Atelier Story</a>
+          <a href="index.html">Sustainable Sourcing</a>
+          <a href="index.html">Press Archive</a>
+          <a href="/index.html" class="footer-hub-link">Return to Hub</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 Aurum Luxury Retail &bull; Web Development Practical 2 (HTML5 &amp; CSS3 Only)
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

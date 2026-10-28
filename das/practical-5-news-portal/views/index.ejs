@@ -1,0 +1,94 @@
+<%- include('partials/header') %>
+
+<main class="main-body">
+  <div class="container">
+    
+    <!-- Trending News Ticker Bar -->
+    <div class="trending-strip">
+      <div class="trending-label">
+        <span class="flash-icon">&#9889;</span> TRENDING NOW
+      </div>
+      <div class="trending-links">
+        <% trending.forEach(function(item, idx) { %>
+          <a href="/article/<%= item.id %>" class="trending-item">
+            <span class="trend-num">0<%= idx + 1 %></span>
+            <span class="trend-text"><%= item.title %></span>
+          </a>
+        <% }); %>
+      </div>
+    </div>
+
+    <!-- Featured Front-Page Story (Hero) -->
+    <% if (featured) { %>
+      <section class="featured-hero">
+        <div class="featured-grid">
+          <div class="featured-media" style="background: <%= featured.imageGradient %>;">
+            <% if (featured.image) { %>
+              <img src="<%= featured.image %>" alt="<%= featured.title %>" class="featured-img" />
+            <% } else { %>
+              <span class="featured-emoji"><%= featured.imageEmoji %></span>
+            <% } %>
+            <div class="featured-overlay">
+              <span class="featured-badge">COVER STORY &bull; <%= featured.category %></span>
+            </div>
+          </div>
+          <div class="featured-content">
+            <div class="featured-meta">
+              <span class="author-name">By <%= featured.author %></span>
+              <span class="meta-dot">&bull;</span>
+              <span class="pub-date"><%= featured.date %></span>
+              <span class="meta-dot">&bull;</span>
+              <span class="read-duration"><%= featured.readTime %></span>
+            </div>
+            <h2 class="featured-title">
+              <a href="/article/<%= featured.id %>"><%= featured.title %></a>
+            </h2>
+            <p class="featured-summary"><%= featured.summary %></p>
+            <div class="featured-actions">
+              <a href="/article/<%= featured.id %>" class="btn-read-lead">
+                Read Full Coverage &rarr;
+              </a>
+              <span class="views-count">&#128065; <%= featured.views.toLocaleString() %> Readers</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    <% } %>
+
+    <!-- News Grid: Latest Dispatches -->
+    <section class="section-block">
+      <div class="section-title-bar">
+        <h2 class="section-heading">LATEST DISPATCHES</h2>
+        <span class="section-sub">Real-Time Editorial Updates Across Desks</span>
+      </div>
+
+      <div class="news-cards-grid">
+        <% latest.forEach(function(article) { %>
+          <%- include('partials/news-card', { article: article }) %>
+        <% }); %>
+      </div>
+    </section>
+
+    <!-- Category Desks Overview -->
+    <section class="section-block category-highlights-block">
+      <div class="section-title-bar">
+        <h2 class="section-heading">EXPLORE DESKS</h2>
+        <span class="section-sub">Specialized Reporting Departments</span>
+      </div>
+      <div class="desks-grid">
+        <% categories.forEach(function(cat) { %>
+          <a href="/category/<%= cat %>" class="desk-card">
+            <div class="desk-card-inner">
+              <h3 class="desk-title"><%= cat %></h3>
+              <p class="desk-desc">Latest reporting, breakthroughs, and analysis from our <%= cat %> correspondents.</p>
+              <span class="desk-link-text">Browse <%= cat %> &rarr;</span>
+            </div>
+          </a>
+        <% }); %>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<%- include('partials/footer') %>

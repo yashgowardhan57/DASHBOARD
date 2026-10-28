@@ -1,0 +1,23 @@
+{
+  "name": "practical-5-news-portal",
+  "version": "1.0.0",
+  "description": "Responsive Digital News Portal with EJS, Node.js, and Express",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "news",
+    "portal",
+    "ejs",
+    "express",
+    "nodejs"
+  ],
+  "author": "Yash Gowardhan",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.9",
+    "express": "^4.19.2"
+  }
+}

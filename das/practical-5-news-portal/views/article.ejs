@@ -1,0 +1,90 @@
+<%- include('partials/header') %>
+
+<main class="main-body">
+  <div class="container article-layout">
+    
+    <div class="article-breadcrumb">
+      <a href="/">Front Page</a> &gt; 
+      <a href="/category/<%= article.category %>"><%= article.category %></a> &gt; 
+      <span>Dispatch #<%= article.id %></span>
+    </div>
+
+    <!-- Article Header -->
+    <header class="article-header">
+      <div class="article-badge-row">
+        <span class="article-category-pill"><%= article.category %></span>
+        <% if (article.isTrending) { %>
+          <span class="trending-badge">&#9889; Trending Analysis</span>
+        <% } %>
+      </div>
+      
+      <h1 class="article-headline"><%= article.title %></h1>
+      <p class="article-deck"><%= article.summary %></p>
+
+      <div class="article-byline-bar">
+        <div class="author-block">
+          <div class="author-avatar-circle">
+            <%= article.author.split(' ').map(function(n){ return n[0]; }).join('') %>
+          </div>
+          <div class="author-details">
+            <span class="author-name-text">Reported by <strong><%= article.author %></strong></span>
+            <span class="author-title">Senior Editorial Correspondent</span>
+          </div>
+        </div>
+        <div class="article-time-block">
+          <span class="article-pub-date">Published on <%= article.date %></span>
+          <span class="article-read-meta"><%= article.readTime %> &bull; &#128065; <%= article.views.toLocaleString() %> views</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Visual Banner -->
+    <div class="article-lead-visual" style="background: <%= article.imageGradient %>;">
+      <% if (article.image) { %>
+        <img src="<%= article.image %>" alt="<%= article.title %>" class="lead-img" />
+      <% } else { %>
+        <span class="lead-emoji"><%= article.imageEmoji %></span>
+      <% } %>
+      <div class="lead-caption">
+        Figure 1.0 &bull; Editorial photo for <%= article.category %> dispatch #<%= article.id %>.
+      </div>
+    </div>
+
+    <!-- Article Prose Content -->
+    <div class="article-body-content">
+      <%- article.content %>
+
+      <!-- Topic Tags -->
+      <div class="article-tags-block">
+        <span class="tags-title">FILED UNDER:</span>
+        <div class="tags-pills">
+          <% (article.tags || []).forEach(function(tag) { %>
+            <a href="/search?q=<%= tag %>" class="article-tag-item">#<%= tag %></a>
+          <% }); %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Related Articles Section -->
+    <% if (related && related.length > 0) { %>
+      <section class="related-section">
+        <div class="section-title-bar">
+          <h2 class="section-heading">MORE FROM THE <%= article.category.toUpperCase() %> DESK</h2>
+        </div>
+        <div class="news-cards-grid">
+          <% related.forEach(function(rel) { %>
+            <%- include('partials/news-card', { article: rel }) %>
+          <% }); %>
+        </div>
+      </section>
+    <% } %>
+
+    <div class="article-navigation-footer">
+      <a href="/" class="btn-read-lead">&larr; Back to Front Page</a>
+      <a href="/category/<%= article.category %>" class="btn-subtle">More in <%= article.category %> &rarr;</a>
+    </div>
+
+  </div>
+</main>
+
+<%- include('partials/footer') %>

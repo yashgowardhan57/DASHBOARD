@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Practical 5 — Responsive News Portal (EJS &amp; Express)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Lora:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="public/css/news.css" />
+  <style>
+    body { background: #0F0F13; color: #E0E0E6; }
+    .portal-launcher {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem 1.25rem;
+    }
+    .launcher-box {
+      background: #181822;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 2.25rem;
+      max-width: 680px;
+      width: 100%;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+    .status-probe {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.25rem;
+      background: #0E0E14;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px;
+      margin-bottom: 1.5rem;
+    }
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #F59E0B;
+      display: inline-block;
+      margin-right: 0.5rem;
+    }
+    .status-dot.online { background: #10B981; box-shadow: 0 0 10px #10B981; }
+    .status-dot.offline { background: #EF4444; box-shadow: 0 0 10px #EF4444; }
+    .code-term {
+      background: #08080C;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8125rem;
+      color: #7DD3FC;
+      line-height: 1.6;
+      margin: 1.25rem 0;
+    }
+    .code-term .cmt { color: #64748B; }
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+      margin: 1.25rem 0;
+    }
+    .feat-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      font-size: 0.8125rem;
+    }
+    .feat-card strong { color: #FFF; display: block; margin-bottom: 0.2rem; }
+    .btn-launch {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: #C41E3A;
+      color: #FFF;
+      padding: 0.85rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9375rem;
+      text-decoration: none;
+      width: 100%;
+      box-shadow: 0 4px 18px rgba(196,30,58,0.35);
+      transition: all 0.2s;
+    }
+    .btn-launch:hover { background: #E50914; transform: translateY(-1px); }
+  </style>
+</head>
+<body>
+  <div class="portal-launcher">
+    <div class="launcher-box">
+      <a href="http://localhost:3000/index.html" id="backToHub" style="color: #999; font-size: 0.8125rem; display: inline-block; margin-bottom: 1rem;">
+        &larr; Back to Practical Hub
+      </a>
+      <script>
+        if (window.location.protocol === 'file:') {
+          var hubBtn = document.getElementById('backToHub');
+          if (hubBtn) hubBtn.href = '../dashboard/index.html';
+        }
+      </script>
+      
+      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+        <span style="font-size: 0.75rem; font-weight: 700; background: rgba(196,30,58,0.2); color: #FFA1A5; padding: 0.2rem 0.6rem; border-radius: 9999px;">
+          PRACTICAL 5 &bull; EJS TEMPLATES
+        </span>
+      </div>
+
+      <h1 style="font-family: 'Cinzel', serif; font-size: 1.85rem; color: #FFF; margin-bottom: 0.25rem;">
+        THE DAILY CHRONICLE
+      </h1>
+      <p style="color: #999; font-size: 0.875rem; margin-bottom: 1.5rem;">
+        Multi-Page Dynamic News Portal with Express.js, EJS Partials, and Search
+      </p>
+
+      <div class="status-probe">
+        <div>
+          <span class="status-dot" id="serverDot"></span>
+          <strong id="serverStatusText">Checking EJS Server (Port 3002)...</strong>
+          <div style="font-size: 0.75rem; color: #666; margin-top: 0.2rem;" id="serverSubText">Probing http://localhost:3002</div>
+        </div>
+        <button type="button" id="refreshBtn" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); color: #DDD; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem;">
+          Probe Again
+        </button>
+      </div>
+
+      <div class="features-grid">
+        <div class="feat-card">
+          <strong>EJS Partials</strong>
+          Reusable header, footer, navigation bar, and news-card templates.
+        </div>
+        <div class="feat-card">
+          <strong>Category Desks</strong>
+          Dynamic routes for Tech, Education, Business, Sports, and Entertainment.
+        </div>
+        <div class="feat-card">
+          <strong>Article Detail Views</strong>
+          Deep reading pages with author byline, full prose, and related stories.
+        </div>
+        <div class="feat-card">
+          <strong>Server-Side Search</strong>
+          Express query parameter filtering over demonstration article dataset.
+        </div>
+      </div>
+
+      <div class="code-term">
+        <span class="cmt"># Commands to start Practical 5 server:</span><br/>
+        cd practical-5-news-portal<br/>
+        npm install<br/>
+        npm start
+      </div>
+
+      <a href="http://localhost:3002/" target="_blank" class="btn-launch" id="launchBtn">
+        Open The Daily Chronicle (Port 3002) &rarr;
+      </a>
+    </div>
+  </div>
+
+  <script>
+    function checkNewsServer() {
+      var dot = document.getElementById('serverDot');
+      var status = document.getElementById('serverStatusText');
+      var sub = document.getElementById('serverSubText');
+
+      dot.className = 'status-dot';
+      status.textContent = 'Probing EJS Server (Port 3002)...';
+
+      fetch('http://localhost:3002/', { mode: 'no-cors' })
+        .then(function() {
+          dot.className = 'status-dot online';
+          status.textContent = 'News Server Online on Port 3002';
+          sub.textContent = 'EJS template engine is responding. Ready to browse.';
+        })
+        .catch(function() {
+          dot.className = 'status-dot offline';
+          status.textContent = 'News Server Not Detected on Port 3002';
+          sub.textContent = 'Run "npm start" inside practical-5-news-portal to launch.';
+        });
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', checkNewsServer);
+    checkNewsServer();
+  </script>
+</body>
+</html>

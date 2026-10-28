@@ -1,0 +1,33 @@
+<article class="news-card">
+  <a href="/article/<%= article.id %>" class="news-card-media" style="background: <%= article.imageGradient %>;">
+    <% if (article.image) { %>
+      <img src="<%= article.image %>" alt="<%= article.title %>" class="card-img" loading="lazy" />
+    <% } else { %>
+      <span class="card-emoji"><%= article.imageEmoji %></span>
+    <% } %>
+    <span class="card-category-badge"><%= article.category %></span>
+  </a>
+  <div class="news-card-body">
+    <div class="news-card-meta">
+      <span class="card-author"><%= article.author %></span>
+      <span class="meta-separator">&bull;</span>
+      <span class="card-date"><%= article.date %></span>
+      <span class="meta-separator">&bull;</span>
+      <span class="card-read-time"><%= article.readTime %></span>
+    </div>
+    <h3 class="news-card-title">
+      <a href="/article/<%= article.id %>"><%= article.title %></a>
+    </h3>
+    <p class="news-card-summary"><%= article.summary %></p>
+    <div class="news-card-footer">
+      <div class="card-tags">
+        <% (article.tags || []).slice(0, 2).forEach(function(tag) { %>
+          <span class="card-tag">#<%= tag %></span>
+        <% }); %>
+      </div>
+      <a href="/article/<%= article.id %>" class="read-more-link">
+        Read Story &rarr;
+      </a>
+    </div>
+  </div>
+</article>
