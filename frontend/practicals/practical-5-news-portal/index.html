@@ -8,187 +8,649 @@
       window.location.replace(window.location.pathname + '/' + window.location.search + window.location.hash);
     }
   </script>
-  <title>Practical 5 — Responsive News Portal (EJS &amp; Express)</title>
+  <meta name="description" content="The Daily Chronicle — Multi-Page Responsive News Portal with Express.js, EJS Partials, and Search" />
+  <title>The Daily Chronicle — Practical 5 (Digital News Portal)</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Lora:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  
   <link rel="stylesheet" href="public/css/news.css" />
   <style>
-    body { background: #0F0F13; color: #E0E0E6; }
-    .portal-launcher {
-      min-height: 100vh;
-      display: flex;
+    /* In-browser article modal and active filters */
+    .article-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
       align-items: center;
       justify-content: center;
-      padding: 2.5rem 1.25rem;
+      padding: 1.5rem;
     }
-    .launcher-box {
-      background: #181822;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      padding: 2.25rem;
-      max-width: 680px;
+    .article-modal-box {
+      background: #FFFFFF;
+      color: #111111;
+      border-radius: 12px;
+      max-width: 780px;
       width: 100%;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      max-height: 88vh;
+      overflow-y: auto;
+      padding: 2.5rem;
+      position: relative;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.5);
     }
-    .status-probe {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 1.25rem;
-      background: #0E0E14;
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 10px;
-      margin-bottom: 1.5rem;
-    }
-    .status-dot {
-      width: 10px;
-      height: 10px;
+    .modal-close-icon {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      background: #F3F4F6;
+      border: none;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
-      background: #F59E0B;
-      display: inline-block;
-      margin-right: 0.5rem;
-    }
-    .status-dot.online { background: #10B981; box-shadow: 0 0 10px #10B981; }
-    .status-dot.offline { background: #EF4444; box-shadow: 0 0 10px #EF4444; }
-    .code-term {
-      background: #08080C;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 8px;
-      padding: 1rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8125rem;
-      color: #7DD3FC;
-      line-height: 1.6;
-      margin: 1.25rem 0;
-    }
-    .code-term .cmt { color: #64748B; }
-    .features-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.85rem;
-      margin: 1.25rem 0;
-    }
-    .feat-card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      font-size: 0.8125rem;
-    }
-    .feat-card strong { color: #FFF; display: block; margin-bottom: 0.2rem; }
-    .btn-launch {
-      display: inline-flex;
+      display: flex;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
-      background: #C41E3A;
-      color: #FFF;
-      padding: 0.85rem 1.5rem;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 0.9375rem;
-      text-decoration: none;
-      width: 100%;
-      box-shadow: 0 4px 18px rgba(196,30,58,0.35);
+      cursor: pointer;
+      font-size: 1.25rem;
+      color: #4B5563;
       transition: all 0.2s;
     }
-    .btn-launch:hover { background: #E50914; transform: translateY(-1px); }
+    .modal-close-icon:hover {
+      background: #E5E7EB;
+      color: #111;
+    }
+    .article-modal-body p {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #2D3748;
+      margin-bottom: 1.25rem;
+    }
+    .server-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.72rem;
+      color: #BBB;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      margin-left: 0.75rem;
+    }
+    .status-dot-mini {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 6px #10B981;
+    }
+    .status-dot-mini.live {
+      background: #3B82F6;
+      box-shadow: 0 0 6px #3B82F6;
+    }
+    .guide-btn-top {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #DDD;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      cursor: pointer;
+      margin-left: 0.5rem;
+      transition: all 0.2s;
+    }
+    .guide-btn-top:hover {
+      background: rgba(255,255,255,0.1);
+      color: #FFF;
+    }
+    .category-filter-item {
+      cursor: pointer;
+    }
+    .tag-badge {
+      display: inline-block;
+      background: #F3F4F6;
+      color: #4B5563;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      margin-right: 0.4rem;
+      margin-bottom: 0.4rem;
+    }
+    .news-card {
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <div class="portal-launcher">
-    <div class="launcher-box">
-      <a href="/index.html" id="backToHub" style="color: #999; font-size: 0.8125rem; display: inline-block; margin-bottom: 1rem;">
-        &larr; Back to Practical Hub
-      </a>
-      <script>
-        var hubBtn = document.getElementById('backToHub');
-        if (hubBtn) {
-          hubBtn.href = window.location.protocol === 'file:' ? '../../index.html' : '/index.html';
-        }
-      </script>
-      
-      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-        <span style="font-size: 0.75rem; font-weight: 700; background: rgba(196,30,58,0.2); color: #FFA1A5; padding: 0.2rem 0.6rem; border-radius: 9999px;">
-          PRACTICAL 5 &bull; EJS TEMPLATES
+  <!-- Top Ticker / Hub Link Bar -->
+  <div class="top-bar">
+    <div class="container top-bar-content">
+      <div class="top-bar-left">
+        <a href="../../index.html" class="back-hub-pill" id="backToHub">
+          &larr; Back to Practical Hub
+        </a>
+        <span class="edition-tag">Practical 5 &bull; EJS Digital News Portal</span>
+        <span class="server-status-pill">
+          <span class="status-dot-mini" id="newsStatusDot"></span>
+          <span id="newsStatusLabel">Editorial Portal Active</span>
         </span>
       </div>
+      <div class="top-bar-right">
+        <span class="date-display" id="dateDisplay">October 29, 2026</span>
+        <span class="weather-pill">Nagpur, IN &bull; 28&deg;C Clear</span>
+        <button type="button" class="guide-btn-top" id="openServerGuideBtn">EJS Server Guide</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    var hubBtn = document.getElementById('backToHub');
+    if (hubBtn) {
+      hubBtn.href = (window.location.protocol === 'file:' || !window.location.pathname.startsWith('/practicals')) ? '../../index.html' : '/index.html';
+    }
+    var d = new Date();
+    var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('dateDisplay').textContent = d.toLocaleDateString('en-US', options);
+  </script>
 
-      <h1 style="font-family: 'Cinzel', serif; font-size: 1.85rem; color: #FFF; margin-bottom: 0.25rem;">
-        THE DAILY CHRONICLE
+  <!-- Newspaper Masthead -->
+  <header class="masthead">
+    <div class="container masthead-inner">
+      <div class="masthead-meta-left">
+        <span class="meta-label">ESTABLISHED 2026</span>
+        <span class="meta-sub">VOL. CIV &bull; NO. 248</span>
+      </div>
+      
+      <div class="masthead-center">
+        <a href="#home" class="brand-link" id="brandHomeLink">
+          <h1 class="newspaper-title">THE DAILY CHRONICLE</h1>
+          <p class="newspaper-motto">Veritas et Sapientia &bull; Technology, Science &amp; Global Affairs</p>
+        </a>
+      </div>
+
+      <div class="masthead-meta-right">
+        <div class="search-form">
+          <input type="text" id="searchInput" placeholder="Search news archive..." class="search-input" autocomplete="off" />
+          <button type="button" class="search-btn" id="searchSubmitBtn" aria-label="Search">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Editorial Navigation Bar -->
+    <nav class="nav-bar">
+      <div class="container">
+        <ul class="nav-list" id="categoryNav">
+          <li class="nav-item active category-filter-item" data-category="All">
+            <a class="nav-link">All Desks</a>
+          </li>
+          <li class="nav-item category-filter-item" data-category="Technology">
+            <a class="nav-link">Technology</a>
+          </li>
+          <li class="nav-item category-filter-item" data-category="Education">
+            <a class="nav-link">Education</a>
+          </li>
+          <li class="nav-item category-filter-item" data-category="Business">
+            <a class="nav-link">Business</a>
+          </li>
+          <li class="nav-item category-filter-item" data-category="Sports">
+            <a class="nav-link">Sports</a>
+          </li>
+          <li class="nav-item category-filter-item" data-category="Entertainment">
+            <a class="nav-link">Entertainment</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <main class="main-body" id="home">
+    <div class="container">
+      
+      <!-- Trending News Ticker Bar -->
+      <div class="trending-strip">
+        <div class="trending-label">
+          <span class="flash-icon">&#9889;</span> TRENDING NOW
+        </div>
+        <div class="trending-links" id="trendingStrip">
+          <!-- Populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Featured Front-Page Story (Hero) -->
+      <section class="featured-hero" id="heroSection">
+        <div class="featured-grid">
+          <div class="featured-media" id="heroMedia" style="background: linear-gradient(135deg, #1E3A8A, #3B82F6);">
+            <span class="featured-emoji" id="heroEmoji">⚡</span>
+            <div class="featured-overlay">
+              <span class="featured-badge" id="heroBadge">COVER STORY &bull; Technology</span>
+            </div>
+          </div>
+          <div class="featured-content">
+            <div class="featured-meta">
+              <span class="author-name" id="heroAuthor">By Elena Rostova</span>
+              <span class="meta-dot">&bull;</span>
+              <span class="pub-date" id="heroDate">October 24, 2026</span>
+              <span class="meta-dot">&bull;</span>
+              <span class="read-duration" id="heroReadTime">4 min read</span>
+            </div>
+            <h2 class="featured-title">
+              <a href="javascript:void(0)" id="heroTitleLink">Next-Generation Web Standards: How Modern Browsers Are Revolutionizing Performance</a>
+            </h2>
+            <p class="featured-summary" id="heroSummary">
+              From WebAssembly components to native CSS nesting and scroll-driven animations, explore how browser engines are delivering unprecedented client-side speed.
+            </p>
+            <div class="featured-actions">
+              <button type="button" class="btn-read-lead" id="heroReadBtn">
+                Read Full Coverage &rarr;
+              </button>
+              <span class="views-count" id="heroViews">&#128065; 14,820 Readers</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Search Query Info Banner (Hidden by default) -->
+      <div id="searchNotice" style="display:none; background:#F3F4F6; padding:0.85rem 1.25rem; border-radius:8px; margin:1.5rem 0; border-left:4px solid var(--accent-red);">
+        Showing search results for: <strong id="searchQueryText"></strong> &bull; <a href="javascript:void(0)" id="clearSearchBtn" style="color:var(--accent-red); font-weight:600; margin-left:0.5rem;">Clear search</a>
+      </div>
+
+      <!-- News Grid: Latest Dispatches -->
+      <section class="section-block">
+        <div class="section-title-bar">
+          <h2 class="section-heading" id="gridTitle">LATEST DISPATCHES</h2>
+          <span class="section-sub" id="gridSubtitle">Real-Time Editorial Updates Across Desks</span>
+        </div>
+
+        <div class="news-cards-grid" id="articlesGrid">
+          <!-- Populated by JavaScript -->
+        </div>
+      </section>
+
+      <!-- Category Desks Overview -->
+      <section class="section-block category-highlights-block">
+        <div class="section-title-bar">
+          <h2 class="section-heading">EXPLORE DESKS</h2>
+          <span class="section-sub">Specialized Reporting Departments</span>
+        </div>
+        <div class="desks-grid">
+          <div class="desk-card" data-category="Technology">
+            <div class="desk-card-inner">
+              <h3 class="desk-title">Technology</h3>
+              <p class="desk-desc">Latest reporting on web architectures, browser platforms, and distributed systems.</p>
+              <span class="desk-link-text">Browse Technology &rarr;</span>
+            </div>
+          </div>
+          <div class="desk-card" data-category="Education">
+            <div class="desk-card-inner">
+              <h3 class="desk-title">Education</h3>
+              <p class="desk-desc">Curriculum updates, university research benchmarks, and AI-assisted engineering labs.</p>
+              <span class="desk-link-text">Browse Education &rarr;</span>
+            </div>
+          </div>
+          <div class="desk-card" data-category="Business">
+            <div class="desk-card-inner">
+              <h3 class="desk-title">Business</h3>
+              <p class="desk-desc">Supply chain economics, domestic fab nodes, and renewable energy capital flows.</p>
+              <span class="desk-link-text">Browse Business &rarr;</span>
+            </div>
+          </div>
+          <div class="desk-card" data-category="Sports">
+            <div class="desk-card-inner">
+              <h3 class="desk-title">Sports</h3>
+              <p class="desk-desc">High-frequency telemetry analysis, pitch ergonomics, and tactical transformations.</p>
+              <span class="desk-link-text">Browse Sports &rarr;</span>
+            </div>
+          </div>
+          <div class="desk-card" data-category="Entertainment">
+            <div class="desk-card-inner">
+              <h3 class="desk-title">Entertainment</h3>
+              <p class="desk-desc">Virtual volume stages, real-time CGI rendering, and next-generation cinematic craft.</p>
+              <span class="desk-link-text">Browse Entertainment &rarr;</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Newspaper Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <h2 class="footer-title">THE DAILY CHRONICLE</h2>
+          <p class="footer-motto">Veritas et Sapientia &bull; Established 2026</p>
+          <p class="footer-about">
+            A dynamic digital newspaper developed as Practical 5 demonstrating EJS templates, reusable components, partial layouts, dynamic routing, and search queries.
+          </p>
+        </div>
+        <div class="footer-cols">
+          <div class="footer-col">
+            <h4 class="col-title">Editorial Desks</h4>
+            <ul class="col-links">
+              <li><a href="javascript:void(0)" class="cat-link" data-cat="Technology">Technology</a></li>
+              <li><a href="javascript:void(0)" class="cat-link" data-cat="Education">Education</a></li>
+              <li><a href="javascript:void(0)" class="cat-link" data-cat="Business">Business</a></li>
+              <li><a href="javascript:void(0)" class="cat-link" data-cat="Sports">Sports</a></li>
+              <li><a href="javascript:void(0)" class="cat-link" data-cat="Entertainment">Entertainment</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4 class="col-title">Architecture</h4>
+            <ul class="col-links">
+              <li><span style="color:#AAA;">Node.js / Express</span></li>
+              <li><span style="color:#AAA;">EJS Template Engine</span></li>
+              <li><span style="color:#AAA;">Reusable Partials</span></li>
+              <li><span style="color:#AAA;">Responsive Typography</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 The Daily Chronicle &bull; Yash Gowardhan (B.Tech IT, 3rd Year) &bull; SVPCET</p>
+        <p class="footer-sub">Practical 5 — Web Development Laboratory Assignment</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 1. Interactive Article Reader Modal -->
+  <div class="article-modal" id="articleModal">
+    <div class="article-modal-box">
+      <button type="button" class="modal-close-icon" id="closeArticleModalBtn">&times;</button>
+      <div style="margin-bottom: 0.75rem;">
+        <span class="featured-badge" id="modalCategoryBadge" style="background:var(--accent-red); color:#fff; padding:0.25rem 0.65rem; border-radius:4px; font-size:0.75rem; font-weight:700;">
+          TECHNOLOGY
+        </span>
+      </div>
+      <h1 id="modalArticleTitle" style="font-family:'Cinzel',serif; font-size:1.85rem; line-height:1.25; margin-bottom:0.75rem; color:#111;">
+        Article Title
       </h1>
-      <p style="color: #999; font-size: 0.875rem; margin-bottom: 1.5rem;">
-        Multi-Page Dynamic News Portal with Express.js, EJS Partials, and Search
-      </p>
-
-      <div class="status-probe">
-        <div>
-          <span class="status-dot" id="serverDot"></span>
-          <strong id="serverStatusText">Checking EJS Server (Port 3002)...</strong>
-          <div style="font-size: 0.75rem; color: #666; margin-top: 0.2rem;" id="serverSubText">Probing http://localhost:3002</div>
-        </div>
-        <button type="button" id="refreshBtn" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); color: #DDD; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem;">
-          Probe Again
-        </button>
+      <div style="font-size:0.875rem; color:#6B7280; margin-bottom:1.5rem; display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+        <span id="modalArticleAuthor" style="font-weight:600; color:#111;">By Elena Rostova</span>
+        <span>&bull;</span>
+        <span id="modalArticleDate">October 24, 2026</span>
+        <span>&bull;</span>
+        <span id="modalArticleReadTime">4 min read</span>
+        <span>&bull;</span>
+        <span id="modalArticleViews">&#128065; 14,820 readers</span>
       </div>
-
-      <div class="features-grid">
-        <div class="feat-card">
-          <strong>EJS Partials</strong>
-          Reusable header, footer, navigation bar, and news-card templates.
-        </div>
-        <div class="feat-card">
-          <strong>Category Desks</strong>
-          Dynamic routes for Tech, Education, Business, Sports, and Entertainment.
-        </div>
-        <div class="feat-card">
-          <strong>Article Detail Views</strong>
-          Deep reading pages with author byline, full prose, and related stories.
-        </div>
-        <div class="feat-card">
-          <strong>Server-Side Search</strong>
-          Express query parameter filtering over demonstration article dataset.
-        </div>
+      <div class="article-modal-body" id="modalArticleContent">
+        <!-- Prose injected here -->
       </div>
-
-      <div class="code-term">
-        <span class="cmt"># Commands to start Practical 5 server:</span><br/>
-        cd practical-5-news-portal<br/>
-        npm install<br/>
-        npm start
+      <div style="margin-top:2rem; padding-top:1.25rem; border-top:1px solid #E5E7EB;" id="modalTagsContainer">
+        <!-- Tags injected here -->
       </div>
-
-      <a href="http://localhost:3002/" target="_blank" class="btn-launch" id="launchBtn">
-        Open The Daily Chronicle (Port 3002) &rarr;
-      </a>
     </div>
   </div>
 
+  <!-- 2. Server Architecture Guide Modal -->
+  <div class="article-modal" id="serverGuideModal">
+    <div class="article-modal-box" style="background:#181822; color:#FFF; max-width:640px;">
+      <button type="button" class="modal-close-icon" id="closeGuideModalBtn" style="background:#2A2A38; color:#DDD;">&times;</button>
+      <h2 style="font-family:'Cinzel',serif; font-size:1.4rem; color:#FFF; margin-bottom:0.5rem;">
+        Express.js + EJS Server Guide
+      </h2>
+      <p style="font-size:0.875rem; color:#A1A1AA; margin-bottom:1rem;">
+        Practical 5 is built with an Express.js backend and EJS template engine supporting reusable partials (<code>header.ejs</code>, <code>footer.ejs</code>, <code>news-card.ejs</code>).
+      </p>
+      <div style="background:#0D0D12; border:1px solid #27272A; border-radius:8px; padding:1rem; font-family:'JetBrains Mono',monospace; font-size:0.8125rem; color:#38BDF8; line-height:1.6; margin-bottom:1rem;">
+        <span style="color:#71717A;"># Run the EJS backend server locally:</span><br/>
+        cd backend/services/practical-5-news-portal<br/>
+        npm install<br/>
+        npm start<br/><br/>
+        <span style="color:#71717A;"># Server starts on port 3002:</span><br/>
+        http://localhost:3002/
+      </div>
+      <p style="font-size:0.8125rem; color:#71717A;">
+        When this standalone portal is open, articles can be read in full fidelity without any server dependency.
+      </p>
+    </div>
+  </div>
+
+  <!-- Load Data -->
+  <script src="data/articles.js"></script>
+
+  <!-- Interactive News Portal Controller -->
   <script>
-    function checkNewsServer() {
-      var dot = document.getElementById('serverDot');
-      var status = document.getElementById('serverStatusText');
-      var sub = document.getElementById('serverSubText');
+    (function () {
+      'use strict';
 
-      dot.className = 'status-dot';
-      status.textContent = 'Probing EJS Server (Port 3002)...';
+      var articles = window.NEWS_ARTICLES || [];
+      var activeCategory = 'All';
+      var activeQuery = '';
 
-      fetch('http://localhost:3002/', { mode: 'no-cors' })
-        .then(function() {
-          dot.className = 'status-dot online';
-          status.textContent = 'News Server Online on Port 3002';
-          sub.textContent = 'EJS template engine is responding. Ready to browse.';
-        })
-        .catch(function() {
-          dot.className = 'status-dot offline';
-          status.textContent = 'News Server Not Detected on Port 3002';
-          sub.textContent = 'Run "npm start" inside practical-5-news-portal to launch.';
+      var grid = document.getElementById('articlesGrid');
+      var searchInput = document.getElementById('searchInput');
+      var searchNotice = document.getElementById('searchNotice');
+      var searchQueryText = document.getElementById('searchQueryText');
+      var clearSearchBtn = document.getElementById('clearSearchBtn');
+
+      var articleModal = document.getElementById('articleModal');
+      var closeArticleModalBtn = document.getElementById('closeArticleModalBtn');
+      var serverGuideModal = document.getElementById('serverGuideModal');
+      var openServerGuideBtn = document.getElementById('openServerGuideBtn');
+      var closeGuideModalBtn = document.getElementById('closeGuideModalBtn');
+
+      // Probe backend port 3002
+      function probeEjsServer() {
+        var dot = document.getElementById('newsStatusDot');
+        var label = document.getElementById('newsStatusLabel');
+        fetch('http://localhost:3002/api/health', { mode: 'no-cors' })
+          .then(function () {
+            dot.className = 'status-dot-mini live';
+            label.textContent = 'EJS Server Online (Port 3002)';
+          })
+          .catch(function () {
+            dot.className = 'status-dot-mini';
+            label.textContent = 'Standalone Portal Active';
+          });
+      }
+      probeEjsServer();
+
+      // Render Trending Bar
+      function renderTrending() {
+        var container = document.getElementById('trendingStrip');
+        var trending = articles.filter(function (a) { return a.isTrending; }).slice(0, 4);
+        container.innerHTML = trending.map(function (item, idx) {
+          return '<a href="javascript:void(0)" class="trending-item" data-id="' + item.id + '">' +
+            '<span class="trend-num">0' + (idx + 1) + '</span>' +
+            '<span class="trend-text">' + item.title + '</span>' +
+            '</a>';
+        }).join('');
+      }
+
+      // Render Hero Featured Story
+      function renderHero() {
+        var feat = articles.find(function (a) { return a.isFeatured; }) || articles[0];
+        if (!feat) return;
+        document.getElementById('heroMedia').style.background = feat.imageGradient || 'linear-gradient(135deg, #1E3A8A, #3B82F6)';
+        document.getElementById('heroEmoji').textContent = feat.imageEmoji || '⚡';
+        document.getElementById('heroBadge').textContent = 'COVER STORY \u2022 ' + feat.category.toUpperCase();
+        document.getElementById('heroAuthor').textContent = 'By ' + feat.author;
+        document.getElementById('heroDate').textContent = feat.date;
+        document.getElementById('heroReadTime').textContent = feat.readTime;
+        document.getElementById('heroTitleLink').textContent = feat.title;
+        document.getElementById('heroSummary').textContent = feat.summary;
+        document.getElementById('heroViews').innerHTML = '&#128065; ' + feat.views.toLocaleString() + ' Readers';
+
+        function openHero() { openArticleModal(feat.id); }
+        document.getElementById('heroReadBtn').onclick = openHero;
+        document.getElementById('heroTitleLink').onclick = openHero;
+      }
+
+      // Render Article Cards Grid
+      function renderArticles() {
+        var filtered = articles.filter(function (a) {
+          if (activeCategory !== 'All' && a.category.toLowerCase() !== activeCategory.toLowerCase()) {
+            return false;
+          }
+          if (activeQuery.trim()) {
+            var q = activeQuery.toLowerCase().trim();
+            var inTitle = a.title.toLowerCase().includes(q);
+            var inSummary = a.summary.toLowerCase().includes(q);
+            var inAuthor = a.author.toLowerCase().includes(q);
+            var inTags = (a.tags || []).some(function (t) { return t.toLowerCase().includes(q); });
+            if (!inTitle && !inSummary && !inAuthor && !inTags) return false;
+          }
+          return true;
         });
-    }
 
-    document.getElementById('refreshBtn').addEventListener('click', checkNewsServer);
-    checkNewsServer();
+        if (filtered.length === 0) {
+          grid.innerHTML = '<div style="grid-column: 1 / -1; text-align:center; padding:3rem 1rem; color:#888;">' +
+            '<div style="font-size:2rem; margin-bottom:0.5rem;">📰</div>' +
+            '<h3>No articles found</h3>' +
+            '<p style="font-size:0.875rem;">Try adjusting your keyword search or category desk filter.</p>' +
+            '</div>';
+          return;
+        }
+
+        grid.innerHTML = filtered.map(function (a) {
+          return '<article class="news-card" data-id="' + a.id + '">' +
+            '<div class="card-media" style="background:' + a.imageGradient + '; height:140px; display:flex; align-items:center; justify-content:center; border-radius:8px 8px 0 0; position:relative;">' +
+            '<span style="font-size:2.5rem;">' + a.imageEmoji + '</span>' +
+            '<span class="card-category-badge" style="position:absolute; top:10px; left:10px; background:rgba(0,0,0,0.65); color:#fff; font-size:0.7rem; font-weight:700; padding:0.2rem 0.5rem; border-radius:4px; text-transform:uppercase;">' + a.category + '</span>' +
+            '</div>' +
+            '<div class="card-body" style="padding:1rem;">' +
+            '<div class="card-meta" style="font-size:0.75rem; color:#888; margin-bottom:0.4rem;">' +
+            '<span>' + a.date + '</span> &bull; <span>' + a.readTime + '</span>' +
+            '</div>' +
+            '<h3 class="card-title" style="font-family:\'Lora\',serif; font-size:1.05rem; line-height:1.35; margin-bottom:0.5rem; color:#111;">' +
+            a.title +
+            '</h3>' +
+            '<p class="card-excerpt" style="font-size:0.8125rem; color:#666; line-height:1.5; margin-bottom:0.75rem;">' +
+            a.summary +
+            '</p>' +
+            '<div class="card-footer" style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:#999; border-top:1px solid #EEE; padding-top:0.5rem;">' +
+            '<span>By ' + a.author + '</span>' +
+            '<span style="color:var(--accent-red); font-weight:600;">Read &rarr;</span>' +
+            '</div>' +
+            '</div>' +
+            '</article>';
+        }).join('');
+      }
+
+      // Open Article Reader Modal
+      function openArticleModal(id) {
+        var article = articles.find(function (a) { return a.id === Number(id); });
+        if (!article) return;
+
+        document.getElementById('modalCategoryBadge').textContent = article.category.toUpperCase();
+        document.getElementById('modalArticleTitle').textContent = article.title;
+        document.getElementById('modalArticleAuthor').textContent = 'By ' + article.author;
+        document.getElementById('modalArticleDate').textContent = article.date;
+        document.getElementById('modalArticleReadTime').textContent = article.readTime;
+        document.getElementById('modalArticleViews').innerHTML = '&#128065; ' + article.views.toLocaleString() + ' readers';
+        document.getElementById('modalArticleContent').innerHTML = article.content;
+
+        var tagsHtml = (article.tags || []).map(function (t) {
+          return '<span class="tag-badge">#' + t + '</span>';
+        }).join('');
+        document.getElementById('modalTagsContainer').innerHTML = '<span style="font-size:0.8125rem; font-weight:600; margin-right:0.5rem; color:#666;">Topics:</span>' + tagsHtml;
+
+        articleModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeArticleModal() {
+        articleModal.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+
+      // Category Switching
+      document.querySelectorAll('.category-filter-item').forEach(function (el) {
+        el.addEventListener('click', function () {
+          document.querySelectorAll('.category-filter-item').forEach(function (item) { item.classList.remove('active'); });
+          this.classList.add('active');
+          activeCategory = this.getAttribute('data-category');
+          document.getElementById('gridTitle').textContent = activeCategory === 'All' ? 'LATEST DISPATCHES' : activeCategory.toUpperCase() + ' DESK';
+          renderArticles();
+        });
+      });
+
+      // Desk Cards in Bottom Grid
+      document.querySelectorAll('.desk-card').forEach(function (card) {
+        card.addEventListener('click', function () {
+          var cat = this.getAttribute('data-category');
+          var targetTab = document.querySelector('.category-filter-item[data-category="' + cat + '"]');
+          if (targetTab) targetTab.click();
+          window.scrollTo({ top: document.querySelector('.section-block').offsetTop - 60, behavior: 'smooth' });
+        });
+      });
+
+      document.querySelectorAll('.cat-link').forEach(function (link) {
+        link.addEventListener('click', function () {
+          var cat = this.getAttribute('data-cat');
+          var targetTab = document.querySelector('.category-filter-item[data-category="' + cat + '"]');
+          if (targetTab) targetTab.click();
+          window.scrollTo({ top: document.querySelector('.section-block').offsetTop - 60, behavior: 'smooth' });
+        });
+      });
+
+      // Search handling
+      function handleSearch() {
+        activeQuery = searchInput.value;
+        if (activeQuery.trim()) {
+          searchNotice.style.display = 'block';
+          searchQueryText.textContent = '"' + activeQuery + '"';
+        } else {
+          searchNotice.style.display = 'none';
+        }
+        renderArticles();
+      }
+
+      searchInput.addEventListener('input', handleSearch);
+      document.getElementById('searchSubmitBtn').addEventListener('click', handleSearch);
+      clearSearchBtn.addEventListener('click', function () {
+        searchInput.value = '';
+        activeQuery = '';
+        searchNotice.style.display = 'none';
+        renderArticles();
+      });
+
+      // Article click delegation
+      document.addEventListener('click', function (e) {
+        var card = e.target.closest('.news-card') || e.target.closest('.trending-item');
+        if (card && card.dataset.id) {
+          openArticleModal(card.dataset.id);
+        }
+      });
+
+      closeArticleModalBtn.addEventListener('click', closeArticleModal);
+      articleModal.addEventListener('click', function (e) {
+        if (e.target === articleModal) closeArticleModal();
+      });
+
+      // Guide Modal
+      openServerGuideBtn.addEventListener('click', function () {
+        serverGuideModal.style.display = 'flex';
+      });
+      closeGuideModalBtn.addEventListener('click', function () {
+        serverGuideModal.style.display = 'none';
+      });
+      serverGuideModal.addEventListener('click', function (e) {
+        if (e.target === serverGuideModal) serverGuideModal.style.display = 'none';
+      });
+
+      // Esc key
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          closeArticleModal();
+          serverGuideModal.style.display = 'none';
+        }
+      });
+
+      // Initial Render
+      renderTrending();
+      renderHero();
+      renderArticles();
+    })();
   </script>
 </body>
 </html>

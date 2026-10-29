@@ -98,6 +98,25 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true, service: 'PracticalOS Gateway Backend', uptime: process.uptime() });
 });
 
+// Direct routing aliases for practicals
+app.get(['/login', '/register', '/auth'], (req, res) => {
+  const p4Path = path.join(FRONTEND_DIR, 'practicals', 'practical-4-authentication', 'index.html');
+  if (fs.existsSync(p4Path)) return res.sendFile(p4Path);
+  res.redirect('/practicals/practical-4-authentication/index.html');
+});
+
+app.get(['/news', '/portal'], (req, res) => {
+  const p5Path = path.join(FRONTEND_DIR, 'practicals', 'practical-5-news-portal', 'index.html');
+  if (fs.existsSync(p5Path)) return res.sendFile(p5Path);
+  res.redirect('/practicals/practical-5-news-portal/index.html');
+});
+
+app.get(['/student-profile', '/directory'], (req, res) => {
+  const p6Path = path.join(FRONTEND_DIR, 'practicals', 'practical-6-student-profile', 'index.html');
+  if (fs.existsSync(p6Path)) return res.sendFile(p6Path);
+  res.redirect('/practicals/practical-6-student-profile/index.html');
+});
+
 // Serve frontend static assets if available (e.g. unified deployment)
 if (fs.existsSync(FRONTEND_DIR)) {
   console.log(`[Server] Serving static frontend from: ${FRONTEND_DIR}`);

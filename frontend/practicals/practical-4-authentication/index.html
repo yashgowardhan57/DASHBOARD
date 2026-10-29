@@ -8,128 +8,125 @@
       window.location.replace(window.location.pathname + '/' + window.location.search + window.location.hash);
     }
   </script>
-  <title>Practical 4 — Animated Login & Registration (Full-Stack)</title>
+  <meta name="description" content="Animated Login and Registration System with Node.js, Express, and PostgreSQL" />
+  <title>Practical 4 — Animated Login &amp; Registration (NexusAuth)</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  
   <link rel="stylesheet" href="public/css/auth.css" />
   <style>
-    .launcher-card {
-      max-width: 680px;
-    }
-    .status-banner {
+    /* Additional Enhancements for Practical 4 Standalone & Live Gateway */
+    .status-pill-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 1rem 1.25rem;
-      border-radius: var(--radius-md);
-      background: var(--bg-input);
-      border: 1px solid var(--border-subtle);
-      margin-bottom: 1.5rem;
+      width: 100%;
+      max-width: 520px;
+      margin-bottom: 1.25rem;
+      gap: 0.75rem;
     }
-    .status-left {
+    .backend-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+    }
+    .backend-badge.online .badge-dot {
+      background: #10B981;
+      box-shadow: 0 0 8px #10B981;
+    }
+    .badge-dot.standalone {
+      background: #F59E0B;
+      box-shadow: 0 0 8px #F59E0B;
+    }
+    .btn-guide-toggle {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-size: 0.75rem;
+      cursor: pointer;
+      text-decoration: underline;
+      transition: var(--transition);
+    }
+    .btn-guide-toggle:hover {
+      color: #fff;
+    }
+    .demo-hint-box {
+      background: rgba(229, 9, 20, 0.06);
+      border: 1px dashed rgba(229, 9, 20, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 0.65rem 0.85rem;
+      margin-top: 1rem;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-    }
-    .status-indicator {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #F59E0B;
-      box-shadow: 0 0 10px #F59E0B;
-    }
-    .status-indicator.online {
-      background: #10B981;
-      box-shadow: 0 0 10px #10B981;
-    }
-    .status-indicator.offline {
-      background: #EF4444;
-      box-shadow: 0 0 10px #EF4444;
-    }
-    .code-box {
-      background: #000;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 1rem 1.25rem;
-      font-family: var(--font-mono);
-      font-size: 0.8125rem;
-      color: #E2E8F0;
-      line-height: 1.6;
-      margin: 1rem 0;
-      overflow-x: auto;
-    }
-    .code-box .comment { color: #64748B; }
-    .code-box .cmd { color: #38BDF8; font-weight: 600; }
-    .features-list {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-      margin: 1.25rem 0;
-    }
-    .feature-item {
-      display: flex;
-      align-items: flex-start;
+      justify-content: space-between;
       gap: 0.5rem;
-      font-size: 0.8125rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
     }
-    .feature-item svg {
-      color: var(--accent-red);
-      flex-shrink: 0;
-      margin-top: 2px;
+    .demo-hint-btn {
+      background: var(--accent-red);
+      color: #fff;
+      border: none;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: var(--transition);
     }
-    .actions-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-      margin-top: 1.5rem;
+    .demo-hint-btn:hover {
+      background: var(--accent-red-hover);
     }
-    .btn-secondary {
-      padding: 0.85rem 1.25rem;
+    /* Modal for Server Architecture */
+    .server-guide-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .server-guide-box {
       background: var(--bg-surface-elevated);
       border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      color: var(--text-main);
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 0.875rem;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      transition: var(--transition);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      max-width: 620px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.6);
     }
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.2);
+    .guide-code {
+      background: #000;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.85rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      color: #38BDF8;
+      line-height: 1.6;
+      margin: 0.75rem 0;
+      overflow-x: auto;
     }
-    .btn-primary-link {
-      padding: 0.85rem 1.25rem;
-      background: var(--accent-red);
-      border-radius: var(--radius-md);
-      color: #fff;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 0.875rem;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      transition: var(--transition);
-      box-shadow: 0 4px 18px var(--accent-red-glow);
-    }
-    .btn-primary-link:hover {
-      background: var(--accent-red-hover);
-      box-shadow: 0 6px 24px rgba(229, 9, 20, 0.5);
-    }
-    @media (max-width: 600px) {
-      .features-list, .actions-grid { grid-template-columns: 1fr; }
-    }
+    .guide-code .comment { color: #64748B; }
   </style>
 </head>
 <body class="auth-body">
-  <a href="/index.html" class="back-link" id="backToHub">
+  <!-- Back Link to Practical Hub -->
+  <a href="../../index.html" class="back-link" id="backToHub">
     <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
       <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
     </svg>
@@ -138,117 +135,246 @@
   <script>
     var hubBtn = document.getElementById('backToHub');
     if (hubBtn) {
-      hubBtn.href = window.location.protocol === 'file:' ? '../../index.html' : '/index.html';
+      hubBtn.href = (window.location.protocol === 'file:' || !window.location.pathname.startsWith('/practicals')) ? '../../index.html' : '/index.html';
     }
   </script>
 
+  <!-- Ambient Glow Background Accents -->
   <div class="ambient-glow glow-top"></div>
   <div class="ambient-glow glow-bottom"></div>
 
-  <main class="auth-container launcher-card">
+  <main class="auth-container">
+    <!-- Brand Header -->
     <div class="auth-brand">
       <div class="brand-badge">
         <span class="badge-dot"></span>
-        Practical 4 &bull; Full-Stack PostgreSQL Auth
+        Practical 4 &bull; Full-Stack Authentication Gateway
       </div>
-      <h1 class="brand-title">Animated Auth <span>Gateway</span></h1>
-      <p class="brand-subtitle">Node.js + Express + PostgreSQL + Bcrypt 12 + Sessions</p>
+      <h1 class="brand-title">Nexus<span>Auth</span></h1>
+      <p class="brand-subtitle">Node.js + Express + PostgreSQL Session Security</p>
     </div>
 
-    <div class="auth-card">
-      <!-- Live Server Probe -->
-      <div class="status-banner">
-        <div class="status-left">
-          <span class="status-indicator" id="statusDot"></span>
-          <div>
-            <div style="font-weight: 600; font-size: 0.875rem;" id="statusText">Checking Backend Server (Port 3001)...</div>
-            <div style="font-size: 0.75rem; color: var(--text-dim);" id="statusSub">Probing http://localhost:3001</div>
+    <!-- Status Pill Row -->
+    <div class="status-pill-row">
+      <div class="backend-badge" id="backendStatusBadge">
+        <span class="badge-dot standalone" id="statusDot"></span>
+        <span id="statusText">Checking Backend Status...</span>
+      </div>
+      <button type="button" class="btn-guide-toggle" id="openGuideBtn">PostgreSQL Setup Guide</button>
+    </div>
+
+    <!-- Auth Card -->
+    <div class="auth-card" id="authCard">
+      <!-- Tabs for Login / Register -->
+      <div class="auth-tabs" role="tablist">
+        <button type="button" class="tab-btn active" id="tabLogin" role="tab" aria-selected="true">
+          Sign In
+        </button>
+        <button type="button" class="tab-btn" id="tabRegister" role="tab" aria-selected="false">
+          Create Account
+        </button>
+        <div class="tab-indicator" id="tabIndicator"></div>
+      </div>
+
+      <!-- Alerts -->
+      <div class="alert alert-error" id="serverAlert" role="alert" style="display: none;"></div>
+      <div class="alert alert-error" id="clientAlert" role="alert" style="display: none;"></div>
+
+      <!-- 1. Login Form Panel -->
+      <div class="form-panel active" id="loginPanel">
+        <form class="auth-form" id="loginForm" novalidate>
+          <div class="form-group">
+            <label for="loginEmail" class="form-label">Email Address</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+              </svg>
+              <input type="email" id="loginEmail" name="email" class="form-input" placeholder="student@example.com" value="yash.gowardhan@svpcet.edu.in" required autocomplete="email" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="label-row">
+              <label for="loginPassword" class="form-label">Password</label>
+              <span class="hint-text">Minimum 6 chars</span>
+            </div>
+            <div class="input-wrapper">
+              <svg class="input-icon" width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+              </svg>
+              <input type="password" id="loginPassword" name="password" class="form-input" placeholder="••••••••" value="Password123!" required autocomplete="current-password" />
+              <button type="button" class="pw-toggle" data-target="loginPassword" aria-label="Toggle password visibility">
+                <svg class="eye-open" width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                  <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                </svg>
+                <svg class="eye-closed" width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style="display:none;">
+                  <path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clip-rule="evenodd"/>
+                  <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit" id="loginBtn">
+            <span class="btn-text">Sign In</span>
+            <span class="btn-loader" style="display:none;"></span>
+          </button>
+
+          <div class="demo-hint-box">
+            <span>Demo: <code>yash.gowardhan@svpcet.edu.in</code></span>
+            <button type="button" class="demo-hint-btn" id="quickFillBtn">Quick Fill</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- 2. Register Form Panel -->
+      <div class="form-panel" id="registerPanel" style="display: none;">
+        <form class="auth-form" id="registerForm" novalidate>
+          <div class="form-group">
+            <label for="regName" class="form-label">Full Name</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+              </svg>
+              <input type="text" id="regName" name="name" class="form-input" placeholder="Your Name" required autocomplete="name" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="regEmail" class="form-label">Email Address</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+              </svg>
+              <input type="email" id="regEmail" name="email" class="form-input" placeholder="student@example.com" required autocomplete="email" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="regPassword" class="form-label">Password</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+              </svg>
+              <input type="password" id="regPassword" name="password" class="form-input" placeholder="At least 6 characters" required autocomplete="new-password" />
+              <button type="button" class="pw-toggle" data-target="regPassword" aria-label="Toggle password visibility">
+                <svg class="eye-open" width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                  <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                </svg>
+                <svg class="eye-closed" width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style="display:none;">
+                  <path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clip-rule="evenodd"/>
+                  <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z"/>
+                </svg>
+              </button>
+            </div>
+            <!-- Strength meter -->
+            <div class="pw-strength" id="pwStrength">
+              <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+              <span class="strength-label" id="strengthLabel">Enter password</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="regConfirmPassword" class="form-label">Confirm Password</label>
+            <div class="input-wrapper">
+              <svg class="input-icon" width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+              <input type="password" id="regConfirmPassword" name="confirmPassword" class="form-input" placeholder="Repeat password" required autocomplete="new-password" />
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit" id="registerBtn">
+            <span class="btn-text">Create Account</span>
+            <span class="btn-loader" style="display:none;"></span>
+          </button>
+        </form>
+      </div>
+
+      <!-- 3. Authenticated Session View -->
+      <div class="session-panel" id="sessionPanel" style="display: none;">
+        <div class="profile-header">
+          <div class="profile-avatar-large" id="sessionAvatar">YG</div>
+          <div class="profile-details">
+            <h2 class="profile-user-name" id="sessionUserName">Yash Gowardhan</h2>
+            <p class="profile-user-email" id="sessionUserEmail">yash.gowardhan@svpcet.edu.in</p>
+            <span class="role-pill">Verified Account</span>
           </div>
         </div>
-        <button type="button" class="btn-secondary" id="checkAgainBtn" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;">
-          Refresh Status
-        </button>
+
+        <div class="session-info-grid">
+          <div class="session-stat">
+            <span class="stat-label">User ID (Database Key)</span>
+            <span class="stat-value font-mono" id="sessionUserId">#101</span>
+          </div>
+          <div class="session-stat">
+            <span class="stat-label">Authentication Method</span>
+            <span class="stat-value">Bcrypt Hashed + Session</span>
+          </div>
+          <div class="session-stat">
+            <span class="stat-label">Session Security</span>
+            <span class="stat-value">HttpOnly Cookie (24h TTL)</span>
+          </div>
+          <div class="session-stat">
+            <span class="stat-label">Database Status</span>
+            <span class="stat-value text-green" id="sessionDbStatus">PostgreSQL Connected</span>
+          </div>
+        </div>
+
+        <div class="card-actions-row" style="margin-top: 1.5rem;">
+          <button type="button" class="btn-logout" id="logoutBtn">
+            <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/>
+            </svg>
+            Sign Out of Session
+          </button>
+        </div>
       </div>
 
-      <h3 style="font-size: 1rem; margin-bottom: 0.75rem;">Architecture &amp; Features</h3>
-      <div class="features-list">
-        <div class="feature-item">
-          <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-          <span><strong>PostgreSQL Database:</strong> Unique email constraint, auto-created users table</span>
-        </div>
-        <div class="feature-item">
-          <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-          <span><strong>Bcrypt Password Hashing:</strong> 12 salt rounds, no plaintext storage</span>
-        </div>
-        <div class="feature-item">
-          <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-          <span><strong>Session Security:</strong> connect-pg-simple session store with HttpOnly cookies</span>
-        </div>
-        <div class="feature-item">
-          <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
-          <span><strong>Protected Route:</strong> <code>/dashboard</code> requires active authenticated session</span>
-        </div>
-      </div>
-
-      <h3 style="font-size: 0.9375rem; margin-top: 1.25rem; color: var(--text-muted);">How to Run the Server</h3>
-      <div class="code-box">
-        <span class="comment"># 1. Navigate to directory and install dependencies</span><br/>
-        <span class="cmd">cd practical-4-authentication</span><br/>
-        <span class="cmd">npm install</span><br/><br/>
-        <span class="comment"># 2. Configure .env with your PostgreSQL credentials</span><br/>
-        <span class="cmd">copy .env.example .env</span><br/><br/>
-        <span class="comment"># 3. Start the Express server on port 3001</span><br/>
-        <span class="cmd">npm start</span>
-      </div>
-
-      <div class="actions-grid">
-        <a href="http://localhost:3001/login" target="_blank" class="btn-primary-link" id="launchBtn">
-          <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/></svg>
-          Open Live Auth Server (Port 3001)
-        </a>
-        <a href="http://localhost:3001/register" target="_blank" class="btn-secondary" id="registerDirectBtn">
-          Direct Register Page &rarr;
-        </a>
-      </div>
-
+      <!-- Security Meta Footer -->
       <div class="auth-security-meta">
         <div class="meta-item">
-          <span>Port: <strong>3001</strong></span>
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          Bcrypt 12-Round Hashing
         </div>
         <div class="meta-item">
-          <span>Database: <strong>PostgreSQL</strong></span>
-        </div>
-        <div class="meta-item">
-          <span>Schema: <strong>schema.sql</strong></span>
+          <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z"/><path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z"/><path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z"/></svg>
+          PostgreSQL Session Store
         </div>
       </div>
     </div>
   </main>
 
-  <script>
-    function probeServer() {
-      var dot = document.getElementById('statusDot');
-      var title = document.getElementById('statusText');
-      var sub = document.getElementById('statusSub');
+  <!-- Server Architecture & Launch Modal -->
+  <div class="server-guide-modal" id="serverGuideModal">
+    <div class="server-guide-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <h2 style="font-size:1.15rem; color:#fff;">Live PostgreSQL &amp; Express Server Guide</h2>
+        <button type="button" id="closeGuideBtn" style="background:transparent; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
+      </div>
+      <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:1rem;">
+        This practical includes a complete Node.js + Express + PostgreSQL backend. To run the full-stack server locally:
+      </p>
+      <div class="guide-code">
+        <span class="comment"># 1. From workspace root, start the auth server</span><br/>
+        cd backend/services/practical-4-authentication<br/>
+        npm install<br/><br/>
+        <span class="comment"># 2. Configure database credentials</span><br/>
+        copy .env.example .env<br/><br/>
+        <span class="comment"># 3. Start the server (Port 3001)</span><br/>
+        npm start
+      </div>
+      <p style="font-size:0.8125rem; color:var(--text-dim); margin-top:0.75rem;">
+        When started, the page will automatically detect the server and connect with live database persistence.
+      </p>
+    </div>
+  </div>
 
-      dot.className = 'status-indicator';
-      title.textContent = 'Checking Backend Server...';
-
-      fetch('http://localhost:3001/login', { mode: 'no-cors' })
-        .then(function() {
-          dot.className = 'status-indicator online';
-          title.textContent = 'Backend Server is Online (Port 3001)';
-          sub.textContent = 'Click "Open Live Auth Server" below to interact with PostgreSQL';
-        })
-        .catch(function() {
-          dot.className = 'status-indicator offline';
-          title.textContent = 'Backend Server Not Detected';
-          sub.textContent = 'Start the server with: npm start inside practical-4-authentication';
-        });
-    }
-
-    document.getElementById('checkAgainBtn').addEventListener('click', probeServer);
-    probeServer();
-  </script>
+  <script src="../../js/config.js"></script>
+  <script src="public/js/auth.js"></script>
 </body>
 </html>

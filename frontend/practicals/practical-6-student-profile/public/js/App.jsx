@@ -4,9 +4,9 @@
 const { useState, useEffect, useMemo } = React;
 
 function App() {
-  const [students, setStudents] = useState([]);
-  const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [students, setStudents] = useState(window.FALLBACK_STUDENTS || []);
+  const [stats, setStats] = useState(window.FALLBACK_STATS || null);
+  const [loading, setLoading] = useState(!window.FALLBACK_STUDENTS || window.FALLBACK_STUDENTS.length === 0);
   const [error, setError] = useState(null);
   const [isApiMode, setIsApiMode] = useState(false);
 

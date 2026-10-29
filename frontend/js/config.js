@@ -22,17 +22,17 @@
     services: {
       auth: {
         port: 3001,
-        url: env.AUTH_URL || `${BACKEND_BASE}/login`,
+        url: env.AUTH_URL || 'practicals/practical-4-authentication/index.html',
         health: env.AUTH_HEALTH || `${BACKEND_BASE}/api/health`
       },
       news: {
         port: 3002,
-        url: env.NEWS_URL || `${BACKEND_BASE}/`,
+        url: env.NEWS_URL || 'practicals/practical-5-news-portal/index.html',
         health: env.NEWS_HEALTH || `${BACKEND_BASE}/api/health`
       },
       student: {
         port: 3003,
-        url: env.STUDENT_URL || `${BACKEND_BASE}/`,
+        url: env.STUDENT_URL || 'practicals/practical-6-student-profile/index.html',
         health: env.STUDENT_HEALTH || `${BACKEND_BASE}/api/health`,
         apiUrl: env.STUDENT_API_URL || `${BACKEND_BASE}/api/students`
       }

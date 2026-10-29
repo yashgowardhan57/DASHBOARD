@@ -122,25 +122,37 @@ const students = [
   }
 ];
 
-module.exports = {
-  students,
-  getAllStudents: function () {
-    return students;
-  },
-  getStudentById: function (id) {
-    return students.find(function (s) { return s.id === id; });
-  },
-  getStats: function () {
-    const total = students.length;
-    const depts = Array.from(new Set(students.map(function (s) { return s.department; })));
-    const avgGpa = (students.reduce(function (acc, s) { return acc + parseFloat(s.gpa); }, 0) / total).toFixed(2);
-    const avgAttendance = Math.round(students.reduce(function (acc, s) { return acc + parseInt(s.attendance, 10); }, 0) / total) + '%';
-    return {
-      totalStudents: total,
-      departmentsCount: depts.length,
-      departments: depts,
-      averageGpa: avgGpa,
-      averageAttendance: avgAttendance
-    };
-  }
-};
+function computeStatsHelper(list) {
+  const total = list.length;
+  const depts = Array.from(new Set(list.map(function (s) { return s.department; })));
+  const avgGpa = total ? (list.reduce(function (acc, s) { return acc + parseFloat(s.gpa); }, 0) / total).toFixed(2) : '0.00';
+  const avgAttendance = total ? Math.round(list.reduce(function (acc, s) { return acc + parseInt(s.attendance, 10); }, 0) / total) + '%' : '0%';
+  return {
+    totalStudents: total,
+    departmentsCount: depts.length,
+    departments: depts,
+    averageGpa: avgGpa,
+    averageAttendance: avgAttendance
+  };
+}
+
+if (typeof window !== 'undefined') {
+  window.FALLBACK_STUDENTS = students;
+  window.FALLBACK_STATS = computeStatsHelper(students);
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    students,
+    getAllStudents: function () {
+      return students;
+    },
+    getStudentById: function (id) {
+      return students.find(function (s) { return s.id === id; });
+    },
+    getStats: function () {
+      return computeStatsHelper(students);
+    }
+  };
+}
+
