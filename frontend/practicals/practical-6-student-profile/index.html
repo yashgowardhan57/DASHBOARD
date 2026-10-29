@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    if (!window.location.pathname.endsWith('/') && !window.location.pathname.split('/').pop().includes('.')) {
+      window.location.replace(window.location.pathname + '/' + window.location.search + window.location.hash);
+    }
+  </script>
   <meta name="description" content="Student Profile Card Using React Components — Practical 6" />
   <title>ScholarProfile — Student Profile Directory (React)</title>
   

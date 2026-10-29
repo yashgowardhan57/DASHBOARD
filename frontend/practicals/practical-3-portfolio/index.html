@@ -3,6 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script>
+    if (!window.location.pathname.endsWith('/') && !window.location.pathname.split('/').pop().includes('.')) {
+      window.location.replace(window.location.pathname + '/' + window.location.search + window.location.hash);
+    }
+  </script>
   <meta name="description" content="Yash Gowardhan — B.Tech IT Student & Web Developer. Portfolio showcasing projects, skills, and experience." />
   <title>Yash Gowardhan — Web Developer Portfolio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
