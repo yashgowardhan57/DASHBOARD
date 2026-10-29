@@ -31,7 +31,8 @@ function App() {
     setError(null);
 
     const apiBase = window.STUDENT_API_URL || 
-      (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3003' : '');
+      (window.APP_CONFIG && window.APP_CONFIG.hubUrl) || 
+      'https://dashboard-3-lobf.onrender.com';
 
     try {
       // Probe Express API endpoint

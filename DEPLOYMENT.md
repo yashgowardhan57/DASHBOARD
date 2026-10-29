@@ -70,11 +70,11 @@ In `frontend/js/config.js`, you can configure your production backend URL, or in
 ```html
 <script>
   window.__ENV__ = {
-    HUB_URL: 'https://your-backend.onrender.com',
-    STATUS_ENDPOINT: 'https://your-backend.onrender.com/api/status',
-    AUTH_URL: 'https://your-backend.onrender.com/api/auth/login',
-    NEWS_URL: 'https://your-backend.onrender.com/api/news/',
-    STUDENT_URL: 'https://your-backend.onrender.com/api/students/'
+    HUB_URL: 'https://dashboard-3-lobf.onrender.com',
+    STATUS_ENDPOINT: 'https://dashboard-3-lobf.onrender.com/api/status',
+    AUTH_URL: 'https://dashboard-3-lobf.onrender.com/login',
+    NEWS_URL: 'https://dashboard-3-lobf.onrender.com/',
+    STUDENT_URL: 'https://dashboard-3-lobf.onrender.com/'
   };
 </script>
 ```
