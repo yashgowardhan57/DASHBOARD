@@ -1,0 +1,11 @@
+{
+  "name": "practicalos-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "PracticalOS Web Dashboard & Frontend Practicals",
+  "scripts": {
+    "dev": "npx -y serve . -l 3000",
+    "start": "npx -y serve . -l 3000",
+    "build": "echo \"Frontend is pre-built static HTML/CSS/JS ready for deployment.\""
+  }
+}

@@ -1,16 +1,19 @@
 {
-  "name": "practicalos-practical-dashboard",
+  "name": "practicalos-workspace",
   "version": "1.0.0",
   "private": true,
-  "description": "PracticalOS — All Practicals Workspace Dashboard",
-  "main": "das/hub-server.js",
+  "description": "PracticalOS — All Practicals Workspace Dashboard (Separated Frontend & Backend)",
   "scripts": {
-    "start": "node das/hub-server.js",
-    "dev": "node das/hub-server.js",
-    "install:all": "npm --prefix das/practical-4-authentication install && npm --prefix das/practical-5-news-portal install && npm --prefix das/practical-6-student-profile install",
-    "start:p4": "node das/practical-4-authentication/server.js",
-    "start:p5": "node das/practical-5-news-portal/server.js",
-    "start:p6": "node das/practical-6-student-profile/server.js"
+    "start": "node backend/hub-server.js",
+    "dev": "node backend/hub-server.js",
+    "server": "node backend/server.js",
+    "start:backend": "node backend/server.js",
+    "start:frontend": "npm --prefix frontend start",
+    "install:all": "npm --prefix backend install && npm --prefix backend/services/practical-4-authentication install && npm --prefix backend/services/practical-5-news-portal install && npm --prefix backend/services/practical-6-student-profile install",
+    "i:all": "npm run install:all",
+    "start:p4": "node backend/services/practical-4-authentication/server.js",
+    "start:p5": "node backend/services/practical-5-news-portal/server.js",
+    "start:p6": "node backend/services/practical-6-student-profile/server.js"
   },
   "engines": {
     "node": ">=18"

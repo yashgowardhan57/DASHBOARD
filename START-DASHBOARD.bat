@@ -7,7 +7,7 @@ if errorlevel 1 (
   pause
   exit /b 1
 )
-start "PracticalOS Local Hub" cmd /k "cd /d ""%~dp0das"" && node hub-server.js"
+start "PracticalOS Local Hub" cmd /k "cd /d ""%~dp0backend"" && node hub-server.js"
 timeout /t 2 /nobreak >nul
 start "" "http://localhost:3000"
 endlocal

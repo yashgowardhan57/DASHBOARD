@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f5f1">
+  <meta name="description" content="One workspace to launch, search, and track all six web development practicals.">
+  <title>PracticalOS — Your Practical Workspace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+      <a class="brand" href="#top" aria-label="PracticalOS home">
+        <span class="brand-mark"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="3" y="3" width="34" height="34" rx="11" fill="currentColor" opacity=".14"/><path d="M12 11h10.5a7.5 7.5 0 0 1 0 15H18v4h-6V11Zm6 5v5h4.5a2.5 2.5 0 0 0 0-5H18Z" fill="currentColor"/></svg></span>
+        <span class="brand-copy"><strong>Practical<span>OS</span></strong><small>STUDENT WORKSPACE</small></span>
+      </a>
+
+      <div class="nav-label">WORKSPACE</div>
+      <nav class="nav-list">
+        <a class="nav-item active" href="#top" data-nav="overview"><span class="nav-icon" data-icon="grid"></span><span>Overview</span><span class="nav-dot"></span></a>
+        <a class="nav-item" href="#practicals" data-nav="all"><span class="nav-icon" data-icon="layers"></span><span>All practicals</span><span class="nav-count">06</span></a>
+        <button class="nav-item nav-button" data-filter="favorites"><span class="nav-icon" data-icon="star"></span><span>Favorites</span><span class="nav-count" id="favoriteCount">0</span></button>
+        <button class="nav-item nav-button" data-filter="completed"><span class="nav-icon" data-icon="check-circle"></span><span>Completed</span><span class="nav-count" id="completedCount">0/6</span></button>
+      </nav>
+
+      <div class="nav-label nav-label-spaced">BY TECHNOLOGY</div>
+      <nav class="nav-list tech-nav">
+        <button class="nav-item nav-button" data-filter="frontend"><span class="tech-dot dot-lime"></span><span>Frontend</span><span class="nav-count">03</span></button>
+        <button class="nav-item nav-button" data-filter="backend"><span class="tech-dot dot-purple"></span><span>Full-stack</span><span class="nav-count">02</span></button>
+        <button class="nav-item nav-button" data-filter="react"><span class="tech-dot dot-orange"></span><span>React & API</span><span class="nav-count">01</span></button>
+      </nav>
+
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-tip">
+        <div class="tip-spark">✦</div>
+        <strong>Small steps. Real progress.</strong>
+        <p>Mark each practical as complete and keep your work in one place.</p>
+        <button class="tip-action" id="focusBtn">View my progress <span>↗</span></button>
+      </div>
+      <div class="sidebar-footer"><span class="status-pulse"></span><span>Local workspace</span><span class="version-tag">v1.0</span></div>
+    </aside>
+
+    <main class="main-content" id="top">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-button mobile-menu" id="menuBtn" aria-label="Open navigation"><span data-icon="menu"></span></button>
+          <div class="breadcrumb"><span>Workspace</span><span class="crumb-sep">/</span><strong>Overview</strong></div>
+        </div>
+        <div class="topbar-actions">
+          <label class="global-search"><span data-icon="search"></span><input id="searchInput" type="search" placeholder="Search practicals..." autocomplete="off" aria-label="Search practicals"><kbd>⌘ K</kbd></label>
+          <button class="icon-button theme-toggle" id="themeBtn" title="Toggle color theme" aria-label="Toggle color theme"><span data-icon="moon"></span></button>
+          <button class="avatar-button" id="profileBtn" title="Workspace profile" aria-label="Workspace profile">YG</button>
+        </div>
+      </header>
+
+      <section class="welcome-row reveal">
+        <div>
+          <div class="eyebrow"><span class="eyebrow-line"></span> YOUR PROJECT HUB <span class="eyebrow-date" id="currentDate">MONDAY, OCT 26</span></div>
+          <h1>Make your next move <span>count.</span></h1>
+          <p class="welcome-copy">Your practicals, projects, and progress — all in one tidy workspace.</p>
+        </div>
+        <button class="primary-button" id="continueBtn"><span data-icon="arrow-up-right"></span> Continue working</button>
+      </section>
+
+      <section class="hero-panel reveal" aria-label="Workspace summary">
+        <div class="hero-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="hero-core"><span>✳</span></div><span class="float-chip chip-one">HTML</span><span class="float-chip chip-two">JS</span><span class="float-chip chip-three">API</span><span class="hero-cross cross-one">✳</span><span class="hero-cross cross-two">+</span></div>
+        <div class="hero-content">
+          <div class="hero-kicker"><span class="hero-kicker-dot"></span> YOUR LEARNING SPACE</div>
+          <h2>Build. Test.<br><em>Get it done.</em></h2>
+          <p>Jump back into any practical without hunting through folders or terminals.</p>
+          <a class="hero-cta" href="#practicals" id="exploreBtn">Explore practicals <span data-icon="arrow-right"></span></a>
+        </div>
+        <div class="hero-side-note"><span>01 — 06</span><span>PROJECTS IN THIS SPACE</span></div>
+      </section>
+
+      <section class="stats-grid reveal" aria-label="Practical statistics">
+        <article class="stat-card stat-total"><div class="stat-top"><span class="stat-label">All practicals</span><span class="stat-icon icon-ink" data-icon="layers"></span></div><div class="stat-number"><strong data-count="6">0</strong><span class="stat-unit">projects</span></div><div class="stat-foot"><span class="mini-mark">↗</span> One place to manage all</div></article>
+        <article class="stat-card"><div class="stat-top"><span class="stat-label">Completed</span><span class="stat-icon icon-green" data-icon="check-circle"></span></div><div class="stat-number"><strong id="doneMetric">0</strong><span class="stat-unit">of 6</span></div><div class="progress-track"><span id="doneBar" class="progress-fill"></span></div><div class="stat-foot"><span id="progressCaption">A fresh start</span></div></article>
+        <article class="stat-card"><div class="stat-top"><span class="stat-label">Server projects</span><span class="stat-icon icon-blue" data-icon="server"></span></div><div class="stat-number"><strong>3</strong><span class="stat-unit">apps</span></div><div class="stat-foot"><span class="live-indicator"></span><span id="serverCaption">Checking local servers…</span></div></article>
+        <article class="stat-card"><div class="stat-top"><span class="stat-label">Quick access</span><span class="stat-icon icon-yellow" data-icon="zap"></span></div><div class="stat-number"><strong id="recentMetric">0</strong><span class="stat-unit">recently opened</span></div><div class="stat-foot">Your last visited projects</div></article>
+      </section>
+
+      <section class="workspace-grid">
+        <div class="projects-column" id="practicals">
+          <div class="section-heading reveal">
+            <div><div class="section-overline">YOUR COLLECTION</div><h2>All practicals <span class="heading-count" id="visibleCount">06</span></h2><p>Choose a project and pick up where you left off.</p></div>
+            <div class="view-switch" role="group" aria-label="Project view"><button class="view-btn active" data-view="grid" aria-label="Grid view"><span data-icon="grid"></span></button><button class="view-btn" data-view="list" aria-label="List view"><span data-icon="list"></span></button></div>
+          </div>
+
+          <div class="filter-row" role="group" aria-label="Filter practicals">
+            <button class="filter-pill active" data-filter="all">All projects <span>6</span></button>
+            <button class="filter-pill" data-filter="frontend">Frontend <span>3</span></button>
+            <button class="filter-pill" data-filter="backend">Full-stack <span>2</span></button>
+            <button class="filter-pill" data-filter="react">React & API <span>1</span></button>
+            <label class="sort-select"><span data-icon="sliders"></span><select id="sortSelect" aria-label="Sort projects"><option value="default">Recommended</option><option value="name">Name A–Z</option><option value="progress">Incomplete first</option></select></label>
+          </div>
+
+          <div class="project-grid" id="projectGrid" aria-live="polite">
+            <noscript><p class="noscript-note">Enable JavaScript to use practical search, filters, favorites, and progress tracking.</p></noscript>
+          </div>
+          <div class="empty-state" id="emptyState" hidden><div class="empty-illustration">⌕</div><h3>No practicals found</h3><p>Try another search or clear the selected filter.</p><button class="secondary-button" id="clearFiltersBtn">Clear filters</button></div>
+        </div>
+
+        <aside class="right-rail">
+          <section class="rail-card progress-card reveal" id="progressCard">
+            <div class="rail-heading"><div><span class="rail-overline">KEEP GOING</span><h3>Your progress</h3></div><span class="rail-glyph" data-icon="chart"></span></div>
+            <div class="progress-ring-wrap"><div class="progress-ring" id="progressRing"><div class="ring-inner"><strong id="progressPercent">0<span>%</span></strong><small>completed</small></div></div><div class="ring-aside"><strong id="ringCompleted">0 / 6</strong><span>practicals done</span><div class="ring-status"><span class="status-pulse"></span><span id="ringMessage">Ready when you are</span></div></div></div>
+            <div class="progress-breakdown"><div><span class="legend-dot legend-done"></span><span>Completed</span><strong id="legendDone">0</strong></div><div><span class="legend-dot legend-left"></span><span>To do</span><strong id="legendLeft">6</strong></div></div>
+            <button class="rail-link" id="showIncompleteBtn">View unfinished work <span data-icon="arrow-right"></span></button>
+          </section>
+
+          <section class="rail-card recent-card reveal">
+            <div class="rail-heading"><div><span class="rail-overline">PICK UP WHERE YOU LEFT OFF</span><h3>Recently opened</h3></div><span class="rail-glyph" data-icon="clock"></span></div>
+            <div class="recent-list" id="recentList"><div class="recent-empty"><span data-icon="history"></span><p>Your recent projects will show up here.</p></div></div>
+          </section>
+
+          <section class="rail-card server-card reveal">
+            <div class="rail-heading"><div><span class="rail-overline">LOCAL ENVIRONMENT</span><h3>Server status</h3></div><button class="refresh-btn" id="refreshStatusBtn" title="Refresh status" aria-label="Refresh server status"><span data-icon="refresh"></span></button></div>
+            <p class="server-intro">Backend apps run locally on your machine.</p>
+            <div class="server-list" id="serverList"><div class="server-row"><span class="server-state checking"></span><div><strong>Authentication</strong><small>localhost:3001</small></div><span class="server-label">Checking</span></div><div class="server-row"><span class="server-state checking"></span><div><strong>News portal</strong><small>localhost:3002</small></div><span class="server-label">Checking</span></div><div class="server-row"><span class="server-state checking"></span><div><strong>Student profiles</strong><small>localhost:3003</small></div><span class="server-label">Checking</span></div></div>
+            <button class="rail-link" id="serverGuideBtn">How to start a server <span data-icon="arrow-right"></span></button>
+          </section>
+
+          <section class="quote-card reveal"><div class="quote-mark">“</div><p>Progress is built one practical at a time.</p><span>YOUR WORKSPACE REMINDER</span><div class="quote-decoration">✳</div></section>
+        </aside>
+      </section>
+
+      <footer class="page-footer"><div><span class="footer-mark">P</span><span>PracticalOS <span class="footer-muted">· A home for your learning projects</span></span></div><button id="aboutBtn">About this workspace <span>↗</span></button></footer>
+    </main>
+  </div>
+
+  <div class="overlay" id="overlay" hidden></div>
+  <section class="modal" id="detailModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+    <button class="modal-close" data-close-modal aria-label="Close dialog"><span data-icon="x"></span></button>
+    <div id="modalContent"></div>
+  </section>
+  <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+  <script src="js/config.js"></script>
+  <script src="js/dashboard.js" defer></script>
+</body>
+</html>

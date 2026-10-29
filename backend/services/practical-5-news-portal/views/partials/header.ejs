@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title %></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/news.css" />
+</head>
+<body>
+  <!-- Top Ticker / Hub Link Bar -->
+  <div class="top-bar">
+    <div class="container top-bar-content">
+      <div class="top-bar-left">
+        <a href="<%= hubUrl %>/index.html" class="back-hub-pill">
+          &larr; Practical Hub
+        </a>
+        <span class="edition-tag">Practical 5 &bull; EJS Digital News Portal</span>
+      </div>
+      <div class="top-bar-right">
+        <span class="date-display"><%= currentDate %></span>
+        <span class="weather-pill">Nagpur, IN &bull; 28&deg;C Clear</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Newspaper Masthead -->
+  <header class="masthead">
+    <div class="container masthead-inner">
+      <div class="masthead-meta-left">
+        <span class="meta-label">ESTABLISHED 2026</span>
+        <span class="meta-sub">VOL. CIV &bull; NO. 248</span>
+      </div>
+      
+      <div class="masthead-center">
+        <a href="/" class="brand-link">
+          <h1 class="newspaper-title">THE DAILY CHRONICLE</h1>
+          <p class="newspaper-motto">Veritas et Sapientia &bull; Technology, Science &amp; Global Affairs</p>
+        </a>
+      </div>
+
+      <div class="masthead-meta-right">
+        <form action="/search" method="GET" class="search-form">
+          <input type="text" name="q" placeholder="Search archive..." class="search-input" value="<%= typeof query !== 'undefined' ? query : '' %>" required />
+          <button type="submit" class="search-btn" aria-label="Search">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Editorial Navigation Bar -->
+    <nav class="nav-bar">
+      <div class="container">
+        <ul class="nav-list">
+          <li class="nav-item <%= pageCategory === 'Home' ? 'active' : '' %>">
+            <a href="/" class="nav-link">Home</a>
+          </li>
+          <% categories.forEach(function(cat) { %>
+            <li class="nav-item <%= pageCategory === cat ? 'active' : '' %>">
+              <a href="/category/<%= cat %>" class="nav-link"><%= cat %></a>
+            </li>
+          <% }); %>
+        </ul>
+      </div>
+    </nav>
+  </header>
