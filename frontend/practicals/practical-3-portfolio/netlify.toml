@@ -1,0 +1,12 @@
+# Netlify build config for Practical 3 (Static HTML/CSS/JS)
+# No build step needed — just publish the directory as-is.
+
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+

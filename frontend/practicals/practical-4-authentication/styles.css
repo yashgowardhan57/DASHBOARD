@@ -1,0 +1,1006 @@
+/*
+=============================================================================
+Practical 4: Animated Login & Registration Page
+Concepts Covered: CSS Animations, Transitions, Keyframes
+Theme: Modern Dark Onyx (Glassmorphism, Ambient Keyframes, Micro-interactions)
+=============================================================================
+*/
+
+:root {
+  /* Color System */
+  --bg-dark: #0b0c10;
+  --bg-card: #131419;
+  --bg-panel-left: linear-gradient(180deg, #181921 0%, #111218 100%);
+  --bg-input: rgba(255, 255, 255, 0.035);
+  --bg-input-focus: rgba(255, 255, 255, 0.06);
+  --bg-social: rgba(255, 255, 255, 0.04);
+  --bg-social-hover: rgba(255, 255, 255, 0.08);
+
+  --border-light: rgba(255, 255, 255, 0.1);
+  --border-input: rgba(255, 255, 255, 0.12);
+  --border-input-focus: rgba(255, 255, 255, 0.35);
+
+  --text-primary: #ffffff;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-dark: #0f1015;
+
+  --accent-primary: #ffffff;
+  --accent-glow: rgba(255, 255, 255, 0.2);
+  --success-color: #22c55e;
+  --error-color: #ef4444;
+
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Spacing Scale */
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-card: 22px;
+
+  /* Shadows */
+  --shadow-card: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  --shadow-glow: 0 0 30px rgba(255, 255, 255, 0.08);
+
+  /* Transitions */
+  --transition-fast: 0.18s ease;
+  --transition-normal: 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.48s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* =============================================================================
+   1. Base & Reset
+   ============================================================================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow-x: hidden;
+  padding: 1.5rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* =============================================================================
+   2. CSS Keyframe Animations
+   ============================================================================= */
+
+/* Ambient Floating Background Light Keyframes */
+@keyframes ambientDrift1 {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translate(80px, 40px) scale(1.15);
+    opacity: 0.65;
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.4;
+  }
+}
+
+@keyframes ambientDrift2 {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translate(-60px, -50px) scale(1.2);
+    opacity: 0.55;
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.3;
+  }
+}
+
+/* Card Entry Animation Keyframe */
+@keyframes cardEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Form Container Transition Keyframes */
+@keyframes formFadeInSlide {
+  0% {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes formFadeOutSlide {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-18px);
+  }
+}
+
+/* Pulsing Status Dot Keyframe */
+@keyframes pulseDot {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 8px rgba(34, 197, 94, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+/* Spinner Keyframe */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Toast Slide In Keyframe */
+@keyframes toastSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-24px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Subtle Shimmer for Primary Button */
+@keyframes buttonShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* =============================================================================
+   3. Ambient Background & Status Elements
+   ============================================================================= */
+.ambient-glow {
+  position: fixed;
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  filter: blur(130px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.glow-1 {
+  top: -80px;
+  left: 10%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, rgba(138, 147, 165, 0.04) 50%, transparent 70%);
+  animation: ambientDrift1 14s ease-in-out infinite;
+}
+
+.glow-2 {
+  bottom: -100px;
+  right: 12%;
+  background: radial-gradient(circle, rgba(160, 174, 192, 0.07) 0%, rgba(74, 85, 104, 0.03) 50%, transparent 70%);
+  animation: ambientDrift2 18s ease-in-out infinite;
+}
+
+/* PostgreSQL Status Pill (Top Floating) */
+.db-status-pill {
+  position: fixed;
+  top: 18px;
+  right: 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(19, 20, 25, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-light);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  z-index: 100;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+  transition: var(--transition-normal);
+}
+
+.db-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--text-muted);
+  display: inline-block;
+  transition: var(--transition-fast);
+}
+
+.db-status-dot.connected {
+  background-color: var(--success-color);
+  animation: pulseDot 2s infinite;
+}
+
+.db-status-dot.disconnected {
+  background-color: var(--error-color);
+}
+
+/* Toast Notifications */
+.toast-container {
+  position: fixed;
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+  width: 90%;
+  max-width: 440px;
+}
+
+.toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border-radius: var(--radius-md);
+  background: rgba(19, 20, 25, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-light);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+  animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
+.toast.toast-success {
+  border-left: 4px solid var(--success-color);
+}
+
+.toast.toast-error {
+  border-left: 4px solid var(--error-color);
+}
+
+.toast-message {
+  flex: 1;
+}
+
+/* =============================================================================
+   4. Auth Wrapper & Main Card
+   ============================================================================= */
+.auth-wrapper {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 960px;
+  animation: cardEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.auth-card {
+  display: grid;
+  grid-template-columns: 1.05fr 1.15fr;
+  background-color: var(--bg-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+  min-height: 600px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* =============================================================================
+   5. Left Showcase Panel (ONYX Brand & Features)
+   ============================================================================= */
+.showcase-panel {
+  background: var(--bg-panel-left);
+  padding: 2.75rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+}
+
+/* Brand Header */
+.brand-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-logo-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  transition: transform var(--transition-normal);
+}
+
+.brand-header:hover .brand-logo-icon {
+  transform: rotate(8deg) scale(1.05);
+}
+
+.brand-name {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--text-primary);
+}
+
+/* Showcase Body */
+.showcase-content {
+  margin: 2.2rem 0;
+}
+
+.eyebrow-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+
+.badge-icon {
+  color: var(--text-primary);
+  font-size: 0.75rem;
+}
+
+.showcase-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.showcase-desc {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  margin-bottom: 2.2rem;
+  max-width: 340px;
+}
+
+/* Feature List */
+.feature-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.feature-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+  transition: transform var(--transition-fast), background-color var(--transition-fast);
+}
+
+.feature-item:hover .feature-icon {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.feature-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.feature-subtitle {
+  font-size: 0.775rem;
+  color: var(--text-muted);
+}
+
+/* Left Panel Footer */
+.showcase-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 1.25rem;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.footer-link:hover {
+  color: var(--text-primary);
+}
+
+.footer-link-divider {
+  width: 3px;
+  height: 3px;
+  background-color: var(--text-muted);
+  border-radius: 50%;
+  opacity: 0.6;
+}
+
+/* =============================================================================
+   6. Right Form Panel & Animated Transitions
+   ============================================================================= */
+.form-panel {
+  padding: 2.75rem 2.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Form Container Switching Transitions */
+.form-container {
+  display: none;
+  opacity: 0;
+  transform: translateX(18px);
+  transition: opacity var(--transition-normal), transform var(--transition-normal);
+  width: 100%;
+}
+
+.form-container.active {
+  display: block;
+  opacity: 1;
+  transform: translateX(0);
+  animation: formFadeInSlide 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Form Header */
+.form-header {
+  margin-bottom: 1.75rem;
+}
+
+.form-eyebrow {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.form-title {
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.35rem;
+  letter-spacing: -0.015em;
+}
+
+.form-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Form Structure */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* Input Wrapper & Inputs */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  transition: color var(--transition-fast);
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.72rem 2.8rem 0.72rem 2.75rem;
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-family: inherit;
+  outline: none;
+  transition: background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-input::placeholder {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.form-input:focus {
+  background-color: var(--bg-input-focus);
+  border-color: var(--border-input-focus);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+}
+
+.form-input:focus + .input-icon,
+.input-wrapper:focus-within .input-icon {
+  color: var(--text-primary);
+}
+
+/* Password Toggle Eye Button */
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast), transform var(--transition-fast);
+}
+
+.password-toggle:hover {
+  color: var(--text-primary);
+  transform: scale(1.08);
+}
+
+.eye-icon.hidden {
+  display: none;
+}
+
+/* Password Requirement Helper */
+.password-requirement {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: -0.35rem;
+  transition: color var(--transition-fast);
+}
+
+.password-requirement.valid {
+  color: var(--success-color);
+}
+
+.requirement-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+}
+
+/* Custom Checkbox */
+.custom-checkbox-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 0.775rem;
+  color: var(--text-secondary);
+}
+
+.custom-checkbox-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.custom-checkmark {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-input);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.custom-checkbox-container input:checked ~ .custom-checkmark {
+  background-color: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
+.custom-checkbox-container input:checked ~ .custom-checkmark::after {
+  content: "";
+  display: block;
+  width: 4px;
+  height: 8px;
+  border: solid var(--text-dark);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  margin-top: -2px;
+}
+
+/* Form Row Options (Remember me & Forgot Password) */
+.form-row-options {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2px;
+  font-size: 0.775rem;
+}
+
+.forgot-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.forgot-link:hover {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+.form-row-terms {
+  margin-top: 2px;
+}
+
+.inline-link {
+  color: var(--text-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color var(--transition-fast);
+}
+
+.inline-link:hover {
+  color: var(--text-secondary);
+}
+
+/* =============================================================================
+   7. Buttons (Primary & Social)
+   ============================================================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0.78rem 1.4rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: 1px solid transparent;
+  outline: none;
+  transition: all var(--transition-normal);
+  position: relative;
+  user-select: none;
+}
+
+/* Primary Submit Button */
+.btn-primary {
+  width: 100%;
+  background-color: var(--text-primary);
+  color: var(--text-dark);
+  box-shadow: 0 4px 14px rgba(255, 255, 255, 0.1);
+  margin-top: 0.35rem;
+}
+
+.btn-primary:hover {
+  background-color: #f1f3f7;
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.18);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Button Spinner */
+.btn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-top-color: var(--text-dark);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.btn-spinner.hidden {
+  display: none;
+}
+
+/* Divider */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0.4rem 0;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.divider-text {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+/* Social Buttons */
+.social-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.btn-social {
+  background-color: var(--bg-social);
+  border: 1px solid var(--border-light);
+  color: var(--text-primary);
+  font-size: 0.825rem;
+  padding: 0.68rem 1rem;
+}
+
+.btn-social:hover {
+  background-color: var(--bg-social-hover);
+  border-color: rgba(255, 255, 255, 0.22);
+  transform: translateY(-1.5px);
+}
+
+.btn-social:active {
+  transform: translateY(0);
+}
+
+/* Switcher Link at Bottom */
+.form-switch-prompt {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.switch-link {
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.8rem;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 2px;
+  position: relative;
+  transition: color var(--transition-fast);
+}
+
+.switch-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* =============================================================================
+   8. Authenticated Dashboard State Card
+   ============================================================================= */
+.auth-success-card {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem 0;
+}
+
+.success-icon-badge {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: var(--success-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  animation: pulseDot 2.5s infinite;
+}
+
+.profile-details-box {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin: 1.5rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.profile-detail-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.825rem;
+}
+
+.detail-label {
+  color: var(--text-muted);
+}
+
+.detail-value {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.detail-value.active-badge {
+  color: var(--success-color);
+  background: rgba(34, 197, 94, 0.12);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.725rem;
+}
+
+/* =============================================================================
+   9. Responsive Breakpoints
+   ============================================================================= */
+@media (max-width: 860px) {
+  .auth-card {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+  }
+
+  .showcase-panel {
+    display: none; /* Mobile view prioritizes active authentication form */
+  }
+
+  .form-panel {
+    padding: 2.25rem 2rem;
+  }
+
+  .db-status-pill {
+    top: 12px;
+    right: 12px;
+  }
+}
+
+@media (max-width: 440px) {
+  body {
+    padding: 0.8rem;
+  }
+
+  .form-panel {
+    padding: 1.75rem 1.25rem;
+  }
+
+  .social-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ---- PracticalOS Hub Integration ---- */
+.back-to-hub {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 9999;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(18, 19, 23, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  transition: all 0.25s ease;
+  line-height: 1;
+}
+.back-to-hub:hover {
+  background: #ffffff;
+  color: #0f1013 !important;
+  transform: translateX(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}

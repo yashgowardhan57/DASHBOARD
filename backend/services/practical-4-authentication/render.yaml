@@ -1,0 +1,10 @@
+# ─── Render Deployment Configuration ─────────────────────────────────────────
+# This file is used when deploying practical-4 to Render.com as a Web Service.
+# It is committed alongside your code (no secrets here).
+
+# Build command runs on Render's servers:
+buildCommand: npm install
+
+# Start command:
+startCommand: npm start
+

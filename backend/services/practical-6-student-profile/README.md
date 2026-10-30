@@ -1,59 +1,39 @@
-# Practical 6: Student Profile Card Using React Components
+# Student Profile Card — React + Node.js
 
-**Title:** Develop a Student Profile Card Using React Components  
-**Technology:** React, JSX, CSS3, Node.js, and Express.js (No Database)  
-**Strict Theme Palette:**
-- Isabelline: `#F4F2F0`
-- Timberwolf: `#D1CBC7`
-- Khaki: `#C3AA97`
-- Beaver: `#907564`
-- Walnut Brown: `#57514C`  
-**Developer:** Yash Gowardhan (B.Tech IT, 3rd Year)
+A beginner-friendly college portal project demonstrating React, JSX, functional components, and props. Includes a React frontend and Express backend with sample student data.
 
----
+## Requirements
+- Node.js 18+ (recommended)
+- npm
 
-## 📖 Overview
-*ScholarProfile* is a college student directory dashboard featuring reusable React functional components, JSX syntax, props passing, client-side filtering, and an Express.js REST API backend.
-
-> **Constraint Compliance:** This practical **does not connect to PostgreSQL or any external database**. Sample student records are served locally by Express at `/api/students`.
-
----
-
-## 🧩 React Component Breakdown for College Viva
-
-1. **`App` Component (`public/js/App.jsx`):**
-   - Root stateful functional component.
-   - Manages state hooks: `students`, `stats`, `loading`, `search`, `selectedDept`, `selectedYear`, and `selectedStudent`.
-   - Fetches data from the Express REST API (`http://localhost:3003/api/students`) with automatic fallback to local dataset.
-
-2. **`StudentCard` Component (`public/js/components/StudentCard.jsx`):**
-   - Reusable card component.
-   - Receives student data via `props` (`student`, `onSelectStudent`).
-   - Renders avatar initials, name, course, roll number, academic year, motto, CGPA, and attendance metrics.
-
-3. **`StudentModal` Component (`public/js/components/StudentModal.jsx`):**
-   - Detailed inspection overlay with complete institutional biography, degree programs, and full skill pills.
-
-4. **`StatsBar` Component (`public/js/components/StatsBar.jsx`):**
-   - Reusable metrics banner displaying enrolled scholar counts, department tallies, and mean attendance.
-
----
-
-## 🚀 Setup & Execution Instructions
+## Run locally
+Open a terminal in this folder and run:
 
 ```bash
-# 1. Navigate to directory
-cd practical-6-student-profile
-
-# 2. Install dependencies (express, cors)
-npm install
-
-# 3. Start Express API and static server
-npm start
+npm run install:all
+npm run dev
 ```
 
-Access in your browser:
-- **React Web Portal:** `http://localhost:3003/`
-- **Express REST API:** `http://localhost:3003/api/students`
-- **Stats API Endpoint:** `http://localhost:3003/api/stats`
-- **Direct Static/Dashboard View:** `http://localhost:3000/practical-6-student-profile/index.html`
+Frontend: http://localhost:5173  
+Backend API: http://localhost:5000/api/students
+
+The frontend uses Vite's development proxy to call the backend.
+
+## Project structure
+- `frontend/` — React UI, reusable `StudentCard` component, JSX and props
+- `backend/` — Express API returning student records
+- `backend/data/students.js` — editable sample student data
+
+## Website content
+- Six sample student profile cards with skills and contact details
+- Search by name, course, skill, or roll number
+- Academic-program filter chips and live directory statistics
+- Campus-life highlights and sample student activities/events
+- A React learning section explaining JSX, components, props, and state
+
+The activities and student records are demonstration content; replace them with approved college details before publishing.
+
+## Customize
+Edit `backend/data/students.js` to change the sample students. This demo stores sample data in a JavaScript file; it does not use a database or persistent student editing.
+## Responsive layout
+The layout includes responsive CSS breakpoints for wide desktop screens, laptops, tablets, small phones, and narrow 320px-width screens. The student grid adapts from three columns to two columns and then a single column on phones. Navigation, filters, search, events, statistics, and the project explanation also adjust for smaller screens. Touch-friendly controls and reduced-motion preferences are supported. The HTML page includes a viewport meta tag for mobile browser scaling.

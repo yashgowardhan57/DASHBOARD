@@ -1,158 +1,89 @@
-// Demonstration Student Records for Practical 6 — Academic Portal
-
 const students = [
   {
-    id: "STU-2024-001",
-    name: "Yash Gowardhan",
-    initials: "YG",
-    department: "Information Technology",
-    course: "B.Tech Information Technology",
-    year: "Third Year (Sem VI)",
-    yearLevel: "3rd Year",
-    email: "yash.gowardhan@svpcet.edu.in",
-    college: "St. Vincent Pallotti College of Engineering and Technology, Nagpur",
-    focus: "Web Application Development",
-    motto: "Learn, Build, Improve",
-    gpa: "9.24",
-    attendance: "94%",
-    status: "Active",
-    skills: [
-      "HTML5",
-      "CSS3",
-      "JavaScript",
-      "React.js",
-      "Node.js",
-      "Express.js",
-      "PostgreSQL",
-      "Git & GitHub",
-      "DSA",
-      "System Design"
-    ],
-    bio: "Passionate full-stack developer focusing on performant web architecture, modern component libraries, and clean engineering standards."
-  },
-  {
-    id: "STU-2024-002",
+    id: 1,
     name: "Aarav Sharma",
     initials: "AS",
-    department: "Computer Science",
-    course: "B.Tech Computer Science & Engineering",
-    year: "Third Year (Sem VI)",
-    yearLevel: "3rd Year",
-    email: "aarav.sharma@svpcet.edu.in",
-    college: "St. Vincent Pallotti College of Engineering and Technology, Nagpur",
-    focus: "Cloud Computing & DevOps",
-    motto: "Automate and Optimize",
-    gpa: "8.92",
-    attendance: "91%",
-    status: "Active",
-    skills: ["Docker", "Kubernetes", "Linux", "Python", "Go", "AWS", "CI/CD"],
-    bio: "Infrastructure engineer dedicated to automated pipeline construction and microservices scaling."
-  },
-  {
-    id: "STU-2024-003",
-    name: "Ananya Deshmukh",
-    initials: "AD",
-    department: "Artificial Intelligence",
-    course: "B.Tech AI & Data Science",
-    year: "Final Year (Sem VIII)",
-    yearLevel: "4th Year",
-    email: "ananya.deshmukh@svpcet.edu.in",
-    college: "St. Vincent Pallotti College of Engineering and Technology, Nagpur",
-    focus: "Computer Vision & Deep Learning",
-    motto: "Transforming Data into Insight",
-    gpa: "9.45",
-    attendance: "96%",
-    status: "Active",
-    skills: ["PyTorch", "TensorFlow", "OpenCV", "Python", "NumPy", "Pandas", "Scikit-Learn"],
-    bio: "Researcher specializing in convolutional architectures and medical imaging classification models."
-  },
-  {
-    id: "STU-2024-004",
-    name: "Rohan Kulkarni",
-    initials: "RK",
-    department: "Information Technology",
     course: "B.Tech Information Technology",
-    year: "Second Year (Sem IV)",
-    yearLevel: "2nd Year",
-    email: "rohan.kulkarni@svpcet.edu.in",
-    college: "St. Vincent Pallotti College of Engineering and Technology, Nagpur",
-    focus: "Mobile App Engineering",
-    motto: "Building for Every Screen",
-    gpa: "8.68",
-    attendance: "88%",
-    status: "Active",
-    skills: ["Flutter", "Dart", "Firebase", "REST APIs", "SQLite", "Figma"],
-    bio: "Mobile-first developer designing fluid, cross-platform Android and iOS utilities."
+    year: "3rd Year",
+    rollNumber: "IT-2301",
+    email: "aarav.sharma@example.com",
+    phone: "+91 98765 12001",
+    skills: ["React", "JavaScript", "CSS"],
+    about: "Curious developer who enjoys building clean, useful web applications.",
+    accent: "plum"
   },
   {
-    id: "STU-2024-005",
-    name: "Pooja Verma",
-    initials: "PV",
-    department: "Cyber Security",
-    course: "B.Tech Cyber Security",
-    year: "Third Year (Sem VI)",
-    yearLevel: "3rd Year",
-    email: "pooja.verma@svpcet.edu.in",
-    college: "St. Vincent Pallotti College of Engineering and Technology, Nagpur",
-    focus: "Penetration Testing & Cryptography",
-    motto: "Security by Architecture",
-    gpa: "9.10",
-    attendance: "93%",
-    status: "Active",
-    skills: ["Wireshark", "Burp Suite", "Kali Linux", "Network Security", "Cryptography", "Python"],
-    bio: "Security analyst auditing authentication tokens, CSRF mitigations, and database injection risks."
+    id: 2,
+    name: "Ananya Patel",
+    initials: "AP",
+    course: "B.Tech Computer Science",
+    year: "2nd Year",
+    rollNumber: "CS-2408",
+    email: "ananya.patel@example.com",
+    phone: "+91 98765 12002",
+    skills: ["Python", "UI Design", "HTML"],
+    about: "Interested in user experience, creative problem-solving, and technology.",
+    accent: "sage"
   },
   {
-    id: "STU-2024-006",
-    name: "Siddharth Nair",
-    initials: "SN",
-    department: "Computer Science",
-    course: "B.Tech Computer Science & Engineering",
-    year: "First Year (Sem II)",
-    yearLevel: "1st Year",
-    email: "siddharth.nair@svpcet.edu.in",
-    college: "St. Vincent Pallotti College of Engineering and Technology, Nagpur",
-    focus: "Algorithmic Foundations",
-    motto: "Foundations First",
-    gpa: "8.75",
-    attendance: "95%",
-    status: "Active",
-    skills: ["C++", "C", "Data Structures", "Algorithms", "Object-Oriented Design"],
-    bio: "Competitive programmer focusing on algorithmic optimization, tree traversals, and dynamic programming."
+    id: 3,
+    name: "Rohan Deshmukh",
+    initials: "RD",
+    course: "B.Tech Electronics",
+    year: "4th Year",
+    rollNumber: "EC-2215",
+    email: "rohan.deshmukh@example.com",
+    phone: "+91 98765 12003",
+    skills: ["IoT", "C++", "ESP32"],
+    about: "Enjoys exploring embedded systems and connecting hardware with software.",
+    accent: "sand"
+  },
+  {
+    id: 4,
+    name: "Meera Kulkarni",
+    initials: "MK",
+    course: "B.Tech Information Technology",
+    year: "2nd Year",
+    rollNumber: "IT-2412",
+    email: "meera.kulkarni@example.com",
+    phone: "+91 98765 12004",
+    skills: ["Figma", "React", "Teamwork"],
+    about: "A thoughtful problem-solver who likes turning ideas into simple digital experiences.",
+    accent: "plum"
+  },
+  {
+    id: 5,
+    name: "Kabir Verma",
+    initials: "KV",
+    course: "B.Tech Computer Science",
+    year: "3rd Year",
+    rollNumber: "CS-2317",
+    email: "kabir.verma@example.com",
+    phone: "+91 98765 12005",
+    skills: ["Node.js", "SQL", "Git"],
+    about: "Enjoys backend development, collaborative projects, and learning new tools.",
+    accent: "sage"
+  },
+  {
+    id: 6,
+    name: "Isha Nair",
+    initials: "IN",
+    course: "B.Tech Electronics",
+    year: "2nd Year",
+    rollNumber: "EC-2409",
+    email: "isha.nair@example.com",
+    phone: "+91 98765 12006",
+    skills: ["Arduino", "C", "Problem Solving"],
+    about: "Interested in electronics, practical experiments, and building useful prototypes.",
+    accent: "sand"
   }
 ];
 
-function computeStatsHelper(list) {
-  const total = list.length;
-  const depts = Array.from(new Set(list.map(function (s) { return s.department; })));
-  const avgGpa = total ? (list.reduce(function (acc, s) { return acc + parseFloat(s.gpa); }, 0) / total).toFixed(2) : '0.00';
-  const avgAttendance = total ? Math.round(list.reduce(function (acc, s) { return acc + parseInt(s.attendance, 10); }, 0) / total) + '%' : '0%';
-  return {
-    totalStudents: total,
-    departmentsCount: depts.length,
-    departments: depts,
-    averageGpa: avgGpa,
-    averageAttendance: avgAttendance
-  };
-}
-
-if (typeof window !== 'undefined') {
-  window.FALLBACK_STUDENTS = students;
-  window.FALLBACK_STATS = computeStatsHelper(students);
-}
-
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = {
-    students,
-    getAllStudents: function () {
-      return students;
-    },
-    getStudentById: function (id) {
-      return students.find(function (s) { return s.id === id; });
-    },
-    getStats: function () {
-      return computeStatsHelper(students);
-    }
-  };
-}
-
+module.exports = students;
+module.exports.default = students;
+module.exports.getAllStudents = () => students;
+module.exports.getStats = () => ({
+  totalStudents: students.length,
+  departmentsCount: 3,
+  skillsCount: new Set(students.flatMap(s => s.skills || [])).size
+});

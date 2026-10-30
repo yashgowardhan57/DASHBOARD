@@ -1,28 +1,104 @@
-# Practical 1: Responsive Restaurant Landing Page
+# Practical 1: Design a Responsive Restaurant Landing Page
 
-**Title:** Design a Responsive Restaurant Landing Page  
-**Technology:** HTML5 and CSS3 Only (No JavaScript, No Backend, No Database)  
-**Theme:** Warm Cream, Terracotta, and Deep Brown  
-**Developer:** Yash Gowardhan (B.Tech IT, 3rd Year)
+| Experiment | Title | Real-Life Scenario | Concepts Covered |
+| :---: | :--- | :--- | :--- |
+| **1** | **Design a Responsive Restaurant Landing Page** | A restaurant wants a website that works seamlessly on mobile, tablet, and desktop devices. | **CSS Flexbox, Grid, Media Queries** |
 
 ---
 
-## 📖 Overview
-An elegant restaurant website for *La Maison Dorée* featuring modern responsive layouts, mouth-watering menu highlights, customer testimonials, reservation contact details, and CSS-driven mobile navigation.
+## 📌 Project Overview
+This project implements **Practical 1** for the **BLACK PLATE** restaurant landing page, matching the exact UI design and content from the lab manual specification.
 
-## 🛠️ Features Implemented
-- **Hero Section:** High-impact restaurant banner with tagline and call-to-actions.
-- **Section Navigation:** Semantic sticky navbar with smooth anchor links (`#hero`, `#menu`, `#about`, `#specials`, `#testimonials`, `#contact`).
-- **CSS-Only Mobile Navigation:** Implemented using the CSS checkbox hack (`#navToggle:checked + label ~ .nav-menu`).
-- **Signature Menu Grid:** Responsive grid cards showcasing appetizers, main courses, and desserts with prices and dietary tags.
-- **Customer Testimonials:** Multi-column testimonial cards with quote stylings.
-- **Pure CSS Back-to-Top:** Positioned fixed action button.
-- **Zero JS Dependency:** 100% compliant with HTML5 and CSS3 only constraint.
+- **Theme**: Luxury Black & White / Dark Slate aesthetic
+- **Responsive Targets**: Mobile (<680px), Tablet (681px - 992px), and Desktop (>992px)
+- **Technologies Used**: HTML5, Modern CSS3 (Flexbox, CSS Grid, Media Queries)
+
+---
+
+## 📁 File Structure
+```
+d:\dash\
+│
+├── index.html        # Semantic HTML5 markup matching the exact sections & text
+├── styles.css        # Clean responsive styles using Flexbox, Grid & Media Queries
+├── README.md         # Practical documentation & lab submission details
+└── images/           # High-resolution offline image assets
+    ├── hero.jpg      # Luxury restaurant dining hall
+    ├── about.jpg     # Fine dining interior
+    ├── steak.jpg     # Grilled Steak dish
+    ├── pizza.jpg     # Italian Pizza
+    └── burger.jpg    # Special Burger
+```
+
+---
+
+## 🧩 Sections Included (Strictly as per UI Specification)
+1. **Header / Navbar**:
+   - Brand logo: `BLACK PLATE`
+   - Navigation links: `Home`, `About`, `Menu`, `Contact`
+   - Sticky top positioning with backdrop blur
+
+2. **Hero Section**:
+   - 2-Column layout on desktop (Flexbox)
+   - Headline: `Luxury Dining Experience`
+   - Description: `Experience premium cuisine crafted by world-class chefs. Enjoy unforgettable flavors in an elegant atmosphere.`
+   - Call to Action button: `Reserve Table` (Pill-shaped)
+   - Hero restaurant interior image
+
+3. **About Us Section**:
+   - 2-Column layout on desktop (Flexbox)
+   - Restaurant interior image on left
+   - Heading: `About Us`
+   - Description: `BLACK PLATE delivers an unforgettable fine dining experience with handcrafted dishes, premium ingredients, and modern interiors. Whether it's family dinner or business meetings, every moment becomes memorable.`
+
+4. **Our Signature Menu Section**:
+   - 3-Column responsive card layout (CSS Grid)
+   - Cards:
+     - **Grilled Steak** (`$28`) - *Premium grilled steak served with fresh vegetables.*
+     - **Italian Pizza** (`$18`) - *Fresh handmade pizza with authentic Italian cheese.*
+     - **Special Burger** (`$20`) - *Juicy burger prepared with premium ingredients.*
+
+5. **Features Section (Why Choose Us)**:
+   - 3-Column card layout (CSS Grid)
+   - Cards:
+     - **Premium Quality** - *Fresh ingredients with world-class recipes.*
+     - **Fast Service** - *Professional chefs and experienced staff.*
+     - **Luxury Interior** - *Elegant black & white ambience for every occasion.*
+
+6. **Reservation CTA Section**:
+   - Centered CTA layout
+   - Heading: `Reserve Your Table`
+   - Timings: `Open Daily • 10:00 AM - 11:00 PM`
+   - Call to Action button: `Book Now` (Pill-shaped)
+
+7. **Footer**:
+   - Centered copyright notice: `© 2026 BLACK PLATE Restaurant | Premium Dining Experience`
+
+---
+
+## 🎯 Implementation of Concepts Covered
+
+### 1. CSS Flexbox
+- **Navbar**: `display: flex; justify-content: space-between; align-items: center;`
+- **Hero & About Sections**: `display: flex; align-items: center; justify-content: space-between; gap: 48px;`
+- **Menu Card Details**: `display: flex; flex-direction: column;` to align titles, descriptions, and bottom price tags evenly.
+
+### 2. CSS Grid
+- **Menu Section**: `display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;`
+- **Features Section**: `display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;`
+
+### 3. Media Queries (Responsive Design)
+- **Tablet (`max-width: 992px`)**:
+  - Re-adjusts grid layouts from 3 columns to 2 columns for comfortable reading.
+  - Decreases heading sizes for proportional hierarchy.
+- **Mobile (`max-width: 680px`)**:
+  - Navbar switches to vertical flex column layout.
+  - Hero and About sections stack into single-column layouts with full-width images.
+  - Menu and Features grids collapse into 1-column cards (`grid-template-columns: 1fr`).
+  - Minimum touch targets (≥44px) maintained for links and buttons.
+
+---
 
 ## 🚀 How to Run
-Simply open `index.html` in any web browser:
-```bash
-# Direct browser opening:
-start index.html
-```
-Or via Practical Hub at: `http://localhost:3000/practical-1-restaurant/index.html`
+Double-click `index.html` or open it with any web browser (Chrome, Edge, Firefox, Safari). All images load locally from the `images/` directory and will work completely offline.
+

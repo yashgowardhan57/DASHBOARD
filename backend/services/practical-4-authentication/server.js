@@ -1,376 +1,234 @@
 require('dotenv').config();
-
 const express = require('express');
-const session = require('express-session');
+const path = require('path');
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
-const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const SALT_ROUNDS = 12;
 
-// ---- Database Configuration ----
-const rawPassword = process.env.DB_PASSWORD;
-const hasPassword = typeof rawPassword === 'string' && rawPassword.trim().length > 0;
+// ─── CORS: Allow Netlify frontend + local dev ───────────────────────────────
+const ALLOWED_ORIGINS = [
+  'http://localhost:3001',
+  'http://localhost:5500',
+  'http://127.0.0.1:5500',
+  // Add your Netlify domain here after deployment, e.g.:
+  // 'https://your-practical-hub.netlify.app'
+];
 
-let pool = null;
-let dbConnected = false;
-let dbStatusMessage = '';
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (!origin || ALLOWED_ORIGINS.includes(origin) || process.env.NODE_ENV !== 'production') {
+    res.header('Access-Control-Allow-Origin', origin || '*');
+  }
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  if (req.method === 'OPTIONS') return res.sendStatus(200);
+  next();
+});
 
-if (!hasPassword) {
-  dbStatusMessage = 'PostgreSQL DB_PASSWORD is not configured in .env. Please set your PostgreSQL password in practical-4-authentication/.env to enable live database authentication.';
-  console.log('\n⚠️  PostgreSQL Notice for Practical 4:');
-  console.log('   DB_PASSWORD is empty in practical-4-authentication/.env.');
-  console.log('   To connect to your PostgreSQL database, please add your password:');
-  console.log('   DB_PASSWORD=your_postgres_password\n');
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname));
+
+// ─── PostgreSQL Connection Pool ──────────────────────────────────────────────
+// Supports both DATABASE_URL (Neon/Render/Supabase) and individual env vars
+let poolConfig;
+
+if (process.env.DATABASE_URL) {
+  // Cloud: Neon, Supabase, Railway, ElephantSQL all provide DATABASE_URL
+  poolConfig = {
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false // Required for Neon / Supabase / most cloud Postgres
+    }
+  };
+  console.log('🌐 [PostgreSQL] Using DATABASE_URL (Cloud Connection)');
 } else {
-  pool = new Pool({
+  // Local development fallback
+  poolConfig = {
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT, 10) || 5432,
     database: process.env.DB_NAME || 'postgres',
     user: process.env.DB_USER || 'postgres',
-    password: String(rawPassword)
-  });
-
-  // Test database connection
-  pool.query('SELECT NOW()')
-    .then(function () {
-      dbConnected = true;
-      dbStatusMessage = 'Connected to PostgreSQL database';
-      console.log('✅ Connected to PostgreSQL database successfully!');
-
-      // Auto-create users table
-      return pool.query(`
-        CREATE TABLE IF NOT EXISTS users (
-          id SERIAL PRIMARY KEY,
-          name VARCHAR(100) NOT NULL,
-          email VARCHAR(255) UNIQUE NOT NULL,
-          password_hash VARCHAR(255) NOT NULL,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-        )
-      `);
-    })
-    .then(function () {
-      console.log('✅ Users table ready in PostgreSQL');
-    })
-    .catch(function (err) {
-      dbConnected = false;
-      dbStatusMessage = 'PostgreSQL connection failed: ' + err.message;
-      console.error('❌ PostgreSQL connection error:', err.message);
-      console.error('   Please check DB_PASSWORD in practical-4-authentication/.env');
-    });
+    password: process.env.DB_PASSWORD || 'admin123'
+  };
+  console.log('💻 [PostgreSQL] Using individual DB_* env vars (Local)');
 }
 
-// ---- Middleware ----
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+const pool = new Pool(poolConfig);
 
-// Expose hubUrl to views
-app.use(function (req, res, next) {
-  res.locals.hubUrl = process.env.HUB_URL || 'http://localhost:3000';
-  next();
-});
+let isDatabaseConnected = false;
+let dbErrorMessage = '';
 
-// Session store setup: use connect-pg-simple if pool is configured, else MemoryStore fallback
-let sessionStore = undefined;
-if (pool) {
+// Auto-create table & verify connection on startup
+async function initDatabase() {
   try {
-    const pgSession = require('connect-pg-simple')(session);
-    sessionStore = new pgSession({
-      pool: pool,
-      createTableIfMissing: true,
-      errorLog: function (err) {
-        console.warn('⚠️ Session store notice:', err.message);
-      }
-    });
-  } catch (e) {
-    sessionStore = undefined;
-  }
-}
+    const client = await pool.connect();
+    isDatabaseConnected = true;
 
-app.use(session({
-  store: sessionStore,
-  secret: process.env.SESSION_SECRET || 'dev-secret-change-in-production',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    httpOnly: true,
-    secure: false,
-    sameSite: 'lax'
-  }
-}));
-
-// Make session user and DB status available to templates
-app.use(function (req, res, next) {
-  res.locals.user = req.session.user || null;
-  res.locals.dbConnected = dbConnected;
-  res.locals.dbStatusMessage = dbStatusMessage;
-  next();
-});
-
-// ---- Auth Middleware ----
-function requireAuth(req, res, next) {
-  if (req.session && req.session.user) {
-    return next();
-  }
-  return res.redirect('/login');
-}
-
-// ---- Routes ----
-
-// Home — redirect to login or dashboard
-app.get('/', function (req, res) {
-  if (req.session.user) {
-    return res.redirect('/dashboard');
-  }
-  res.redirect('/login');
-});
-
-// Login page
-app.get('/login', function (req, res) {
-  if (req.session.user) {
-    return res.redirect('/dashboard');
-  }
-  let initialNotice = null;
-  if (!dbConnected && !hasPassword) {
-    initialNotice = 'PostgreSQL is running, but DB_PASSWORD is not set in practical-4-authentication/.env. Please enter your PostgreSQL password in .env to enable authentication.';
-  }
-  res.render('auth', { mode: 'login', error: initialNotice });
-});
-
-// Register page
-app.get('/register', function (req, res) {
-  if (req.session.user) {
-    return res.redirect('/dashboard');
-  }
-  let initialNotice = null;
-  if (!dbConnected && !hasPassword) {
-    initialNotice = 'PostgreSQL is running, but DB_PASSWORD is not set in practical-4-authentication/.env. Please enter your PostgreSQL password in .env to enable authentication.';
-  }
-  res.render('auth', { mode: 'register', error: initialNotice });
-});
-
-// In-memory fallback user store when PostgreSQL is temporarily offline
-const inMemoryUsers = [];
-
-// Health check endpoint
-app.get('/api/health', function (req, res) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.json({
-    ok: true,
-    service: 'Practical 4 Authentication',
-    port: PORT,
-    dbConnected: dbConnected,
-    dbStatusMessage: dbStatusMessage
-  });
-});
-
-// Handle Registration
-app.post('/register', async function (req, res) {
-  try {
-    var { name, email, password, confirmPassword } = req.body;
-
-    // Server-side validation
-    if (!name || !email || !password || !confirmPassword) {
-      return res.status(400).render('auth', {
-        mode: 'register',
-        error: 'All fields are required.'
-      });
-    }
-
-    if (password.length < 6) {
-      return res.status(400).render('auth', {
-        mode: 'register',
-        error: 'Password must be at least 6 characters.'
-      });
-    }
-
-    if (password !== confirmPassword) {
-      return res.status(400).render('auth', {
-        mode: 'register',
-        error: 'Passwords do not match.'
-      });
-    }
-
-    const cleanEmail = email.toLowerCase().trim();
-    const cleanName = name.trim();
-
-    if (pool && dbConnected) {
-      // Check if email already exists in PostgreSQL
-      var existingUser = await pool.query(
-        'SELECT id FROM users WHERE email = $1',
-        [cleanEmail]
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id         SERIAL PRIMARY KEY,
+        name       VARCHAR(100)  NOT NULL,
+        email      VARCHAR(150)  UNIQUE NOT NULL,
+        password   VARCHAR(255)  NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+    `);
 
-      if (existingUser.rows.length > 0) {
-        return res.status(409).render('auth', {
-          mode: 'register',
-          error: 'An account with this email already exists in PostgreSQL.'
-        });
-      }
+    const dbInfo = process.env.DATABASE_URL
+      ? new URL(process.env.DATABASE_URL).hostname
+      : (process.env.DB_HOST || 'localhost');
 
-      // Hash password with 12 salt rounds
-      var passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-
-      // Insert user into PostgreSQL
-      var result = await pool.query(
-        'INSERT INTO users (name, email, password_hash) VALUES ($1, $2, $3) RETURNING id, name, email',
-        [cleanName, cleanEmail, passwordHash]
-      );
-
-      var newUser = result.rows[0];
-
-      // Set session
-      req.session.user = {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email
-      };
-
-      return res.redirect('/dashboard');
-    } else {
-      // In-memory fallback mode
-      var existingMem = inMemoryUsers.find(u => u.email === cleanEmail);
-      if (existingMem) {
-        return res.status(409).render('auth', {
-          mode: 'register',
-          error: 'An account with this email already exists.'
-        });
-      }
-
-      var hash = await bcrypt.hash(password, SALT_ROUNDS);
-      var memUser = {
-        id: inMemoryUsers.length + 1,
-        name: cleanName,
-        email: cleanEmail,
-        password_hash: hash
-      };
-      inMemoryUsers.push(memUser);
-
-      req.session.user = {
-        id: memUser.id,
-        name: memUser.name,
-        email: memUser.email
-      };
-
-      return res.redirect('/dashboard');
-    }
+    console.log(`✅ [PostgreSQL] Connected to: ${dbInfo}`);
+    console.log('✅ [PostgreSQL] "users" table verified and ready.');
+    client.release();
   } catch (err) {
-    console.error('Registration error:', err);
-    res.status(500).render('auth', {
-      mode: 'register',
-      error: 'Registration error: ' + err.message
+    isDatabaseConnected = false;
+    dbErrorMessage = err.message;
+    console.error('❌ [PostgreSQL] Connection failed:', err.message);
+  }
+}
+
+initDatabase();
+
+// ─── GET /api/status ─────────────────────────────────────────────────────────
+
+// Health check probe for Dashboard
+app.get('/api/health', (req, res) => res.json({ status: 'ok', service: 'practical-4-auth' }));
+
+app.get('/api/status', async (req, res) => {
+  if (!isDatabaseConnected) {
+    return res.status(503).json({
+      connected: false,
+      message: 'PostgreSQL database disconnected',
+      error: dbErrorMessage
     });
   }
-});
-
-// Handle Login
-app.post('/login', async function (req, res) {
   try {
-    var { email, password } = req.body;
+    const result = await pool.query('SELECT COUNT(*) AS count FROM users');
+    const dbLabel = process.env.DATABASE_URL
+      ? 'Neon Cloud PostgreSQL'
+      : (process.env.DB_NAME || 'postgres');
 
-    if (!email || !password) {
-      return res.status(400).render('auth', {
-        mode: 'login',
-        error: 'Email and password are required.'
-      });
-    }
-
-    const cleanEmail = email.toLowerCase().trim();
-
-    if (pool && dbConnected) {
-      // Query user from PostgreSQL
-      var result = await pool.query(
-        'SELECT id, name, email, password_hash FROM users WHERE email = $1',
-        [cleanEmail]
-      );
-
-      if (result.rows.length === 0) {
-        return res.status(401).render('auth', {
-          mode: 'login',
-          error: 'Invalid email or password.'
-        });
-      }
-
-      var user = result.rows[0];
-
-      // Verify password hash
-      var validPassword = await bcrypt.compare(password, user.password_hash);
-
-      if (!validPassword) {
-        return res.status(401).render('auth', {
-          mode: 'login',
-          error: 'Invalid email or password.'
-        });
-      }
-
-      // Set session
-      req.session.user = {
-        id: user.id,
-        name: user.name,
-        email: user.email
-      };
-
-      return res.redirect('/dashboard');
-    } else {
-      // In-memory fallback mode
-      var memUser = inMemoryUsers.find(u => u.email === cleanEmail);
-      if (!memUser) {
-        return res.status(401).render('auth', {
-          mode: 'login',
-          error: 'Invalid email or password.'
-        });
-      }
-
-      var valid = await bcrypt.compare(password, memUser.password_hash);
-      if (!valid) {
-        return res.status(401).render('auth', {
-          mode: 'login',
-          error: 'Invalid email or password.'
-        });
-      }
-
-      req.session.user = {
-        id: memUser.id,
-        name: memUser.name,
-        email: memUser.email
-      };
-
-      return res.redirect('/dashboard');
-    }
-  } catch (err) {
-    console.error('Login error:', err);
-    res.status(500).render('auth', {
-      mode: 'login',
-      error: 'Login error: ' + err.message
+    res.json({
+      connected: true,
+      database: dbLabel,
+      registeredUsers: parseInt(result.rows[0].count, 10),
+      timestamp: new Date().toISOString()
     });
+  } catch (err) {
+    res.status(500).json({ connected: false, error: err.message });
   }
 });
 
-// Dashboard (protected route)
-app.get('/dashboard', requireAuth, function (req, res) {
-  res.render('dashboard', { user: req.session.user });
+// ─── POST /api/register ───────────────────────────────────────────────────────
+app.post('/api/register', async (req, res) => {
+  const { name, email, password } = req.body;
+
+  if (!name || !name.trim())
+    return res.status(400).json({ success: false, message: 'Please enter your full name.' });
+
+  if (!email || !email.trim())
+    return res.status(400).json({ success: false, message: 'Please enter a valid email address.' });
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email.trim()))
+    return res.status(400).json({ success: false, message: 'Please provide a valid email format.' });
+
+  if (!password || password.length < 8)
+    return res.status(400).json({ success: false, message: 'Password must be at least 8 characters.' });
+
+  try {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    const existing = await pool.query(
+      'SELECT id FROM users WHERE LOWER(email) = $1 LIMIT 1;',
+      [normalizedEmail]
+    );
+    if (existing.rows.length > 0)
+      return res.status(409).json({
+        success: false,
+        message: 'An account with this email already exists. Please sign in instead.'
+      });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const result = await pool.query(
+      `INSERT INTO users (name, email, password)
+       VALUES ($1, $2, $3)
+       RETURNING id, name, email, created_at;`,
+      [name.trim(), normalizedEmail, hashedPassword]
+    );
+    const newUser = result.rows[0];
+    console.log(`[DB] Registered: ${newUser.name} <${newUser.email}> ID#${newUser.id}`);
+
+    return res.status(201).json({
+      success: true,
+      message: 'Account created successfully! Welcome to ONYX.',
+      user: { id: newUser.id, name: newUser.name, email: newUser.email, created_at: newUser.created_at }
+    });
+  } catch (err) {
+    console.error('[DB Error] Registration:', err.message);
+    return res.status(500).json({ success: false, message: 'Database error during registration.' });
+  }
 });
 
-// Logout
-app.post('/logout', function (req, res) {
-  req.session.destroy(function (err) {
-    if (err) {
-      console.error('Logout error:', err);
-    }
-    res.clearCookie('connect.sid');
-    res.redirect('/login');
-  });
+// ─── POST /api/login ─────────────────────────────────────────────────────────
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !email.trim())
+    return res.status(400).json({ success: false, message: 'Please enter your email address.' });
+
+  if (!password)
+    return res.status(400).json({ success: false, message: 'Please enter your password.' });
+
+  try {
+    const normalizedEmail = email.trim().toLowerCase();
+    const result = await pool.query(
+      'SELECT id, name, email, password, created_at FROM users WHERE LOWER(email) = $1 LIMIT 1;',
+      [normalizedEmail]
+    );
+
+    if (result.rows.length === 0)
+      return res.status(401).json({
+        success: false,
+        message: 'No account found with this email. Please check your credentials or create an account.'
+      });
+
+    const user = result.rows[0];
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch)
+      return res.status(401).json({
+        success: false,
+        message: 'Incorrect password. Please verify and try again.'
+      });
+
+    console.log(`[DB] Authenticated: ${user.name} <${user.email}> ID#${user.id}`);
+    return res.status(200).json({
+      success: true,
+      message: `Welcome back, ${user.name}! Signed in successfully.`,
+      user: { id: user.id, name: user.name, email: user.email, created_at: user.created_at }
+    });
+  } catch (err) {
+    console.error('[DB Error] Login:', err.message);
+    return res.status(500).json({ success: false, message: 'Database error during sign in.' });
+  }
 });
 
-// ---- Start Server ----
-app.listen(PORT, function () {
-  console.log('🔐 Authentication Server running on http://localhost:' + PORT);
-  console.log('   Login:    http://localhost:' + PORT + '/login');
-  console.log('   Register: http://localhost:' + PORT + '/register');
+// ─── Fallback: serve index.html ───────────────────────────────────────────────
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// ─── Start Server ─────────────────────────────────────────────────────────────
+app.listen(PORT, () => {
+  const dbMode = process.env.DATABASE_URL ? 'Neon Cloud PostgreSQL' : 'Local PostgreSQL';
+  console.log('\n======================================================');
+  console.log('🚀  Practical 4: Animated Authentication — RUNNING');
+  console.log(`📡  URL:      http://localhost:${PORT}`);
+  console.log(`🗄️  Database: ${dbMode}`);
+  console.log(`🌍  ENV:      ${process.env.NODE_ENV || 'development'}`);
+  console.log('======================================================\n');
 });

@@ -1,23 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--
+  =============================================================================
+  Practical 2
+  Experiment Title: Build an E-commerce Product Catalog Layout
+  Real-Life Scenario: An online shopping website needs an attractive product 
+                      display with responsive cards and banners.
+  Concepts Covered: CSS Grid, Flexbox, Responsive Design, Positioning
+  =============================================================================
+  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JOGE STORE | Product Catalog Layout</title>
+  <link rel="stylesheet" href="styles.css">
   <script>
     if (!window.location.pathname.endsWith('/') && !window.location.pathname.split('/').pop().includes('.')) {
       window.location.replace(window.location.pathname + '/' + window.location.search + window.location.hash);
     }
   </script>
-  <meta name="description" content="Aurum — Premium luxury fashion and lifestyle products. Explore curated collections of exquisite items." />
-  <title>Aurum — Luxury E-commerce</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/ecommerce.css" />
 </head>
 <body>
-  <!-- Back to Hub -->
-  <a href="/index.html" class="back-to-hub" aria-label="Back to Practical Hub">← Back to Hub</a>
+  <!-- Back to Dashboard -->
+  <a href="/index.html" class="back-to-hub" aria-label="Back to Practical Hub">
+    ← Back to Hub
+  </a>
   <script>
     if (window.location.protocol === 'file:') {
       var hub = document.querySelector('.back-to-hub');
@@ -25,263 +32,147 @@
     }
   </script>
 
-  <!-- Header -->
-  <header class="header">
-    <div class="header-container">
-      <nav class="header-nav">
-        <a href="index.html">Home</a>
-        <a href="catalog.html">Shop Catalog</a>
-        <a href="product-detail.html">Featured Piece</a>
-      </nav>
-      <a href="index.html" class="brand-logo">AURUM</a>
-      <div class="header-actions">
-        <a href="catalog.html" aria-label="Search">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/></svg>
-        </a>
-        <a href="catalog.html" aria-label="Wishlist">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/></svg>
-        </a>
-        <a href="catalog.html" aria-label="Cart" class="cart-link">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.632 14 6.414 14H15a1 1 0 000-2H6.414l1-1H14a1 1 0 00.894-.553l3-6A1 1 0 0017 3H6.28l-.31-1.243A1 1 0 005 1H3zM16 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM6.5 18a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
-          <span class="cart-count">0</span>
-        </a>
-      </div>
-    </div>
+
+
+  <!-- Navigation Bar (Flexbox & Sticky Positioning) -->
+  <header class="navbar">
+    <div class="logo">JOGE STORE</div>
+    <nav class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#catalog">Catalog</a>
+      <a href="#cart">Cart (0)</a>
+    </nav>
   </header>
 
-  <!-- Hero Banner -->
-  <section class="hero-banner">
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <p class="hero-label">Autumn/Winter Collection</p>
-      <h1 class="hero-title">Timeless<br />Elegance</h1>
-      <p class="hero-desc">Discover our curated collection of luxury fashion and lifestyle essentials crafted with uncompromising quality.</p>
-      <a href="catalog.html" class="btn-shop">Shop Now</a>
-    </div>
-  </section>
-
-  <!-- Categories -->
-  <section class="section categories-section">
-    <div class="container">
-      <div class="categories-grid">
-        <a href="catalog.html" class="category-card">
-          <div class="cat-img">
-            <img src="images/cat-men.jpg" alt="Men's Fashion" loading="lazy" />
-          </div>
-          <h3>Men's Fashion</h3>
-        </a>
-        <a href="catalog.html" class="category-card">
-          <div class="cat-img">
-            <img src="images/cat-women.jpg" alt="Women's Fashion" loading="lazy" />
-          </div>
-          <h3>Women's Fashion</h3>
-        </a>
-        <a href="catalog.html" class="category-card">
-          <div class="cat-img">
-            <img src="images/cat-accessories.jpg" alt="Accessories" loading="lazy" />
-          </div>
-          <h3>Accessories</h3>
-        </a>
-        <a href="catalog.html" class="category-card">
-          <div class="cat-img">
-            <img src="images/cat-footwear.jpg" alt="Footwear" loading="lazy" />
-          </div>
-          <h3>Footwear</h3>
-        </a>
+  <main class="main-container">
+    <!-- Promotional Hero Banner -->
+    <section class="banner-section" id="home">
+      <div class="banner-card">
+        <span class="banner-badge">LIMITED OFFER</span>
+        <h1 class="banner-title">Exclusive Summer Collection</h1>
+        <p class="banner-desc">Upgrade your style with top-rated items at up to 40% off.</p>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- New Arrivals -->
-  <section class="section" id="newArrivals">
-    <div class="container">
-      <div class="section-header">
-        <p class="section-label">Just In</p>
-        <h2 class="section-title">New Arrivals</h2>
-      </div>
+    <!-- Featured Products Section (CSS Grid & Absolute Positioning) -->
+    <section class="products-section" id="catalog">
+      <h2 class="section-title">Featured Products</h2>
+      <div class="title-underline"></div>
+
       <div class="products-grid">
+        <!-- Product 1 -->
         <article class="product-card">
-          <div class="product-image">
-            <img src="images/coat.jpg" alt="Cashmere Overcoat" loading="lazy" />
-            <span class="product-badge new">New</span>
+          <div class="product-img-wrapper">
+            <span class="badge sale">Sale</span>
+            <img src="images/headphones.jpg" alt="Wireless Studio Headphones" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80';">
           </div>
           <div class="product-info">
-            <h3 class="product-name"><a href="product-detail.html">Cashmere Overcoat</a></h3>
-            <p class="product-brand">Aurum Essentials</p>
-            <div class="product-pricing">
-              <span class="product-price">₹12,999</span>
+            <span class="product-category">AUDIO</span>
+            <h3 class="product-name">Wireless Studio Headphones</h3>
+            <div class="price-container">
+              <span class="current-price">$199.00</span>
+              <span class="original-price">$249.00</span>
             </div>
+            <button class="add-to-cart-btn" type="button">Add to Cart</button>
           </div>
         </article>
+
+        <!-- Product 2 -->
         <article class="product-card">
-          <div class="product-image">
-            <img src="images/tote.jpg" alt="Leather Tote Bag" loading="lazy" />
-            <span class="product-badge new">New</span>
+          <div class="product-img-wrapper">
+            <img src="images/watch.jpg" alt="Minimalist Smart Watch" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80';">
           </div>
           <div class="product-info">
-            <h3 class="product-name">Leather Tote Bag</h3>
-            <p class="product-brand">Aurum Accessories</p>
-            <div class="product-pricing">
-              <span class="product-price">₹8,499</span>
+            <span class="product-category">WEARABLES</span>
+            <h3 class="product-name">Minimalist Smart Watch</h3>
+            <div class="price-container">
+              <span class="current-price">$149.00</span>
             </div>
+            <button class="add-to-cart-btn" type="button">Add to Cart</button>
           </div>
         </article>
+
+        <!-- Product 3 -->
         <article class="product-card">
-          <div class="product-image">
-            <img src="images/scarf.jpg" alt="Silk Scarf" loading="lazy" />
+          <div class="product-img-wrapper">
+            <span class="badge hot">Hot</span>
+            <img src="images/shoes.jpg" alt="Crimson Running Shoes" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80';">
           </div>
           <div class="product-info">
-            <h3 class="product-name">Silk Scarf</h3>
-            <p class="product-brand">Aurum Luxe</p>
-            <div class="product-pricing">
-              <span class="product-price">₹3,299</span>
+            <span class="product-category">FOOTWEAR</span>
+            <h3 class="product-name">Crimson Running Shoes</h3>
+            <div class="price-container">
+              <span class="current-price">$120.00</span>
+              <span class="original-price">$150.00</span>
             </div>
+            <button class="add-to-cart-btn" type="button">Add to Cart</button>
           </div>
         </article>
+
+        <!-- Product 4 -->
         <article class="product-card">
-          <div class="product-image">
-            <img src="images/shoes.jpg" alt="Oxford Leather Shoes" loading="lazy" />
-            <span class="product-badge new">New</span>
+          <div class="product-img-wrapper">
+            <img src="images/tote.jpg" alt="Classic Leather Tote" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80';">
           </div>
           <div class="product-info">
-            <h3 class="product-name">Oxford Leather Shoes</h3>
-            <p class="product-brand">Aurum Footwear</p>
-            <div class="product-pricing">
-              <span class="product-price">₹6,999</span>
+            <span class="product-category">ACCESSORIES</span>
+            <h3 class="product-name">Classic Leather Tote</h3>
+            <div class="price-container">
+              <span class="current-price">$89.00</span>
             </div>
+            <button class="add-to-cart-btn" type="button">Add to Cart</button>
           </div>
         </article>
+      </div>
+    </section>
+
+    <!-- The Aura Lifestyle Experience Section (CSS Grid & Absolute Text Positioning) -->
+    <section class="lifestyle-section">
+      <h2 class="section-title">The Aura Lifestyle Experience</h2>
+      <div class="title-underline"></div>
+      <p class="section-subtitle">Curated for quality, built for everyday elegance.</p>
+
+      <div class="lifestyle-grid">
+        <div class="lifestyle-card">
+          <img src="images/boutique.jpg" alt="Flagship Boutique" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80';">
+          <div class="lifestyle-overlay"></div>
+          <span class="lifestyle-label">Flagship Boutique</span>
+        </div>
+        <div class="lifestyle-card">
+          <img src="images/openshop.jpg" alt="Curated Displays" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1528698827591-e19ccd7bc23d?auto=format&fit=crop&w=800&q=80';">
+          <div class="lifestyle-overlay"></div>
+          <span class="lifestyle-label">Curated Displays</span>
+        </div>
+        <div class="lifestyle-card">
+          <img src="images/artisan.jpg" alt="Artisan Craftsmanship" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=800&q=80';">
+          <div class="lifestyle-overlay"></div>
+          <span class="lifestyle-label">Artisan Craftsmanship</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Features Section (CSS Grid) -->
+  <section class="features-section">
+    <div class="features-container">
+      <div class="feature-card">
+        <div class="feature-icon">🚚</div>
+        <h3 class="feature-title">Free Express Shipping</h3>
+        <p class="feature-desc">On all orders over $50. Delivered right to your doorstep within 2-3 business days.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3 class="feature-title">2-Year Warranty</h3>
+        <p class="feature-desc">All products come with our extended manufacturer coverage and 30-day money back guarantee.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎧</div>
+        <h3 class="feature-title">24/7 Dedicated Support</h3>
+        <p class="feature-desc">Our customer experience team is always active to assist with queries or returns.</p>
       </div>
     </div>
   </section>
 
-  <!-- Sale Banner -->
-  <section class="sale-banner">
-    <div class="container">
-      <div class="sale-content">
-        <p class="sale-label">Limited Time Offer</p>
-        <h2 class="sale-title">End of Season Sale</h2>
-        <p class="sale-desc">Up to 40% off on selected premium collections</p>
-        <a href="catalog.html" class="btn-shop">Shop Sale</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Featured Products -->
-  <section class="section" id="featured">
-    <div class="container">
-      <div class="section-header">
-        <p class="section-label">Editors' Choice</p>
-        <h2 class="section-title">Featured Products</h2>
-      </div>
-      <div class="products-grid">
-        <article class="product-card">
-          <div class="product-image">
-            <div class="product-img-placeholder" style="background: linear-gradient(135deg, #C0A882, #7A6B55);">
-              <span class="product-emoji">⌚</span>
-            </div>
-            <span class="product-badge featured">Featured</span>
-          </div>
-          <div class="product-info">
-            <h3 class="product-name">Classic Chronograph</h3>
-            <p class="product-brand">Aurum Timepiece</p>
-            <div class="product-pricing">
-              <span class="product-price">₹24,999</span>
-            </div>
-            <div class="product-colors">
-              <span class="color-dot" style="background: #C0A882;" title="Gold"></span>
-              <span class="color-dot" style="background: #4A4A4A;" title="Gunmetal"></span>
-              <span class="color-dot" style="background: #8B7355;" title="Rose Gold"></span>
-            </div>
-          </div>
-        </article>
-        <article class="product-card">
-          <div class="product-image">
-            <div class="product-img-placeholder" style="background: linear-gradient(135deg, #2C2C2C, #555555);">
-              <span class="product-emoji">🕶️</span>
-            </div>
-          </div>
-          <div class="product-info">
-            <h3 class="product-name">Aviator Sunglasses</h3>
-            <p class="product-brand">Aurum Eyewear</p>
-            <div class="product-pricing">
-              <span class="product-price">₹5,499</span>
-              <span class="product-original">₹7,999</span>
-              <span class="product-discount">-31%</span>
-            </div>
-          </div>
-        </article>
-        <article class="product-card">
-          <div class="product-image">
-            <div class="product-img-placeholder" style="background: linear-gradient(135deg, #D2B48C, #A0826D);">
-              <span class="product-emoji">💼</span>
-            </div>
-          </div>
-          <div class="product-info">
-            <h3 class="product-name">Executive Briefcase</h3>
-            <p class="product-brand">Aurum Business</p>
-            <div class="product-pricing">
-              <span class="product-price">₹15,999</span>
-            </div>
-          </div>
-        </article>
-        <article class="product-card">
-          <div class="product-image">
-            <div class="product-img-placeholder" style="background: linear-gradient(135deg, #F5F0E8, #D4C5B2);">
-              <span class="product-emoji">💎</span>
-            </div>
-            <span class="product-badge sale">-20%</span>
-          </div>
-          <div class="product-info">
-            <h3 class="product-name">Pearl Necklace</h3>
-            <p class="product-brand">Aurum Jewellery</p>
-            <div class="product-pricing">
-              <span class="product-price">₹18,399</span>
-              <span class="product-original">₹22,999</span>
-            </div>
-          </div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <h3 class="brand-logo-footer">AURUM</h3>
-          <p>Curating luxury since 2024. Premium fashion and lifestyle products delivered worldwide.</p>
-        </div>
-        <div class="footer-col">
-          <h4>Shop</h4>
-          <ul>
-            <li><a href="catalog.html">All Products</a></li>
-            <li><a href="catalog.html">New Arrivals</a></li>
-            <li><a href="catalog.html">Sale</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>Company</h4>
-          <ul>
-            <li><a href="index.html">About Us</a></li>
-            <li><a href="index.html">Contact</a></li>
-            <li><a href="index.html">Careers</a></li>
-          </ul>
-        </div>
-        <div class="footer-col">
-          <h4>Help</h4>
-          <ul>
-            <li><a href="index.html">Shipping</a></li>
-            <li><a href="index.html">Returns</a></li>
-            <li><a href="index.html">FAQ</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2024 Aurum. All rights reserved. | Practical 2 — Web Development Lab</p>
-      </div>
-    </div>
-  </footer>
 </body>
 </html>
+

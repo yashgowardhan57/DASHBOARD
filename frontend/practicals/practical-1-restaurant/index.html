@@ -1,19 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--
+  =============================================================================
+  Practical 1
+  Experiment Title: Design a Responsive Restaurant Landing Page
+  Real-Life Scenario: A restaurant wants a website that works seamlessly on 
+                      mobile, tablet, and desktop devices.
+  Concepts Covered: CSS Flexbox, Grid, Media Queries
+  =============================================================================
+  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLACK PLATE | Responsive Restaurant Landing Page</title>
+  <link rel="stylesheet" href="styles.css">
   <script>
     if (!window.location.pathname.endsWith('/') && !window.location.pathname.split('/').pop().includes('.')) {
       window.location.replace(window.location.pathname + '/' + window.location.search + window.location.hash);
     }
   </script>
-  <meta name="description" content="La Maison Dorée — An exquisite dining experience with signature dishes, warm ambiance, and exceptional service." />
-  <title>La Maison Dorée — Fine Dining Restaurant</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/restaurant.css" />
 </head>
 <body>
   <!-- Back to Dashboard -->
@@ -27,349 +32,114 @@
     }
   </script>
 
-  <!-- Navigation -->
-  <header class="navbar" id="navbar">
-    <div class="nav-container">
-      <a href="#hero" class="nav-logo">La Maison <span>Dorée</span></a>
-      <input type="checkbox" id="navToggle" class="nav-toggle-input" aria-label="Toggle navigation" />
-      <label for="navToggle" class="nav-toggle" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </label>
-      <nav class="nav-menu" aria-label="Main navigation">
-        <ul class="nav-links">
-          <li><a href="#hero">Home</a></li>
-          <li><a href="#menu">Menu</a></li>
-          <li><a href="#about">About</a></li>
-          <li><a href="#specials">Specials</a></li>
-          <li><a href="#testimonials">Reviews</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </nav>
-    </div>
+
+
+  <!-- Navigation Bar -->
+  <header class="navbar">
+    <div class="logo">BLACK PLATE</div>
+    <nav class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#about">About</a>
+      <a href="#menu">Menu</a>
+      <a href="#contact">Contact</a>
+    </nav>
   </header>
 
   <!-- Hero Section -->
-  <section class="hero" id="hero">
-    <div class="hero-overlay"></div>
+  <section class="hero-section" id="home">
     <div class="hero-content">
-      <p class="hero-tagline">Welcome to</p>
-      <h1 class="hero-title">La Maison Dorée</h1>
-      <p class="hero-subtitle">Experience the art of fine dining where every dish tells a story of passion, tradition, and culinary excellence.</p>
-      <div class="hero-actions">
-        <a href="#menu" class="btn btn-primary">View Our Menu</a>
-        <a href="#contact" class="btn btn-outline">Reserve a Table</a>
-      </div>
+      <h1>Luxury Dining Experience</h1>
+      <p>Experience premium cuisine crafted by world-class chefs. Enjoy unforgettable flavors in an elegant atmosphere.</p>
+      <a href="#reservation" class="btn">Reserve Table</a>
     </div>
-    <div class="hero-scroll-indicator">
-      <span>Scroll</span>
-      <div class="scroll-line"></div>
+    <div class="hero-image">
+      <img src="images/hero.jpg" alt="Luxury Dining Experience" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=80';">
     </div>
   </section>
 
-  <!-- Popular Dishes -->
-  <section class="section menu-section" id="menu">
-    <div class="container">
-      <div class="section-header">
-        <p class="section-label">Our Signature</p>
-        <h2 class="section-title">Popular Dishes</h2>
-        <p class="section-desc">Handcrafted with the freshest ingredients and centuries of culinary tradition</p>
+  <!-- About Us Section -->
+  <section class="about-section" id="about">
+    <div class="about-image">
+      <img src="images/about.jpg" alt="About Us" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=1000&q=80';">
+    </div>
+    <div class="about-content">
+      <h2>About Us</h2>
+      <p>BLACK PLATE delivers an unforgettable fine dining experience with handcrafted dishes, premium ingredients, and modern interiors. Whether it's family dinner or business meetings, every moment becomes memorable.</p>
+    </div>
+  </section>
+
+  <!-- Signature Menu Section -->
+  <section class="menu-section" id="menu">
+    <h2 class="section-title">Our Signature Menu</h2>
+    <div class="menu-grid">
+      <!-- Menu Item 1 -->
+      <article class="menu-card">
+        <div class="card-img-wrapper">
+          <img src="images/steak.jpg" alt="Grilled Steak" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80';">
+        </div>
+        <div class="card-details">
+          <h3>Grilled Steak</h3>
+          <p>Premium grilled steak served with fresh vegetables.</p>
+          <div class="price">$28</div>
+        </div>
+      </article>
+
+      <!-- Menu Item 2 -->
+      <article class="menu-card">
+        <div class="card-img-wrapper">
+          <img src="images/pizza.jpg" alt="Italian Pizza" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80';">
+        </div>
+        <div class="card-details">
+          <h3>Italian Pizza</h3>
+          <p>Fresh handmade pizza with authentic Italian cheese.</p>
+          <div class="price">$18</div>
+        </div>
+      </article>
+
+      <!-- Menu Item 3 -->
+      <article class="menu-card">
+        <div class="card-img-wrapper">
+          <img src="images/burger.jpg" alt="Special Burger" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80';">
+        </div>
+        <div class="card-details">
+          <h3>Special Burger</h3>
+          <p>Juicy burger prepared with premium ingredients.</p>
+          <div class="price">$20</div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3>Premium Quality</h3>
+        <p>Fresh ingredients with world-class recipes.</p>
       </div>
-
-      <!-- Category Filters -->
-      <div class="menu-filters">
-        <input type="radio" name="menu-cat" id="cat-all" checked class="filter-input" />
-        <label for="cat-all" class="filter-btn">All</label>
-        <input type="radio" name="menu-cat" id="cat-starters" class="filter-input" />
-        <label for="cat-starters" class="filter-btn">Starters</label>
-        <input type="radio" name="menu-cat" id="cat-mains" class="filter-input" />
-        <label for="cat-mains" class="filter-btn">Main Course</label>
-        <input type="radio" name="menu-cat" id="cat-desserts" class="filter-input" />
-        <label for="cat-desserts" class="filter-btn">Desserts</label>
+      <div class="feature-card">
+        <h3>Fast Service</h3>
+        <p>Professional chefs and experienced staff.</p>
       </div>
-
-      <div class="dishes-grid">
-        <!-- Dish 1 -->
-        <article class="dish-card">
-          <div class="dish-image">
-            <img src="images/salad.jpg" alt="Mediterranean Salad" loading="lazy" />
-            <span class="dish-badge">Chef's Pick</span>
-          </div>
-          <div class="dish-info">
-            <h3 class="dish-name">Mediterranean Salad</h3>
-            <p class="dish-desc">Fresh greens, sun-dried tomatoes, feta cheese, olives, with house dressing</p>
-            <div class="dish-footer">
-              <span class="dish-price">₹450</span>
-              <span class="dish-tag">Starter</span>
-            </div>
-          </div>
-        </article>
-
-        <!-- Dish 2 -->
-        <article class="dish-card">
-          <div class="dish-image">
-            <img src="images/pasta.jpg" alt="Truffle Pasta" loading="lazy" />
-          </div>
-          <div class="dish-info">
-            <h3 class="dish-name">Truffle Pasta</h3>
-            <p class="dish-desc">Handmade fettuccine with black truffle, parmesan, and cream sauce</p>
-            <div class="dish-footer">
-              <span class="dish-price">₹850</span>
-              <span class="dish-tag">Main</span>
-            </div>
-          </div>
-        </article>
-
-        <!-- Dish 3 -->
-        <article class="dish-card">
-          <div class="dish-image">
-            <img src="images/steak.jpg" alt="Grilled Tenderloin" loading="lazy" />
-            <span class="dish-badge hot">Popular</span>
-          </div>
-          <div class="dish-info">
-            <h3 class="dish-name">Grilled Tenderloin</h3>
-            <p class="dish-desc">Prime cut with roasted vegetables, red wine jus, and herb butter</p>
-            <div class="dish-footer">
-              <span class="dish-price">₹1,200</span>
-              <span class="dish-tag">Main</span>
-            </div>
-          </div>
-        </article>
-
-        <!-- Dish 4 -->
-        <article class="dish-card">
-          <div class="dish-image">
-            <img src="images/prawns.jpg" alt="Garlic Butter Prawns" loading="lazy" />
-          </div>
-          <div class="dish-info">
-            <h3 class="dish-name">Garlic Butter Prawns</h3>
-            <p class="dish-desc">Jumbo prawns sautéed in garlic herb butter with lemon zest</p>
-            <div class="dish-footer">
-              <span class="dish-price">₹950</span>
-              <span class="dish-tag">Starter</span>
-            </div>
-          </div>
-        </article>
-
-        <!-- Dish 5 -->
-        <article class="dish-card">
-          <div class="dish-image">
-            <img src="images/tiramisu.jpg" alt="Tiramisu Classico" loading="lazy" />
-          </div>
-          <div class="dish-info">
-            <h3 class="dish-name">Tiramisu Classico</h3>
-            <p class="dish-desc">Traditional Italian tiramisu with mascarpone, espresso, and cocoa</p>
-            <div class="dish-footer">
-              <span class="dish-price">₹550</span>
-              <span class="dish-tag">Dessert</span>
-            </div>
-          </div>
-        </article>
-
-        <!-- Dish 6 -->
-        <article class="dish-card">
-          <div class="dish-image">
-            <img src="images/butter-chicken.jpg" alt="Butter Chicken Royale" loading="lazy" />
-            <span class="dish-badge">New</span>
-          </div>
-          <div class="dish-info">
-            <h3 class="dish-name">Butter Chicken Royale</h3>
-            <p class="dish-desc">Slow-cooked chicken in rich tomato-butter gravy with naan</p>
-            <div class="dish-footer">
-              <span class="dish-price">₹750</span>
-              <span class="dish-tag">Main</span>
-            </div>
-          </div>
-        </article>
+      <div class="feature-card">
+        <h3>Luxury Interior</h3>
+        <p>Elegant black &amp; white ambience for every occasion.</p>
       </div>
     </div>
   </section>
 
-  <!-- About Section -->
-  <section class="section about-section" id="about">
-    <div class="container">
-      <div class="about-grid">
-        <div class="about-image">
-          <img src="images/chef.jpg" alt="Our Kitchen & Executive Chef" class="about-img" loading="lazy" />
-        </div>
-        <div class="about-content">
-          <p class="section-label">Our Story</p>
-          <h2 class="section-title">A Legacy of Flavor</h2>
-          <p class="about-text">
-            Founded in 2010, La Maison Dorée has been a cornerstone of fine dining in the heart of the city.
-            Our philosophy is simple — source the finest ingredients, respect culinary traditions, and deliver
-            an unforgettable dining experience.
-          </p>
-          <p class="about-text">
-            Our award-winning chefs bring decades of experience from kitchens across Europe and Asia, creating
-            a fusion of flavors that celebrates diversity and craftsmanship.
-          </p>
-          <div class="about-stats">
-            <div class="about-stat">
-              <span class="about-stat-num">15+</span>
-              <span class="about-stat-label">Years</span>
-            </div>
-            <div class="about-stat">
-              <span class="about-stat-num">50+</span>
-              <span class="about-stat-label">Dishes</span>
-            </div>
-            <div class="about-stat">
-              <span class="about-stat-num">10K+</span>
-              <span class="about-stat-label">Happy Guests</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Special Offers -->
-  <section class="section specials-section" id="specials">
-    <div class="container">
-      <div class="section-header">
-        <p class="section-label">Limited Time</p>
-        <h2 class="section-title">Special Offers</h2>
-      </div>
-      <div class="specials-grid">
-        <div class="special-card">
-          <div class="special-icon">🌙</div>
-          <h3>Candlelight Dinner</h3>
-          <p>Romantic 5-course dinner for two with wine pairing and live music every Friday & Saturday.</p>
-          <span class="special-price">₹3,500 <small>for two</small></span>
-        </div>
-        <div class="special-card featured">
-          <div class="special-badge">Best Value</div>
-          <div class="special-icon">🍷</div>
-          <h3>Sunday Brunch</h3>
-          <p>Unlimited brunch buffet with complimentary mimosas and live cooking stations.</p>
-          <span class="special-price">₹1,200 <small>per person</small></span>
-        </div>
-        <div class="special-card">
-          <div class="special-icon">🎂</div>
-          <h3>Birthday Special</h3>
-          <p>Celebrate with a complimentary dessert platter and a personalized cake for the guest of honor.</p>
-          <span class="special-price">Free <small>with booking</small></span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Testimonials -->
-  <section class="section testimonials-section" id="testimonials">
-    <div class="container">
-      <div class="section-header">
-        <p class="section-label">What People Say</p>
-        <h2 class="section-title">Guest Reviews</h2>
-      </div>
-      <div class="testimonials-grid">
-        <blockquote class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-text">"Absolutely exquisite! The truffle pasta was the best I've ever had. The ambiance and service made our anniversary unforgettable."</p>
-          <footer class="testimonial-author">
-            <div class="author-avatar">RS</div>
-            <div>
-              <cite class="author-name">Rahul Sharma</cite>
-              <span class="author-role">Regular Guest</span>
-            </div>
-          </footer>
-        </blockquote>
-        <blockquote class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-text">"A hidden gem! Every dish is a masterpiece. The Sunday brunch is incredible value with fantastic variety."</p>
-          <footer class="testimonial-author">
-            <div class="author-avatar">PM</div>
-            <div>
-              <cite class="author-name">Priya Menon</cite>
-              <span class="author-role">Food Blogger</span>
-            </div>
-          </footer>
-        </blockquote>
-        <blockquote class="testimonial-card">
-          <div class="testimonial-stars">★★★★★</div>
-          <p class="testimonial-text">"From the warm welcome to the last bite, La Maison Dorée delivers perfection. A must-visit for food lovers."</p>
-          <footer class="testimonial-author">
-            <div class="author-avatar">AK</div>
-            <div>
-              <cite class="author-name">Amit Kumar</cite>
-              <span class="author-role">Food Critic</span>
-            </div>
-          </footer>
-        </blockquote>
-      </div>
-    </div>
-  </section>
-
-  <!-- Contact / Hours / Location -->
-  <section class="section contact-section" id="contact">
-    <div class="container">
-      <div class="contact-grid">
-        <div class="contact-info">
-          <p class="section-label">Visit Us</p>
-          <h2 class="section-title">Opening Hours & Location</h2>
-          <div class="hours-list">
-            <div class="hours-item">
-              <span class="hours-day">Monday – Friday</span>
-              <span class="hours-time">12:00 PM – 10:30 PM</span>
-            </div>
-            <div class="hours-item">
-              <span class="hours-day">Saturday</span>
-              <span class="hours-time">11:00 AM – 11:00 PM</span>
-            </div>
-            <div class="hours-item">
-              <span class="hours-day">Sunday</span>
-              <span class="hours-time">10:00 AM – 10:00 PM</span>
-            </div>
-          </div>
-          <div class="contact-details">
-            <p>📍 42 Heritage Lane, Civil Lines, Nagpur – 440001</p>
-            <p>📞 +91 712-123-4567</p>
-            <p>✉️ reservations@lamaisondoree.in</p>
-          </div>
-          <a href="#hero" class="btn btn-primary">Book a Table</a>
-        </div>
-        <div class="contact-map">
-          <div class="map-placeholder">
-            <span class="map-icon">🗺️</span>
-            <p>Map Location</p>
-            <small>42 Heritage Lane, Civil Lines, Nagpur</small>
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- Reservation Section -->
+  <section class="reservation-section" id="reservation">
+    <h2>Reserve Your Table</h2>
+    <p>Open Daily • 10:00 AM - 11:00 PM</p>
+    <a href="#reservation" class="btn">Book Now</a>
   </section>
 
   <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <h3>La Maison Dorée</h3>
-          <p>Where every meal becomes a cherished memory.</p>
-        </div>
-        <div class="footer-links">
-          <h4>Quick Links</h4>
-          <ul>
-            <li><a href="#hero">Home</a></li>
-            <li><a href="#menu">Menu</a></li>
-            <li><a href="#about">About</a></li>
-            <li><a href="#contact">Contact</a></li>
-          </ul>
-        </div>
-        <div class="footer-links">
-          <h4>Follow Us</h4>
-          <ul>
-            <li><a href="#contact">Instagram</a></li>
-            <li><a href="#contact">Facebook</a></li>
-            <li><a href="#contact">Twitter</a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>&copy; 2024 La Maison Dorée. All rights reserved. | Practical 1 — Web Development Lab</p>
-      </div>
-    </div>
+  <footer class="footer" id="contact">
+    <p>&copy; 2026 BLACK PLATE Restaurant | Premium Dining Experience</p>
   </footer>
 
-  <!-- Back to Top -->
-  <a href="#hero" class="back-to-top" aria-label="Back to top">↑</a>
 </body>
 </html>
+

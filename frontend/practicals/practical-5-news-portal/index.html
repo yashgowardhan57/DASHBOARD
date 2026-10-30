@@ -1,656 +1,370 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Daily Pulse responsive news portal">
+  <title>Daily Pulse — News Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./public/css/style.css">
   <script>
     if (!window.location.pathname.endsWith('/') && !window.location.pathname.split('/').pop().includes('.')) {
       window.location.replace(window.location.pathname + '/' + window.location.search + window.location.hash);
     }
   </script>
-  <meta name="description" content="The Daily Chronicle — Multi-Page Responsive News Portal with Express.js, EJS Partials, and Search" />
-  <title>The Daily Chronicle — Practical 5 (Digital News Portal)</title>
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  
-  <link rel="stylesheet" href="public/css/news.css" />
-  <style>
-    /* In-browser article modal and active filters */
-    .article-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(8px);
-      z-index: 2000;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-    }
-    .article-modal-box {
-      background: #FFFFFF;
-      color: #111111;
-      border-radius: 12px;
-      max-width: 780px;
-      width: 100%;
-      max-height: 88vh;
-      overflow-y: auto;
-      padding: 2.5rem;
-      position: relative;
-      box-shadow: 0 25px 60px rgba(0,0,0,0.5);
-    }
-    .modal-close-icon {
-      position: absolute;
-      top: 1.25rem;
-      right: 1.25rem;
-      background: #F3F4F6;
-      border: none;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 1.25rem;
-      color: #4B5563;
-      transition: all 0.2s;
-    }
-    .modal-close-icon:hover {
-      background: #E5E7EB;
-      color: #111;
-    }
-    .article-modal-body p {
-      font-family: 'Lora', Georgia, serif;
-      font-size: 1.05rem;
-      line-height: 1.8;
-      color: #2D3748;
-      margin-bottom: 1.25rem;
-    }
-    .server-status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 0.72rem;
-      color: #BBB;
-      background: rgba(255, 255, 255, 0.08);
-      padding: 0.2rem 0.6rem;
-      border-radius: 9999px;
-      margin-left: 0.75rem;
-    }
-    .status-dot-mini {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #10B981;
-      box-shadow: 0 0 6px #10B981;
-    }
-    .status-dot-mini.live {
-      background: #3B82F6;
-      box-shadow: 0 0 6px #3B82F6;
-    }
-    .guide-btn-top {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.2);
-      color: #DDD;
-      border-radius: 4px;
-      font-size: 0.7rem;
-      padding: 0.2rem 0.5rem;
-      cursor: pointer;
-      margin-left: 0.5rem;
-      transition: all 0.2s;
-    }
-    .guide-btn-top:hover {
-      background: rgba(255,255,255,0.1);
-      color: #FFF;
-    }
-    .category-filter-item {
-      cursor: pointer;
-    }
-    .tag-badge {
-      display: inline-block;
-      background: #F3F4F6;
-      color: #4B5563;
-      padding: 0.2rem 0.6rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      margin-right: 0.4rem;
-      margin-bottom: 0.4rem;
-    }
-    .news-card {
-      cursor: pointer;
-    }
-  </style>
 </head>
 <body>
-  <!-- Top Ticker / Hub Link Bar -->
-  <div class="top-bar">
-    <div class="container top-bar-content">
-      <div class="top-bar-left">
-        <a href="../../index.html" class="back-hub-pill" id="backToHub">
-          &larr; Back to Practical Hub
-        </a>
-        <span class="edition-tag">Practical 5 &bull; EJS Digital News Portal</span>
-        <span class="server-status-pill">
-          <span class="status-dot-mini" id="newsStatusDot"></span>
-          <span id="newsStatusLabel">Editorial Portal Active</span>
-        </span>
-      </div>
-      <div class="top-bar-right">
-        <span class="date-display" id="dateDisplay">October 29, 2026</span>
-        <span class="weather-pill">Nagpur, IN &bull; 28&deg;C Clear</span>
-        <button type="button" class="guide-btn-top" id="openServerGuideBtn">EJS Server Guide</button>
-      </div>
-    </div>
-  </div>
+  <!-- Back to Dashboard -->
+  <a href="/index.html" class="back-to-hub" aria-label="Back to Practical Hub">
+    ← Back to Hub
+  </a>
   <script>
-    var hubBtn = document.getElementById('backToHub');
-    if (hubBtn) {
-      hubBtn.href = (window.location.protocol === 'file:' || !window.location.pathname.startsWith('/practicals')) ? '../../index.html' : '/index.html';
+    if (window.location.protocol === 'file:') {
+      var hub = document.querySelector('.back-to-hub');
+      if (hub) hub.href = '../../index.html';
     }
-    var d = new Date();
-    var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    document.getElementById('dateDisplay').textContent = d.toLocaleDateString('en-US', options);
   </script>
 
-  <!-- Newspaper Masthead -->
-  <header class="masthead">
-    <div class="container masthead-inner">
-      <div class="masthead-meta-left">
-        <span class="meta-label">ESTABLISHED 2026</span>
-        <span class="meta-sub">VOL. CIV &bull; NO. 248</span>
-      </div>
-      
-      <div class="masthead-center">
-        <a href="#home" class="brand-link" id="brandHomeLink">
-          <h1 class="newspaper-title">THE DAILY CHRONICLE</h1>
-          <p class="newspaper-motto">Veritas et Sapientia &bull; Technology, Science &amp; Global Affairs</p>
-        </a>
-      </div>
 
-      <div class="masthead-meta-right">
-        <div class="search-form">
-          <input type="text" id="searchInput" placeholder="Search news archive..." class="search-input" autocomplete="off" />
-          <button type="button" class="search-btn" id="searchSubmitBtn" aria-label="Search">
-            <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
-            </svg>
-          </button>
-        </div>
-      </div>
+  <div class="top-strip">
+    <div class="container top-strip-inner">
+      <span>THURSDAY, OCTOBER 8, 2026</span>
+      <span class="top-note">Independent • Fast • Digital</span>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-main">
+      <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">☰</button>
+      <a href="/" class="brand">
+        <span class="brand-mark">DP</span>
+        <span>
+          <strong>DAILY PULSE</strong>
+          <small>Your world. Your story.</small>
+        </span>
+      </a>
+
+      <form class="search-form" action="/search" method="GET" role="search">
+        <input type="search" name="q" placeholder="Search news..." aria-label="Search news" value="">
+        <button type="submit" aria-label="Search">⌕</button>
+      </form>
     </div>
 
-    <!-- Editorial Navigation Bar -->
-    <nav class="nav-bar">
-      <div class="container">
-        <ul class="nav-list" id="categoryNav">
-          <li class="nav-item active category-filter-item" data-category="All">
-            <a class="nav-link">All Desks</a>
-          </li>
-          <li class="nav-item category-filter-item" data-category="Technology">
-            <a class="nav-link">Technology</a>
-          </li>
-          <li class="nav-item category-filter-item" data-category="Education">
-            <a class="nav-link">Education</a>
-          </li>
-          <li class="nav-item category-filter-item" data-category="Business">
-            <a class="nav-link">Business</a>
-          </li>
-          <li class="nav-item category-filter-item" data-category="Sports">
-            <a class="nav-link">Sports</a>
-          </li>
-          <li class="nav-item category-filter-item" data-category="Entertainment">
-            <a class="nav-link">Entertainment</a>
-          </li>
-        </ul>
+    <nav class="main-nav" id="mainNav">
+      <div class="container nav-inner">
+        <a href="/" class="active">Home</a>
+        
+          <a href="/category/national" class="">National</a>
+        
+          <a href="/category/world" class="">World</a>
+        
+          <a href="/category/technology" class="">Technology</a>
+        
+          <a href="/category/business" class="">Business</a>
+        
+          <a href="/category/sports" class="">Sports</a>
+        
+          <a href="/category/entertainment" class="">Entertainment</a>
+        
+          <a href="/category/science" class="">Science</a>
+        
       </div>
     </nav>
   </header>
 
-  <main class="main-body" id="home">
-    <div class="container">
+
+<main>
+  <section class="container breaking">
+    <span class="breaking-label">BREAKING</span>
+    <div class="ticker">
+      <div class="ticker-track">
+        <span>Latest updates, technology, business, sports and world news — all in one place.</span>
+        <span>Stay informed with Daily Pulse.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="container page-heading">
+    <div>
+      <span class="eyebrow">TODAY'S EDITION</span>
+      <h1>Top Stories</h1>
+      <p>Fresh stories, quick reads and the topics people are following today.</p>
+    </div>
+  </section>
+
+  
+  <section class="container hero-grid">
+    
+    <a class="hero-card" href="/article/1">
+      <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" alt="AI tools are changing how students learn, create and work">
+      <div class="hero-overlay">
+        <span class="category-pill">Technology</span>
+        <h2>AI tools are changing how students learn, create and work</h2>
+        <p>New generations of AI assistants are becoming everyday tools for research, coding, writing and creative projects.</p>
+        <span class="read-more">Read full story →</span>
+      </div>
+    </a>
+
+    <div class="side-stories">
       
-      <!-- Trending News Ticker Bar -->
-      <div class="trending-strip">
-        <div class="trending-label">
-          <span class="flash-icon">&#9889;</span> TRENDING NOW
-        </div>
-        <div class="trending-links" id="trendingStrip">
-          <!-- Populated by JavaScript -->
-        </div>
-      </div>
-
-      <!-- Featured Front-Page Story (Hero) -->
-      <section class="featured-hero" id="heroSection">
-        <div class="featured-grid">
-          <div class="featured-media" id="heroMedia" style="background: linear-gradient(135deg, #1E3A8A, #3B82F6);">
-            <span class="featured-emoji" id="heroEmoji">⚡</span>
-            <div class="featured-overlay">
-              <span class="featured-badge" id="heroBadge">COVER STORY &bull; Technology</span>
-            </div>
+        <a class="compact-card" href="/article/2">
+          <img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Cities focus on smarter public services and digital access">
+          <div>
+            <span class="mini-category">National</span>
+            <h3>Cities focus on smarter public services and digital access</h3>
+            <small>07:45 AM</small>
           </div>
-          <div class="featured-content">
-            <div class="featured-meta">
-              <span class="author-name" id="heroAuthor">By Elena Rostova</span>
-              <span class="meta-dot">&bull;</span>
-              <span class="pub-date" id="heroDate">October 24, 2026</span>
-              <span class="meta-dot">&bull;</span>
-              <span class="read-duration" id="heroReadTime">4 min read</span>
-            </div>
-            <h2 class="featured-title">
-              <a href="javascript:void(0)" id="heroTitleLink">Next-Generation Web Standards: How Modern Browsers Are Revolutionizing Performance</a>
-            </h2>
-            <p class="featured-summary" id="heroSummary">
-              From WebAssembly components to native CSS nesting and scroll-driven animations, explore how browser engines are delivering unprecedented client-side speed.
-            </p>
-            <div class="featured-actions">
-              <button type="button" class="btn-read-lead" id="heroReadBtn">
-                Read Full Coverage &rarr;
-              </button>
-              <span class="views-count" id="heroViews">&#128065; 14,820 Readers</span>
-            </div>
+        </a>
+      
+        <a class="compact-card" href="/article/3">
+          <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Small businesses adopt digital payments and local online stores">
+          <div>
+            <span class="mini-category">Business</span>
+            <h3>Small businesses adopt digital payments and local online stores</h3>
+            <small>07:20 AM</small>
           </div>
-        </div>
-      </section>
-
-      <!-- Search Query Info Banner (Hidden by default) -->
-      <div id="searchNotice" style="display:none; background:#F3F4F6; padding:0.85rem 1.25rem; border-radius:8px; margin:1.5rem 0; border-left:4px solid var(--accent-red);">
-        Showing search results for: <strong id="searchQueryText"></strong> &bull; <a href="javascript:void(0)" id="clearSearchBtn" style="color:var(--accent-red); font-weight:600; margin-left:0.5rem;">Clear search</a>
-      </div>
-
-      <!-- News Grid: Latest Dispatches -->
-      <section class="section-block">
-        <div class="section-title-bar">
-          <h2 class="section-heading" id="gridTitle">LATEST DISPATCHES</h2>
-          <span class="section-sub" id="gridSubtitle">Real-Time Editorial Updates Across Desks</span>
-        </div>
-
-        <div class="news-cards-grid" id="articlesGrid">
-          <!-- Populated by JavaScript -->
-        </div>
-      </section>
-
-      <!-- Category Desks Overview -->
-      <section class="section-block category-highlights-block">
-        <div class="section-title-bar">
-          <h2 class="section-heading">EXPLORE DESKS</h2>
-          <span class="section-sub">Specialized Reporting Departments</span>
-        </div>
-        <div class="desks-grid">
-          <div class="desk-card" data-category="Technology">
-            <div class="desk-card-inner">
-              <h3 class="desk-title">Technology</h3>
-              <p class="desk-desc">Latest reporting on web architectures, browser platforms, and distributed systems.</p>
-              <span class="desk-link-text">Browse Technology &rarr;</span>
-            </div>
+        </a>
+      
+        <a class="compact-card" href="/article/4">
+          <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Young athletes turn training data into a competitive advantage">
+          <div>
+            <span class="mini-category">Sports</span>
+            <h3>Young athletes turn training data into a competitive advantage</h3>
+            <small>06:55 AM</small>
           </div>
-          <div class="desk-card" data-category="Education">
-            <div class="desk-card-inner">
-              <h3 class="desk-title">Education</h3>
-              <p class="desk-desc">Curriculum updates, university research benchmarks, and AI-assisted engineering labs.</p>
-              <span class="desk-link-text">Browse Education &rarr;</span>
-            </div>
-          </div>
-          <div class="desk-card" data-category="Business">
-            <div class="desk-card-inner">
-              <h3 class="desk-title">Business</h3>
-              <p class="desk-desc">Supply chain economics, domestic fab nodes, and renewable energy capital flows.</p>
-              <span class="desk-link-text">Browse Business &rarr;</span>
-            </div>
-          </div>
-          <div class="desk-card" data-category="Sports">
-            <div class="desk-card-inner">
-              <h3 class="desk-title">Sports</h3>
-              <p class="desk-desc">High-frequency telemetry analysis, pitch ergonomics, and tactical transformations.</p>
-              <span class="desk-link-text">Browse Sports &rarr;</span>
-            </div>
-          </div>
-          <div class="desk-card" data-category="Entertainment">
-            <div class="desk-card-inner">
-              <h3 class="desk-title">Entertainment</h3>
-              <p class="desk-desc">Virtual volume stages, real-time CGI rendering, and next-generation cinematic craft.</p>
-              <span class="desk-link-text">Browse Entertainment &rarr;</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
+        </a>
+      
     </div>
-  </main>
+  </section>
+  
 
-  <!-- Newspaper Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-top">
-        <div class="footer-brand">
-          <h2 class="footer-title">THE DAILY CHRONICLE</h2>
-          <p class="footer-motto">Veritas et Sapientia &bull; Established 2026</p>
-          <p class="footer-about">
-            A dynamic digital newspaper developed as Practical 5 demonstrating EJS templates, reusable components, partial layouts, dynamic routing, and search queries.
-          </p>
-        </div>
-        <div class="footer-cols">
-          <div class="footer-col">
-            <h4 class="col-title">Editorial Desks</h4>
-            <ul class="col-links">
-              <li><a href="javascript:void(0)" class="cat-link" data-cat="Technology">Technology</a></li>
-              <li><a href="javascript:void(0)" class="cat-link" data-cat="Education">Education</a></li>
-              <li><a href="javascript:void(0)" class="cat-link" data-cat="Business">Business</a></li>
-              <li><a href="javascript:void(0)" class="cat-link" data-cat="Sports">Sports</a></li>
-              <li><a href="javascript:void(0)" class="cat-link" data-cat="Entertainment">Entertainment</a></li>
-            </ul>
-          </div>
-          <div class="footer-col">
-            <h4 class="col-title">Architecture</h4>
-            <ul class="col-links">
-              <li><span style="color:#AAA;">Node.js / Express</span></li>
-              <li><span style="color:#AAA;">EJS Template Engine</span></li>
-              <li><span style="color:#AAA;">Reusable Partials</span></li>
-              <li><span style="color:#AAA;">Responsive Typography</span></li>
-            </ul>
-          </div>
-        </div>
+  <section class="container content-layout">
+    <div class="news-section">
+      <div class="section-title">
+        <h2>Latest News</h2>
+        <span>10 stories</span>
       </div>
-      <div class="footer-bottom">
-        <p>&copy; 2026 The Daily Chronicle &bull; Yash Gowardhan (B.Tech IT, 3rd Year) &bull; SVPCET</p>
-        <p class="footer-sub">Practical 5 — Web Development Laboratory Assignment</p>
+
+      
+
+      <div class="news-grid">
+        
+          <article class="news-card">
+            <a href="/article/1" class="card-image">
+              <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" alt="AI tools are changing how students learn, create and work" loading="lazy">
+              <span class="trending-badge">TRENDING</span>
+            </a>
+            <div class="card-body">
+              <span class="mini-category">Technology</span>
+              <h3><a href="/article/1">AI tools are changing how students learn, create and work</a></h3>
+              <p>New generations of AI assistants are becoming everyday tools for research, coding, writing and creative projects.</p>
+              <div class="card-meta"><span>Daily Pulse Desk</span><span>08:10 AM</span></div>
+            </div>
+          </article>
+        
+          <article class="news-card">
+            <a href="/article/2" class="card-image">
+              <img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Cities focus on smarter public services and digital access" loading="lazy">
+              <span class="trending-badge">TRENDING</span>
+            </a>
+            <div class="card-body">
+              <span class="mini-category">National</span>
+              <h3><a href="/article/2">Cities focus on smarter public services and digital access</a></h3>
+              <p>Local administrations are expanding digital-first services while improving access for citizens who prefer in-person support.</p>
+              <div class="card-meta"><span>News Bureau</span><span>07:45 AM</span></div>
+            </div>
+          </article>
+        
+          <article class="news-card">
+            <a href="/article/3" class="card-image">
+              <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Small businesses adopt digital payments and local online stores" loading="lazy">
+              
+            </a>
+            <div class="card-body">
+              <span class="mini-category">Business</span>
+              <h3><a href="/article/3">Small businesses adopt digital payments and local online stores</a></h3>
+              <p>Entrepreneurs are combining neighborhood relationships with online discovery to reach more customers.</p>
+              <div class="card-meta"><span>Business Desk</span><span>07:20 AM</span></div>
+            </div>
+          </article>
+        
+          <article class="news-card">
+            <a href="/article/4" class="card-image">
+              <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Young athletes turn training data into a competitive advantage" loading="lazy">
+              <span class="trending-badge">TRENDING</span>
+            </a>
+            <div class="card-body">
+              <span class="mini-category">Sports</span>
+              <h3><a href="/article/4">Young athletes turn training data into a competitive advantage</a></h3>
+              <p>Wearable technology and video analysis are helping players understand performance beyond the scoreboard.</p>
+              <div class="card-meta"><span>Sports Desk</span><span>06:55 AM</span></div>
+            </div>
+          </article>
+        
+          <article class="news-card">
+            <a href="/article/5" class="card-image">
+              <img src="https://images.unsplash.com/photo-1444723121867-7a241cacace9?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Global cities share ideas for cleaner and more resilient neighborhoods" loading="lazy">
+              
+            </a>
+            <div class="card-body">
+              <span class="mini-category">World</span>
+              <h3><a href="/article/5">Global cities share ideas for cleaner and more resilient neighborhoods</a></h3>
+              <p>Urban planners are comparing practical approaches to public transport, heat management and green spaces.</p>
+              <div class="card-meta"><span>World Desk</span><span>06:30 AM</span></div>
+            </div>
+          </article>
+        
+          <article class="news-card">
+            <a href="/article/6" class="card-image">
+              <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Researchers explore new ways to make everyday technology more efficient" loading="lazy">
+              
+            </a>
+            <div class="card-body">
+              <span class="mini-category">Science</span>
+              <h3><a href="/article/6">Researchers explore new ways to make everyday technology more efficient</a></h3>
+              <p>Energy efficiency and practical engineering remain major themes across current research projects.</p>
+              <div class="card-meta"><span>Science Desk</span><span>06:10 AM</span></div>
+            </div>
+          </article>
+        
+          <article class="news-card">
+            <a href="/article/7" class="card-image">
+              <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Streaming platforms experiment with shorter and more interactive formats" loading="lazy">
+              
+            </a>
+            <div class="card-body">
+              <span class="mini-category">Entertainment</span>
+              <h3><a href="/article/7">Streaming platforms experiment with shorter and more interactive formats</a></h3>
+              <p>Creators are testing new storytelling styles designed for mobile-first audiences.</p>
+              <div class="card-meta"><span>Culture Desk</span><span>05:40 AM</span></div>
+            </div>
+          </article>
+        
+          <article class="news-card">
+            <a href="/article/8" class="card-image">
+              <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Web developers build faster interfaces with modern CSS and JavaScript" loading="lazy">
+              <span class="trending-badge">TRENDING</span>
+            </a>
+            <div class="card-body">
+              <span class="mini-category">Technology</span>
+              <h3><a href="/article/8">Web developers build faster interfaces with modern CSS and JavaScript</a></h3>
+              <p>Responsive design continues to evolve as users expect smooth experiences across phones, tablets and laptops.</p>
+              <div class="card-meta"><span>Tech Desk</span><span>09:15 PM</span></div>
+            </div>
+          </article>
+        
+          <article class="news-card">
+            <a href="/article/9" class="card-image">
+              <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Education projects put greater emphasis on practical digital skills" loading="lazy">
+              
+            </a>
+            <div class="card-body">
+              <span class="mini-category">National</span>
+              <h3><a href="/article/9">Education projects put greater emphasis on practical digital skills</a></h3>
+              <p>Schools and training programs are adding project-based activities to complement classroom learning.</p>
+              <div class="card-meta"><span>Education Desk</span><span>08:40 PM</span></div>
+            </div>
+          </article>
+        
+          <article class="news-card">
+            <a href="/article/10" class="card-image">
+              <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Consumers compare value, convenience and trust before buying online" loading="lazy">
+              
+            </a>
+            <div class="card-body">
+              <span class="mini-category">Business</span>
+              <h3><a href="/article/10">Consumers compare value, convenience and trust before buying online</a></h3>
+              <p>Clear product information and reliable service are becoming central to digital shopping decisions.</p>
+              <div class="card-meta"><span>Business Desk</span><span>07:55 PM</span></div>
+            </div>
+          </article>
+        
       </div>
     </div>
+
+    <aside class="sidebar">
+      <div class="sidebar-box">
+        <div class="section-title small"><h2>Trending Now</h2></div>
+        <ol class="trending-list">
+          
+            <li>
+              <span class="trend-number">01</span>
+              <div>
+                <a href="/article/1">AI tools are changing how students learn, create and work</a>
+                <small>Technology • 08:10 AM</small>
+              </div>
+            </li>
+          
+            <li>
+              <span class="trend-number">02</span>
+              <div>
+                <a href="/article/2">Cities focus on smarter public services and digital access</a>
+                <small>National • 07:45 AM</small>
+              </div>
+            </li>
+          
+            <li>
+              <span class="trend-number">03</span>
+              <div>
+                <a href="/article/4">Young athletes turn training data into a competitive advantage</a>
+                <small>Sports • 06:55 AM</small>
+              </div>
+            </li>
+          
+            <li>
+              <span class="trend-number">04</span>
+              <div>
+                <a href="/article/8">Web developers build faster interfaces with modern CSS and JavaScript</a>
+                <small>Technology • 09:15 PM</small>
+              </div>
+            </li>
+          
+        </ol>
+      </div>
+
+      <div class="sidebar-box newsletter">
+        <span class="eyebrow">DAILY BRIEF</span>
+        <h2>News that fits your day.</h2>
+        <p>Browse by category or use the search bar to find a story instantly.</p>
+        <a href="/category/technology" class="button">Explore Technology</a>
+      </div>
+    </aside>
+  </section>
+</main>
+
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <div class="footer-brand">DAILY PULSE</div>
+        <p>A responsive EJS news portal demo using local raw data. No database required.</p>
+      </div>
+      <div>
+        <h3>Sections</h3>
+        <div class="footer-links">
+          
+            <a href="/category/national">National</a>
+          
+            <a href="/category/world">World</a>
+          
+            <a href="/category/technology">Technology</a>
+          
+            <a href="/category/business">Business</a>
+          
+            <a href="/category/sports">Sports</a>
+          
+        </div>
+      </div>
+      <div>
+        <h3>Project</h3>
+        <p>Built with Node.js, Express, EJS, CSS Grid, Flexbox and media queries.</p>
+      </div>
+    </div>
+    <div class="container copyright">© 2026 Daily Pulse • Demo project</div>
   </footer>
-
-  <!-- 1. Interactive Article Reader Modal -->
-  <div class="article-modal" id="articleModal">
-    <div class="article-modal-box">
-      <button type="button" class="modal-close-icon" id="closeArticleModalBtn">&times;</button>
-      <div style="margin-bottom: 0.75rem;">
-        <span class="featured-badge" id="modalCategoryBadge" style="background:var(--accent-red); color:#fff; padding:0.25rem 0.65rem; border-radius:4px; font-size:0.75rem; font-weight:700;">
-          TECHNOLOGY
-        </span>
-      </div>
-      <h1 id="modalArticleTitle" style="font-family:'Cinzel',serif; font-size:1.85rem; line-height:1.25; margin-bottom:0.75rem; color:#111;">
-        Article Title
-      </h1>
-      <div style="font-size:0.875rem; color:#6B7280; margin-bottom:1.5rem; display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
-        <span id="modalArticleAuthor" style="font-weight:600; color:#111;">By Elena Rostova</span>
-        <span>&bull;</span>
-        <span id="modalArticleDate">October 24, 2026</span>
-        <span>&bull;</span>
-        <span id="modalArticleReadTime">4 min read</span>
-        <span>&bull;</span>
-        <span id="modalArticleViews">&#128065; 14,820 readers</span>
-      </div>
-      <div class="article-modal-body" id="modalArticleContent">
-        <!-- Prose injected here -->
-      </div>
-      <div style="margin-top:2rem; padding-top:1.25rem; border-top:1px solid #E5E7EB;" id="modalTagsContainer">
-        <!-- Tags injected here -->
-      </div>
-    </div>
-  </div>
-
-  <!-- 2. Server Architecture Guide Modal -->
-  <div class="article-modal" id="serverGuideModal">
-    <div class="article-modal-box" style="background:#181822; color:#FFF; max-width:640px;">
-      <button type="button" class="modal-close-icon" id="closeGuideModalBtn" style="background:#2A2A38; color:#DDD;">&times;</button>
-      <h2 style="font-family:'Cinzel',serif; font-size:1.4rem; color:#FFF; margin-bottom:0.5rem;">
-        Express.js + EJS Server Guide
-      </h2>
-      <p style="font-size:0.875rem; color:#A1A1AA; margin-bottom:1rem;">
-        Practical 5 is built with an Express.js backend and EJS template engine supporting reusable partials (<code>header.ejs</code>, <code>footer.ejs</code>, <code>news-card.ejs</code>).
-      </p>
-      <div style="background:#0D0D12; border:1px solid #27272A; border-radius:8px; padding:1rem; font-family:'JetBrains Mono',monospace; font-size:0.8125rem; color:#38BDF8; line-height:1.6; margin-bottom:1rem;">
-        <span style="color:#71717A;"># Run the EJS backend server locally:</span><br/>
-        cd backend/services/practical-5-news-portal<br/>
-        npm install<br/>
-        npm start<br/><br/>
-        <span style="color:#71717A;"># Server starts on port 3002:</span><br/>
-        http://localhost:3002/
-      </div>
-      <p style="font-size:0.8125rem; color:#71717A;">
-        When this standalone portal is open, articles can be read in full fidelity without any server dependency.
-      </p>
-    </div>
-  </div>
-
-  <!-- Load Data -->
-  <script src="data/articles.js"></script>
-
-  <!-- Interactive News Portal Controller -->
-  <script>
-    (function () {
-      'use strict';
-
-      var articles = window.NEWS_ARTICLES || [];
-      var activeCategory = 'All';
-      var activeQuery = '';
-
-      var grid = document.getElementById('articlesGrid');
-      var searchInput = document.getElementById('searchInput');
-      var searchNotice = document.getElementById('searchNotice');
-      var searchQueryText = document.getElementById('searchQueryText');
-      var clearSearchBtn = document.getElementById('clearSearchBtn');
-
-      var articleModal = document.getElementById('articleModal');
-      var closeArticleModalBtn = document.getElementById('closeArticleModalBtn');
-      var serverGuideModal = document.getElementById('serverGuideModal');
-      var openServerGuideBtn = document.getElementById('openServerGuideBtn');
-      var closeGuideModalBtn = document.getElementById('closeGuideModalBtn');
-
-      // Probe backend port 3002
-      function probeEjsServer() {
-        var dot = document.getElementById('newsStatusDot');
-        var label = document.getElementById('newsStatusLabel');
-        fetch('http://localhost:3002/api/health', { mode: 'no-cors' })
-          .then(function () {
-            dot.className = 'status-dot-mini live';
-            label.textContent = 'EJS Server Online (Port 3002)';
-          })
-          .catch(function () {
-            dot.className = 'status-dot-mini';
-            label.textContent = 'Standalone Portal Active';
-          });
-      }
-      probeEjsServer();
-
-      // Render Trending Bar
-      function renderTrending() {
-        var container = document.getElementById('trendingStrip');
-        var trending = articles.filter(function (a) { return a.isTrending; }).slice(0, 4);
-        container.innerHTML = trending.map(function (item, idx) {
-          return '<a href="javascript:void(0)" class="trending-item" data-id="' + item.id + '">' +
-            '<span class="trend-num">0' + (idx + 1) + '</span>' +
-            '<span class="trend-text">' + item.title + '</span>' +
-            '</a>';
-        }).join('');
-      }
-
-      // Render Hero Featured Story
-      function renderHero() {
-        var feat = articles.find(function (a) { return a.isFeatured; }) || articles[0];
-        if (!feat) return;
-        document.getElementById('heroMedia').style.background = feat.imageGradient || 'linear-gradient(135deg, #1E3A8A, #3B82F6)';
-        document.getElementById('heroEmoji').textContent = feat.imageEmoji || '⚡';
-        document.getElementById('heroBadge').textContent = 'COVER STORY \u2022 ' + feat.category.toUpperCase();
-        document.getElementById('heroAuthor').textContent = 'By ' + feat.author;
-        document.getElementById('heroDate').textContent = feat.date;
-        document.getElementById('heroReadTime').textContent = feat.readTime;
-        document.getElementById('heroTitleLink').textContent = feat.title;
-        document.getElementById('heroSummary').textContent = feat.summary;
-        document.getElementById('heroViews').innerHTML = '&#128065; ' + feat.views.toLocaleString() + ' Readers';
-
-        function openHero() { openArticleModal(feat.id); }
-        document.getElementById('heroReadBtn').onclick = openHero;
-        document.getElementById('heroTitleLink').onclick = openHero;
-      }
-
-      // Render Article Cards Grid
-      function renderArticles() {
-        var filtered = articles.filter(function (a) {
-          if (activeCategory !== 'All' && a.category.toLowerCase() !== activeCategory.toLowerCase()) {
-            return false;
-          }
-          if (activeQuery.trim()) {
-            var q = activeQuery.toLowerCase().trim();
-            var inTitle = a.title.toLowerCase().includes(q);
-            var inSummary = a.summary.toLowerCase().includes(q);
-            var inAuthor = a.author.toLowerCase().includes(q);
-            var inTags = (a.tags || []).some(function (t) { return t.toLowerCase().includes(q); });
-            if (!inTitle && !inSummary && !inAuthor && !inTags) return false;
-          }
-          return true;
-        });
-
-        if (filtered.length === 0) {
-          grid.innerHTML = '<div style="grid-column: 1 / -1; text-align:center; padding:3rem 1rem; color:#888;">' +
-            '<div style="font-size:2rem; margin-bottom:0.5rem;">📰</div>' +
-            '<h3>No articles found</h3>' +
-            '<p style="font-size:0.875rem;">Try adjusting your keyword search or category desk filter.</p>' +
-            '</div>';
-          return;
-        }
-
-        grid.innerHTML = filtered.map(function (a) {
-          return '<article class="news-card" data-id="' + a.id + '">' +
-            '<div class="card-media" style="background:' + a.imageGradient + '; height:140px; display:flex; align-items:center; justify-content:center; border-radius:8px 8px 0 0; position:relative;">' +
-            '<span style="font-size:2.5rem;">' + a.imageEmoji + '</span>' +
-            '<span class="card-category-badge" style="position:absolute; top:10px; left:10px; background:rgba(0,0,0,0.65); color:#fff; font-size:0.7rem; font-weight:700; padding:0.2rem 0.5rem; border-radius:4px; text-transform:uppercase;">' + a.category + '</span>' +
-            '</div>' +
-            '<div class="card-body" style="padding:1rem;">' +
-            '<div class="card-meta" style="font-size:0.75rem; color:#888; margin-bottom:0.4rem;">' +
-            '<span>' + a.date + '</span> &bull; <span>' + a.readTime + '</span>' +
-            '</div>' +
-            '<h3 class="card-title" style="font-family:\'Lora\',serif; font-size:1.05rem; line-height:1.35; margin-bottom:0.5rem; color:#111;">' +
-            a.title +
-            '</h3>' +
-            '<p class="card-excerpt" style="font-size:0.8125rem; color:#666; line-height:1.5; margin-bottom:0.75rem;">' +
-            a.summary +
-            '</p>' +
-            '<div class="card-footer" style="display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:#999; border-top:1px solid #EEE; padding-top:0.5rem;">' +
-            '<span>By ' + a.author + '</span>' +
-            '<span style="color:var(--accent-red); font-weight:600;">Read &rarr;</span>' +
-            '</div>' +
-            '</div>' +
-            '</article>';
-        }).join('');
-      }
-
-      // Open Article Reader Modal
-      function openArticleModal(id) {
-        var article = articles.find(function (a) { return a.id === Number(id); });
-        if (!article) return;
-
-        document.getElementById('modalCategoryBadge').textContent = article.category.toUpperCase();
-        document.getElementById('modalArticleTitle').textContent = article.title;
-        document.getElementById('modalArticleAuthor').textContent = 'By ' + article.author;
-        document.getElementById('modalArticleDate').textContent = article.date;
-        document.getElementById('modalArticleReadTime').textContent = article.readTime;
-        document.getElementById('modalArticleViews').innerHTML = '&#128065; ' + article.views.toLocaleString() + ' readers';
-        document.getElementById('modalArticleContent').innerHTML = article.content;
-
-        var tagsHtml = (article.tags || []).map(function (t) {
-          return '<span class="tag-badge">#' + t + '</span>';
-        }).join('');
-        document.getElementById('modalTagsContainer').innerHTML = '<span style="font-size:0.8125rem; font-weight:600; margin-right:0.5rem; color:#666;">Topics:</span>' + tagsHtml;
-
-        articleModal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-      }
-
-      function closeArticleModal() {
-        articleModal.style.display = 'none';
-        document.body.style.overflow = '';
-      }
-
-      // Category Switching
-      document.querySelectorAll('.category-filter-item').forEach(function (el) {
-        el.addEventListener('click', function () {
-          document.querySelectorAll('.category-filter-item').forEach(function (item) { item.classList.remove('active'); });
-          this.classList.add('active');
-          activeCategory = this.getAttribute('data-category');
-          document.getElementById('gridTitle').textContent = activeCategory === 'All' ? 'LATEST DISPATCHES' : activeCategory.toUpperCase() + ' DESK';
-          renderArticles();
-        });
-      });
-
-      // Desk Cards in Bottom Grid
-      document.querySelectorAll('.desk-card').forEach(function (card) {
-        card.addEventListener('click', function () {
-          var cat = this.getAttribute('data-category');
-          var targetTab = document.querySelector('.category-filter-item[data-category="' + cat + '"]');
-          if (targetTab) targetTab.click();
-          window.scrollTo({ top: document.querySelector('.section-block').offsetTop - 60, behavior: 'smooth' });
-        });
-      });
-
-      document.querySelectorAll('.cat-link').forEach(function (link) {
-        link.addEventListener('click', function () {
-          var cat = this.getAttribute('data-cat');
-          var targetTab = document.querySelector('.category-filter-item[data-category="' + cat + '"]');
-          if (targetTab) targetTab.click();
-          window.scrollTo({ top: document.querySelector('.section-block').offsetTop - 60, behavior: 'smooth' });
-        });
-      });
-
-      // Search handling
-      function handleSearch() {
-        activeQuery = searchInput.value;
-        if (activeQuery.trim()) {
-          searchNotice.style.display = 'block';
-          searchQueryText.textContent = '"' + activeQuery + '"';
-        } else {
-          searchNotice.style.display = 'none';
-        }
-        renderArticles();
-      }
-
-      searchInput.addEventListener('input', handleSearch);
-      document.getElementById('searchSubmitBtn').addEventListener('click', handleSearch);
-      clearSearchBtn.addEventListener('click', function () {
-        searchInput.value = '';
-        activeQuery = '';
-        searchNotice.style.display = 'none';
-        renderArticles();
-      });
-
-      // Article click delegation
-      document.addEventListener('click', function (e) {
-        var card = e.target.closest('.news-card') || e.target.closest('.trending-item');
-        if (card && card.dataset.id) {
-          openArticleModal(card.dataset.id);
-        }
-      });
-
-      closeArticleModalBtn.addEventListener('click', closeArticleModal);
-      articleModal.addEventListener('click', function (e) {
-        if (e.target === articleModal) closeArticleModal();
-      });
-
-      // Guide Modal
-      openServerGuideBtn.addEventListener('click', function () {
-        serverGuideModal.style.display = 'flex';
-      });
-      closeGuideModalBtn.addEventListener('click', function () {
-        serverGuideModal.style.display = 'none';
-      });
-      serverGuideModal.addEventListener('click', function (e) {
-        if (e.target === serverGuideModal) serverGuideModal.style.display = 'none';
-      });
-
-      // Esc key
-      document.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape') {
-          closeArticleModal();
-          serverGuideModal.style.display = 'none';
-        }
-      });
-
-      // Initial Render
-      renderTrending();
-      renderHero();
-      renderArticles();
-    })();
-  </script>
+  <script src="./public/js/app.js"></script>
 </body>
 </html>
+

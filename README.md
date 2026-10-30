@@ -99,12 +99,12 @@ npm run start:p6    # Practical 6 Student Profile API (Port 3003)
 
 | # | Project | Tech Stack | Type | Location |
 |---|---|---|---|---|
-| 01 | **Restaurant Page** | HTML5, CSS3 | Static Frontend | `frontend/practicals/practical-1-restaurant/` |
-| 02 | **E-Commerce Catalog** | HTML5, CSS3 | Static Frontend | `frontend/practicals/practical-2-ecommerce/` |
-| 03 | **Developer Portfolio** | HTML5, CSS3, JavaScript | Dynamic Static | `frontend/practicals/practical-3-portfolio/` |
-| 04 | **Authentication System** | Node.js, Express, PostgreSQL | Full Stack | `backend/services/practical-4-authentication/` |
-| 05 | **News Portal** | Node.js, Express, EJS | Full Stack | `backend/services/practical-5-news-portal/` |
-| 06 | **Student Profile Directory** | Node.js, Express API, React | Full Stack | `frontend/` & `backend/services/practical-6-student-profile/` |
+| 01 | **BLACK PLATE Restaurant Page** | HTML5, CSS3 | Static Frontend | `frontend/practicals/practical-1-restaurant/` |
+| 02 | **JOGE STORE Product Catalog** | HTML5, CSS3, CSS Grid, Flexbox | Static Frontend | `frontend/practicals/practical-2-ecommerce/` |
+| 03 | **Developer Portfolio** | HTML5, CSS3, JavaScript | Modern Static | `frontend/practicals/practical-3-portfolio/` |
+| 04 | **ONYX Authentication Gateway** | Node.js, Express, PostgreSQL, Bcrypt | Full Stack | `frontend/` & `backend/services/practical-4-authentication/` |
+| 05 | **Daily Pulse News Portal** | Node.js, Express, EJS, CSS Grid | Full Stack | `frontend/` & `backend/services/practical-5-news-portal/` |
+| 06 | **campus. Student Directory** | React, Vite, Express REST API | Full Stack | `frontend/` & `backend/services/practical-6-student-profile/` |
 
 ---
 

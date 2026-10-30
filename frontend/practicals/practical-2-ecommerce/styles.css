@@ -1,0 +1,501 @@
+/* 
+=============================================================================
+Practical 2: Build an E-commerce Product Catalog Layout
+CSS Grid, Flexbox, Responsive Design, Positioning
+=============================================================================
+*/
+
+/* CSS Variables */
+:root {
+  --bg-page: #f8f9fa;
+  --bg-banner: #23272f;
+  --bg-card: #ffffff;
+  --bg-dark-section: #1d1f26;
+  --bg-feature-card: #282a33;
+  --text-dark: #1a1c22;
+  --text-muted: #6b7280;
+  --text-light: #ffffff;
+  --text-light-muted: #a3a7b2;
+  --border-light: #e5e7eb;
+  --border-dark: rgba(255, 255, 255, 0.08);
+  --btn-dark: #32363f;
+  --btn-dark-hover: #1e2025;
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --max-width: 1200px;
+  --transition: all 0.25s ease;
+}
+
+/* CSS Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-page);
+  color: var(--text-dark);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 1. Navigation Bar (Flexbox & Sticky Positioning) */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 5%;
+  background-color: #1e2025;
+  color: var(--text-light);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.logo {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+
+.nav-links a {
+  font-size: 0.95rem;
+  color: #cfd2db;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.nav-links a:hover {
+  color: var(--text-light);
+}
+
+/* Main Content Wrapper */
+.main-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 4%;
+}
+
+/* 2. Promotional Hero Banner */
+.banner-section {
+  padding: 30px 0 20px;
+}
+
+.banner-card {
+  background: linear-gradient(135deg, #282c35 0%, #1e2027 100%);
+  color: var(--text-light);
+  border-radius: var(--radius-lg);
+  padding: 44px 40px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.banner-badge {
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: var(--text-light);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.banner-title {
+  font-size: 2.3rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+}
+
+.banner-desc {
+  font-size: 0.95rem;
+  color: var(--text-light-muted);
+}
+
+/* Section Common Headings */
+.section-title {
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-top: 36px;
+}
+
+.title-underline {
+  width: 44px;
+  height: 3px;
+  background-color: #2b2e38;
+  margin: 8px 0 24px;
+  border-radius: 2px;
+}
+
+.section-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin: -14px 0 26px;
+}
+
+/* 3. Featured Products Section (CSS Grid & Positioning) */
+.products-section {
+  padding: 10px 0 30px;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+}
+
+.product-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+  border-color: #d1d5db;
+}
+
+/* Absolute Positioning for Badge over Image Container */
+.product-img-wrapper {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  background-color: #f1f2f6;
+  margin-bottom: 12px;
+}
+
+.product-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-img-wrapper img {
+  transform: scale(1.04);
+}
+
+/* Positioning: absolute badge */
+.badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  background-color: #2d3039;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.3px;
+}
+
+.product-info {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.product-category {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #8c909a;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.product-name {
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+
+.price-container {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-grow: 1;
+}
+
+.current-price {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.original-price {
+  font-size: 0.88rem;
+  color: #9ca3af;
+  text-decoration: line-through;
+  font-weight: 400;
+}
+
+.add-to-cart-btn {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 0;
+  background-color: var(--btn-dark);
+  color: var(--text-light);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.add-to-cart-btn:hover {
+  background-color: var(--btn-dark-hover);
+}
+
+/* 4. Lifestyle Experience Section (CSS Grid & Absolute Positioning) */
+.lifestyle-section {
+  padding: 20px 0 50px;
+}
+
+.lifestyle-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.lifestyle-card {
+  position: relative;
+  height: 220px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.lifestyle-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.lifestyle-card:hover img {
+  transform: scale(1.05);
+}
+
+.lifestyle-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.25) 55%, transparent 100%);
+  pointer-events: none;
+}
+
+.lifestyle-label {
+  position: absolute;
+  bottom: 16px;
+  left: 18px;
+  z-index: 2;
+  color: var(--text-light);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+}
+
+/* 5. Features Section (CSS Grid & Dark Theme) */
+.features-section {
+  background-color: var(--bg-dark-section);
+  padding: 50px 4% 60px;
+  margin-top: 20px;
+}
+
+.features-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.feature-card {
+  background-color: var(--bg-feature-card);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--radius-md);
+  padding: 30px 24px;
+  transition: var(--transition);
+}
+
+.feature-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.feature-icon {
+  font-size: 1.8rem;
+  margin-bottom: 14px;
+}
+
+.feature-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--text-light);
+  margin-bottom: 8px;
+}
+
+.feature-desc {
+  font-size: 0.9rem;
+  color: var(--text-light-muted);
+  line-height: 1.55;
+}
+
+/* =============================================================================
+   Media Queries (Responsive Breakpoints: Desktop, Tablet, Mobile)
+   ============================================================================= */
+
+/* Tablet Devices (max-width: 992px) */
+@media (max-width: 992px) {
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .lifestyle-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .lifestyle-grid .lifestyle-card:last-child {
+    grid-column: span 2;
+  }
+
+  .features-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .features-container .feature-card:last-child {
+    grid-column: span 2;
+  }
+
+  .banner-title {
+    font-size: 2rem;
+  }
+}
+
+/* Mobile Devices (max-width: 640px) */
+@media (max-width: 640px) {
+  .navbar {
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px 4%;
+  }
+
+  .nav-links {
+    gap: 16px;
+  }
+
+  .banner-card {
+    padding: 28px 20px;
+  }
+
+  .banner-title {
+    font-size: 1.6rem;
+  }
+
+  .section-title {
+    font-size: 1.4rem;
+  }
+
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lifestyle-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lifestyle-grid .lifestyle-card:last-child {
+    grid-column: span 1;
+  }
+
+  .features-container {
+    grid-template-columns: 1fr;
+  }
+
+  .features-container .feature-card:last-child {
+    grid-column: span 1;
+  }
+
+  .feature-card {
+    padding: 24px 18px;
+  }
+}
+/* ---- PracticalOS Hub Integration ---- */
+.back-to-hub {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 9999;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(18, 19, 23, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  transition: all 0.25s ease;
+  line-height: 1;
+}
+.back-to-hub:hover {
+  background: #ffffff;
+  color: #0f1013 !important;
+  transform: translateX(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}

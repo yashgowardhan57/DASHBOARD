@@ -1,0 +1,22 @@
+# Netlify build config for Practical 4
+# The frontend (index.html + styles.css + script.js) is served from this folder.
+# The backend API is hosted separately on Render.com.
+
+[build]
+  publish = "."
+
+# Redirect all /api/* requests to the Render backend during Netlify hosting.
+# Replace YOUR_RENDER_URL with your actual Render service URL.
+[[redirects]]
+  from   = "/api/*"
+  to     = "https://YOUR_RENDER_URL/api/:splat"
+  status = 200
+  force  = true
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Access-Control-Allow-Origin = "*"
+

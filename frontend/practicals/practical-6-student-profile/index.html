@@ -1,105 +1,32 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#57514c" />
+    <meta name="description" content="A college portal with reusable React student profile cards." />
+    <title>Campus | Student Profiles</title>
+    <script type="module" crossorigin src="./assets/index-BaBXW3Aa.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-COc6H4_y.css">
+    <script>
     if (!window.location.pathname.endsWith('/') && !window.location.pathname.split('/').pop().includes('.')) {
       window.location.replace(window.location.pathname + '/' + window.location.search + window.location.hash);
     }
   </script>
-  <meta name="description" content="Student Profile Card Using React Components — Practical 6" />
-  <title>ScholarProfile — Student Profile Directory (React)</title>
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  
-  <link rel="stylesheet" href="public/css/student.css" />
-
-  <!-- React 18 Production UMD + Babel for in-browser JSX parsing -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
-<body>
-  <!-- Root React DOM Container -->
-  <div id="root"></div>
-
-  <!-- Load Data and Configuration -->
-  <script src="../../js/config.js"></script>
-  <script src="data/students.js"></script>
-
-  <!-- Load React Components with Babel JSX Transpiler -->
-  <script type="text/babel" src="public/js/components/StatsBar.jsx"></script>
-  <script type="text/babel" src="public/js/components/StudentCard.jsx"></script>
-  <script type="text/babel" src="public/js/components/StudentModal.jsx"></script>
-  <script type="text/babel" src="public/js/App.jsx"></script>
-
-  <!-- Mount Component -->
-  <script type="text/babel">
-    try {
-      const container = document.getElementById('root');
-      const root = ReactDOM.createRoot(container);
-      root.render(<App />);
-    } catch (e) {
-      console.error('React mount error:', e);
+  <body>
+  <!-- Back to Dashboard -->
+  <a href="/index.html" class="back-to-hub" aria-label="Back to Practical Hub">
+    ← Back to Hub
+  </a>
+  <script>
+    if (window.location.protocol === 'file:') {
+      var hub = document.querySelector('.back-to-hub');
+      if (hub) hub.href = '../../index.html';
     }
   </script>
 
-  <!-- Fallback in case Babel/CDN encounters CORS or network issues -->
-  <script>
-    window.addEventListener('DOMContentLoaded', function () {
-      setTimeout(function () {
-        var root = document.getElementById('root');
-        if (!root || root.children.length === 0 || root.innerHTML.trim() === '') {
-          console.warn('React took longer than expected to hydrate; initializing resilient DOM renderer.');
-          var students = window.FALLBACK_STUDENTS || [];
-          var stats = window.FALLBACK_STATS || { totalStudents: students.length, departmentsCount: 4, averageGpa: '9.05', averageAttendance: '94%' };
-          
-          var html = '<div class="portal-app">' +
-            '<div class="portal-topbar"><div class="container topbar-content">' +
-            '<div style="display:flex;align-items:center;gap:0.75rem;">' +
-            '<a href="../../index.html" class="back-to-hub-link">&larr; Practical Hub</a>' +
-            '<span style="font-size:0.75rem;color:var(--color-khaki);">Practical 6 &bull; Student Profile Directory (Direct Mode)</span>' +
-            '</div><div class="college-affiliation">St. Vincent Pallotti College of Engg. &amp; Tech, Nagpur</div>' +
-            '</div></div>' +
-            '<header class="portal-header"><div class="container">' +
-            '<div class="header-badge"><span class="badge-dot"></span>Active Academic Term 2026</div>' +
-            '<h1 class="portal-title">Scholar<span>Profile</span></h1>' +
-            '<p class="portal-subtitle">Student Directory — Reusable UI Components &amp; Academic Records</p>' +
-            '</div></header>' +
-            '<div class="stats-banner"><div class="container"><div class="stats-grid">' +
-            '<div class="stat-item"><div class="stat-icon">&#128101;</div><div class="stat-meta"><span class="stat-num">' + stats.totalStudents + '</span><span class="stat-title">Enrolled Scholars</span></div></div>' +
-            '<div class="stat-item"><div class="stat-icon">&#127891;</div><div class="stat-meta"><span class="stat-num">' + stats.departmentsCount + '</span><span class="stat-title">Departments</span></div></div>' +
-            '<div class="stat-item"><div class="stat-icon">&#127942;</div><div class="stat-meta"><span class="stat-num">' + stats.averageGpa + '</span><span class="stat-title">Average CGPA</span></div></div>' +
-            '<div class="stat-item"><div class="stat-icon">&#128337;</div><div class="stat-meta"><span class="stat-num">' + stats.averageAttendance + '</span><span class="stat-title">Mean Attendance</span></div></div>' +
-            '</div></div></div>' +
-            '<main class="portal-main"><div class="container">' +
-            '<div class="students-grid" id="fallbackGrid">';
 
-          students.forEach(function (s) {
-            html += '<article class="student-card">' +
-              '<div class="card-top">' +
-              '<div class="student-avatar">' + (s.initials || s.name.substring(0, 2).toUpperCase()) + '</div>' +
-              '<div class="card-identity">' +
-              '<h3 class="student-name">' + s.name + '</h3>' +
-              '<div class="student-roll">' + s.id + '</div>' +
-              '<span class="dept-badge">' + s.department + '</span>' +
-              '</div></div>' +
-              '<div class="student-course-info"><div><strong>Course:</strong> ' + s.course + '</div><div><strong>Level:</strong> ' + s.year + '</div></div>' +
-              (s.motto ? '<div class="student-motto">&ldquo;' + s.motto + '&rdquo;</div>' : '') +
-              '<div class="skills-container">' + (s.skills || []).slice(0, 4).map(function (sk) { return '<span class="skill-pill">' + sk + '</span>'; }).join('') + '</div>' +
-              '<div class="metrics-row"><div class="metric-item"><span class="metric-label">CGPA</span><span class="metric-val">' + s.gpa + '</span></div><div class="metric-item"><span class="metric-label">Attendance</span><span class="metric-val">' + s.attendance + '</span></div></div>' +
-              '<button type="button" class="btn-view-profile" onclick="alert(\'Student: ' + s.name + '\\nEmail: ' + s.email + '\\nCollege: ' + s.college + '\\nFocus: ' + s.focus + '\')">View Scholar Details &rarr;</button>' +
-              '</article>';
-          });
-
-          html += '</div></div></main></div>';
-          root.innerHTML = html;
-        }
-      }, 1800);
-    });
-  </script>
-</body>
+    <div id="root"></div>
+  </body>
 </html>

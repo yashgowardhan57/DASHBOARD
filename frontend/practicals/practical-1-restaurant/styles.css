@@ -1,0 +1,511 @@
+/* 
+=============================================================================
+Practical 1: Responsive Restaurant Landing Page
+CSS Flexbox, CSS Grid & Media Queries Implementation
+=============================================================================
+*/
+
+/* CSS Variables */
+:root {
+  --bg-primary: #141518;
+  --bg-secondary: #1f2127;
+  --bg-card: #22242b;
+  --text-primary: #ffffff;
+  --text-secondary: #a3a3ae;
+  --text-muted: #737380;
+  --card-border: rgba(255, 255, 255, 0.08);
+  --btn-bg: #ffffff;
+  --btn-text: #111111;
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --transition: all 0.3s ease;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-pill: 9999px;
+  --max-width: 1180px;
+}
+
+/* CSS Reset & Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Common Button Style */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 12px 30px;
+  background-color: var(--btn-bg);
+  color: var(--btn-text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
+  transition: var(--transition);
+  cursor: pointer;
+  border: none;
+}
+
+.btn:hover {
+  background-color: #e5e5e5;
+  transform: translateY(-2px);
+}
+
+/* 1. Navigation Bar (Flexbox) */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 6%;
+  background-color: rgba(20, 21, 24, 0.95);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.logo {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--text-primary);
+  text-transform: uppercase;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.nav-links a {
+  font-size: 0.95rem;
+  color: #dcdce2;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.nav-links a:hover {
+  color: #ffffff;
+}
+
+/* 2. Hero Section (Flexbox / 2-Column Layout) */
+.hero-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 70px 5%;
+}
+
+.hero-content {
+  flex: 1;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--text-primary);
+  margin-bottom: 18px;
+  letter-spacing: -0.5px;
+}
+
+.hero-content p {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 28px;
+  max-width: 520px;
+}
+
+.hero-image {
+  flex: 1;
+}
+
+.hero-image img {
+  width: 100%;
+  height: 340px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* 3. About Us Section (Flexbox / 2-Column Layout) */
+.about-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 70px 5%;
+}
+
+.about-image {
+  flex: 1;
+}
+
+.about-image img {
+  width: 100%;
+  height: 340px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.about-content {
+  flex: 1;
+}
+
+.about-content h2 {
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 18px;
+  letter-spacing: -0.5px;
+}
+
+.about-content p {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  max-width: 520px;
+}
+
+/* 4. Signature Menu Section (CSS Grid) */
+.menu-section {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 70px 5%;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 44px;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.menu-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  transition: var(--transition);
+}
+
+.menu-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.card-img-wrapper {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+  margin-bottom: 16px;
+}
+
+.card-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-details {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.card-details h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.card-details p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 18px;
+  flex-grow: 1;
+}
+
+.card-details .price {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* 5. Features Section (CSS Grid) */
+.features-section {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 30px 5% 60px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.feature-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-md);
+  padding: 38px 24px;
+  text-align: center;
+  transition: var(--transition);
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.feature-card h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.feature-card p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+/* 6. Reservation / CTA Section */
+.reservation-section {
+  text-align: center;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 50px 5% 70px;
+}
+
+.reservation-section h2 {
+  font-size: 2.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+}
+
+.reservation-section p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 26px;
+}
+
+/* 7. Footer */
+.footer {
+  text-align: center;
+  padding: 36px 5%;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footer p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* =============================================================================
+   Media Queries (Responsive Breakpoints: Desktop, Tablet, Mobile)
+   ============================================================================= */
+
+/* Tablet Devices (max-width: 992px) */
+@media (max-width: 992px) {
+  .hero-section,
+  .about-section {
+    gap: 36px;
+    padding: 50px 5%;
+  }
+
+  .hero-content h1,
+  .about-content h2,
+  .reservation-section h2 {
+    font-size: 2.3rem;
+  }
+
+  .hero-image img,
+  .about-image img {
+    height: 280px;
+  }
+
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .features-grid .feature-card:last-child {
+    grid-column: span 2;
+  }
+}
+
+/* Mobile Devices (max-width: 680px) */
+@media (max-width: 680px) {
+  .navbar {
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px 5%;
+  }
+
+  .nav-links {
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero-section {
+    flex-direction: column;
+    padding: 40px 5%;
+    gap: 28px;
+    text-align: center;
+  }
+
+  .hero-content p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-image {
+    width: 100%;
+  }
+
+  .hero-image img {
+    height: 240px;
+  }
+
+  .about-section {
+    flex-direction: column-reverse;
+    padding: 40px 5%;
+    gap: 28px;
+    text-align: center;
+  }
+
+  .about-content p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .about-image {
+    width: 100%;
+  }
+
+  .about-image img {
+    height: 240px;
+  }
+
+  .hero-content h1,
+  .about-content h2,
+  .reservation-section h2 {
+    font-size: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+    margin-bottom: 28px;
+  }
+
+  .menu-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .features-grid .feature-card:last-child {
+    grid-column: span 1;
+  }
+
+  .feature-card {
+    padding: 28px 20px;
+  }
+
+  .reservation-section {
+    padding: 40px 5% 50px;
+  }
+}
+
+
+/* ---- PracticalOS Hub Integration ---- */
+.back-to-hub {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 9999;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(18, 19, 23, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  transition: all 0.25s ease;
+  line-height: 1;
+}
+.back-to-hub:hover {
+  background: #ffffff;
+  color: #0f1013 !important;
+  transform: translateX(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}

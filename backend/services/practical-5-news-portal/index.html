@@ -1,189 +1,370 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Practical 5 — Responsive News Portal (EJS &amp; Express)</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Lora:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="public/css/news.css" />
-  <style>
-    body { background: #0F0F13; color: #E0E0E6; }
-    .portal-launcher {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2.5rem 1.25rem;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Daily Pulse responsive news portal">
+  <title>Daily Pulse — News Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./public/css/style.css">
+  <script>
+    if (!window.location.pathname.endsWith('/') && !window.location.pathname.split('/').pop().includes('.')) {
+      window.location.replace(window.location.pathname + '/' + window.location.search + window.location.hash);
     }
-    .launcher-box {
-      background: #181822;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      padding: 2.25rem;
-      max-width: 680px;
-      width: 100%;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-    }
-    .status-probe {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem 1.25rem;
-      background: #0E0E14;
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 10px;
-      margin-bottom: 1.5rem;
-    }
-    .status-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #F59E0B;
-      display: inline-block;
-      margin-right: 0.5rem;
-    }
-    .status-dot.online { background: #10B981; box-shadow: 0 0 10px #10B981; }
-    .status-dot.offline { background: #EF4444; box-shadow: 0 0 10px #EF4444; }
-    .code-term {
-      background: #08080C;
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 8px;
-      padding: 1rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.8125rem;
-      color: #7DD3FC;
-      line-height: 1.6;
-      margin: 1.25rem 0;
-    }
-    .code-term .cmt { color: #64748B; }
-    .features-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.85rem;
-      margin: 1.25rem 0;
-    }
-    .feat-card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
-      font-size: 0.8125rem;
-    }
-    .feat-card strong { color: #FFF; display: block; margin-bottom: 0.2rem; }
-    .btn-launch {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      background: #C41E3A;
-      color: #FFF;
-      padding: 0.85rem 1.5rem;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 0.9375rem;
-      text-decoration: none;
-      width: 100%;
-      box-shadow: 0 4px 18px rgba(196,30,58,0.35);
-      transition: all 0.2s;
-    }
-    .btn-launch:hover { background: #E50914; transform: translateY(-1px); }
-  </style>
+  </script>
 </head>
 <body>
-  <div class="portal-launcher">
-    <div class="launcher-box">
-      <a href="http://localhost:3000/index.html" id="backToHub" style="color: #999; font-size: 0.8125rem; display: inline-block; margin-bottom: 1rem;">
-        &larr; Back to Practical Hub
-      </a>
-      <script>
-        if (window.location.protocol === 'file:') {
-          var hubBtn = document.getElementById('backToHub');
-          if (hubBtn) hubBtn.href = '../dashboard/index.html';
-        }
-      </script>
-      
-      <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-        <span style="font-size: 0.75rem; font-weight: 700; background: rgba(196,30,58,0.2); color: #FFA1A5; padding: 0.2rem 0.6rem; border-radius: 9999px;">
-          PRACTICAL 5 &bull; EJS TEMPLATES
-        </span>
-      </div>
+  <!-- Back to Dashboard -->
+  <a href="/index.html" class="back-to-hub" aria-label="Back to Practical Hub">
+    ← Back to Hub
+  </a>
+  <script>
+    if (window.location.protocol === 'file:') {
+      var hub = document.querySelector('.back-to-hub');
+      if (hub) hub.href = '../../index.html';
+    }
+  </script>
 
-      <h1 style="font-family: 'Cinzel', serif; font-size: 1.85rem; color: #FFF; margin-bottom: 0.25rem;">
-        THE DAILY CHRONICLE
-      </h1>
-      <p style="color: #999; font-size: 0.875rem; margin-bottom: 1.5rem;">
-        Multi-Page Dynamic News Portal with Express.js, EJS Partials, and Search
-      </p>
 
-      <div class="status-probe">
-        <div>
-          <span class="status-dot" id="serverDot"></span>
-          <strong id="serverStatusText">Checking EJS Server (Port 3002)...</strong>
-          <div style="font-size: 0.75rem; color: #666; margin-top: 0.2rem;" id="serverSubText">Probing http://localhost:3002</div>
-        </div>
-        <button type="button" id="refreshBtn" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); color: #DDD; padding: 0.4rem 0.8rem; border-radius: 6px; cursor: pointer; font-size: 0.75rem;">
-          Probe Again
-        </button>
-      </div>
-
-      <div class="features-grid">
-        <div class="feat-card">
-          <strong>EJS Partials</strong>
-          Reusable header, footer, navigation bar, and news-card templates.
-        </div>
-        <div class="feat-card">
-          <strong>Category Desks</strong>
-          Dynamic routes for Tech, Education, Business, Sports, and Entertainment.
-        </div>
-        <div class="feat-card">
-          <strong>Article Detail Views</strong>
-          Deep reading pages with author byline, full prose, and related stories.
-        </div>
-        <div class="feat-card">
-          <strong>Server-Side Search</strong>
-          Express query parameter filtering over demonstration article dataset.
-        </div>
-      </div>
-
-      <div class="code-term">
-        <span class="cmt"># Commands to start Practical 5 server:</span><br/>
-        cd practical-5-news-portal<br/>
-        npm install<br/>
-        npm start
-      </div>
-
-      <a href="http://localhost:3002/" target="_blank" class="btn-launch" id="launchBtn">
-        Open The Daily Chronicle (Port 3002) &rarr;
-      </a>
+  <div class="top-strip">
+    <div class="container top-strip-inner">
+      <span>THURSDAY, OCTOBER 8, 2026</span>
+      <span class="top-note">Independent • Fast • Digital</span>
     </div>
   </div>
 
-  <script>
-    function checkNewsServer() {
-      var dot = document.getElementById('serverDot');
-      var status = document.getElementById('serverStatusText');
-      var sub = document.getElementById('serverSubText');
+  <header class="site-header">
+    <div class="container header-main">
+      <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">☰</button>
+      <a href="/" class="brand">
+        <span class="brand-mark">DP</span>
+        <span>
+          <strong>DAILY PULSE</strong>
+          <small>Your world. Your story.</small>
+        </span>
+      </a>
 
-      dot.className = 'status-dot';
-      status.textContent = 'Probing EJS Server (Port 3002)...';
+      <form class="search-form" action="/search" method="GET" role="search">
+        <input type="search" name="q" placeholder="Search news..." aria-label="Search news" value="">
+        <button type="submit" aria-label="Search">⌕</button>
+      </form>
+    </div>
 
-      fetch('http://localhost:3002/', { mode: 'no-cors' })
-        .then(function() {
-          dot.className = 'status-dot online';
-          status.textContent = 'News Server Online on Port 3002';
-          sub.textContent = 'EJS template engine is responding. Ready to browse.';
-        })
-        .catch(function() {
-          dot.className = 'status-dot offline';
-          status.textContent = 'News Server Not Detected on Port 3002';
-          sub.textContent = 'Run "npm start" inside practical-5-news-portal to launch.';
-        });
-    }
+    <nav class="main-nav" id="mainNav">
+      <div class="container nav-inner">
+        <a href="/" class="active">Home</a>
+        
+          <a href="/category/national" class="">National</a>
+        
+          <a href="/category/world" class="">World</a>
+        
+          <a href="/category/technology" class="">Technology</a>
+        
+          <a href="/category/business" class="">Business</a>
+        
+          <a href="/category/sports" class="">Sports</a>
+        
+          <a href="/category/entertainment" class="">Entertainment</a>
+        
+          <a href="/category/science" class="">Science</a>
+        
+      </div>
+    </nav>
+  </header>
 
-    document.getElementById('refreshBtn').addEventListener('click', checkNewsServer);
-    checkNewsServer();
-  </script>
+
+<main>
+  <section class="container breaking">
+    <span class="breaking-label">BREAKING</span>
+    <div class="ticker">
+      <div class="ticker-track">
+        <span>Latest updates, technology, business, sports and world news — all in one place.</span>
+        <span>Stay informed with Daily Pulse.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="container page-heading">
+    <div>
+      <span class="eyebrow">TODAY'S EDITION</span>
+      <h1>Top Stories</h1>
+      <p>Fresh stories, quick reads and the topics people are following today.</p>
+    </div>
+  </section>
+
+  
+  <section class="container hero-grid">
+    
+    <a class="hero-card" href="/article/1">
+      <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" alt="AI tools are changing how students learn, create and work">
+      <div class="hero-overlay">
+        <span class="category-pill">Technology</span>
+        <h2>AI tools are changing how students learn, create and work</h2>
+        <p>New generations of AI assistants are becoming everyday tools for research, coding, writing and creative projects.</p>
+        <span class="read-more">Read full story →</span>
+      </div>
+    </a>
+
+    <div class="side-stories">
+      
+        <a class="compact-card" href="/article/2">
+          <img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Cities focus on smarter public services and digital access">
+          <div>
+            <span class="mini-category">National</span>
+            <h3>Cities focus on smarter public services and digital access</h3>
+            <small>07:45 AM</small>
+          </div>
+        </a>
+      
+        <a class="compact-card" href="/article/3">
+          <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Small businesses adopt digital payments and local online stores">
+          <div>
+            <span class="mini-category">Business</span>
+            <h3>Small businesses adopt digital payments and local online stores</h3>
+            <small>07:20 AM</small>
+          </div>
+        </a>
+      
+        <a class="compact-card" href="/article/4">
+          <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Young athletes turn training data into a competitive advantage">
+          <div>
+            <span class="mini-category">Sports</span>
+            <h3>Young athletes turn training data into a competitive advantage</h3>
+            <small>06:55 AM</small>
+          </div>
+        </a>
+      
+    </div>
+  </section>
+  
+
+  <section class="container content-layout">
+    <div class="news-section">
+      <div class="section-title">
+        <h2>Latest News</h2>
+        <span>10 stories</span>
+      </div>
+
+      
+
+      <div class="news-grid">
+        
+          <article class="news-card">
+            <a href="/article/1" class="card-image">
+              <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" alt="AI tools are changing how students learn, create and work" loading="lazy">
+              <span class="trending-badge">TRENDING</span>
+            </a>
+            <div class="card-body">
+              <span class="mini-category">Technology</span>
+              <h3><a href="/article/1">AI tools are changing how students learn, create and work</a></h3>
+              <p>New generations of AI assistants are becoming everyday tools for research, coding, writing and creative projects.</p>
+              <div class="card-meta"><span>Daily Pulse Desk</span><span>08:10 AM</span></div>
+            </div>
+          </article>
+        
+          <article class="news-card">
+            <a href="/article/2" class="card-image">
+              <img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Cities focus on smarter public services and digital access" loading="lazy">
+              <span class="trending-badge">TRENDING</span>
+            </a>
+            <div class="card-body">
+              <span class="mini-category">National</span>
+              <h3><a href="/article/2">Cities focus on smarter public services and digital access</a></h3>
+              <p>Local administrations are expanding digital-first services while improving access for citizens who prefer in-person support.</p>
+              <div class="card-meta"><span>News Bureau</span><span>07:45 AM</span></div>
+            </div>
+          </article>
+        
+          <article class="news-card">
+            <a href="/article/3" class="card-image">
+              <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Small businesses adopt digital payments and local online stores" loading="lazy">
+              
+            </a>
+            <div class="card-body">
+              <span class="mini-category">Business</span>
+              <h3><a href="/article/3">Small businesses adopt digital payments and local online stores</a></h3>
+              <p>Entrepreneurs are combining neighborhood relationships with online discovery to reach more customers.</p>
+              <div class="card-meta"><span>Business Desk</span><span>07:20 AM</span></div>
+            </div>
+          </article>
+        
+          <article class="news-card">
+            <a href="/article/4" class="card-image">
+              <img src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Young athletes turn training data into a competitive advantage" loading="lazy">
+              <span class="trending-badge">TRENDING</span>
+            </a>
+            <div class="card-body">
+              <span class="mini-category">Sports</span>
+              <h3><a href="/article/4">Young athletes turn training data into a competitive advantage</a></h3>
+              <p>Wearable technology and video analysis are helping players understand performance beyond the scoreboard.</p>
+              <div class="card-meta"><span>Sports Desk</span><span>06:55 AM</span></div>
+            </div>
+          </article>
+        
+          <article class="news-card">
+            <a href="/article/5" class="card-image">
+              <img src="https://images.unsplash.com/photo-1444723121867-7a241cacace9?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Global cities share ideas for cleaner and more resilient neighborhoods" loading="lazy">
+              
+            </a>
+            <div class="card-body">
+              <span class="mini-category">World</span>
+              <h3><a href="/article/5">Global cities share ideas for cleaner and more resilient neighborhoods</a></h3>
+              <p>Urban planners are comparing practical approaches to public transport, heat management and green spaces.</p>
+              <div class="card-meta"><span>World Desk</span><span>06:30 AM</span></div>
+            </div>
+          </article>
+        
+          <article class="news-card">
+            <a href="/article/6" class="card-image">
+              <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Researchers explore new ways to make everyday technology more efficient" loading="lazy">
+              
+            </a>
+            <div class="card-body">
+              <span class="mini-category">Science</span>
+              <h3><a href="/article/6">Researchers explore new ways to make everyday technology more efficient</a></h3>
+              <p>Energy efficiency and practical engineering remain major themes across current research projects.</p>
+              <div class="card-meta"><span>Science Desk</span><span>06:10 AM</span></div>
+            </div>
+          </article>
+        
+          <article class="news-card">
+            <a href="/article/7" class="card-image">
+              <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Streaming platforms experiment with shorter and more interactive formats" loading="lazy">
+              
+            </a>
+            <div class="card-body">
+              <span class="mini-category">Entertainment</span>
+              <h3><a href="/article/7">Streaming platforms experiment with shorter and more interactive formats</a></h3>
+              <p>Creators are testing new storytelling styles designed for mobile-first audiences.</p>
+              <div class="card-meta"><span>Culture Desk</span><span>05:40 AM</span></div>
+            </div>
+          </article>
+        
+          <article class="news-card">
+            <a href="/article/8" class="card-image">
+              <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Web developers build faster interfaces with modern CSS and JavaScript" loading="lazy">
+              <span class="trending-badge">TRENDING</span>
+            </a>
+            <div class="card-body">
+              <span class="mini-category">Technology</span>
+              <h3><a href="/article/8">Web developers build faster interfaces with modern CSS and JavaScript</a></h3>
+              <p>Responsive design continues to evolve as users expect smooth experiences across phones, tablets and laptops.</p>
+              <div class="card-meta"><span>Tech Desk</span><span>09:15 PM</span></div>
+            </div>
+          </article>
+        
+          <article class="news-card">
+            <a href="/article/9" class="card-image">
+              <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Education projects put greater emphasis on practical digital skills" loading="lazy">
+              
+            </a>
+            <div class="card-body">
+              <span class="mini-category">National</span>
+              <h3><a href="/article/9">Education projects put greater emphasis on practical digital skills</a></h3>
+              <p>Schools and training programs are adding project-based activities to complement classroom learning.</p>
+              <div class="card-meta"><span>Education Desk</span><span>08:40 PM</span></div>
+            </div>
+          </article>
+        
+          <article class="news-card">
+            <a href="/article/10" class="card-image">
+              <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&amp;fit=crop&amp;w=1000&amp;q=80" alt="Consumers compare value, convenience and trust before buying online" loading="lazy">
+              
+            </a>
+            <div class="card-body">
+              <span class="mini-category">Business</span>
+              <h3><a href="/article/10">Consumers compare value, convenience and trust before buying online</a></h3>
+              <p>Clear product information and reliable service are becoming central to digital shopping decisions.</p>
+              <div class="card-meta"><span>Business Desk</span><span>07:55 PM</span></div>
+            </div>
+          </article>
+        
+      </div>
+    </div>
+
+    <aside class="sidebar">
+      <div class="sidebar-box">
+        <div class="section-title small"><h2>Trending Now</h2></div>
+        <ol class="trending-list">
+          
+            <li>
+              <span class="trend-number">01</span>
+              <div>
+                <a href="/article/1">AI tools are changing how students learn, create and work</a>
+                <small>Technology • 08:10 AM</small>
+              </div>
+            </li>
+          
+            <li>
+              <span class="trend-number">02</span>
+              <div>
+                <a href="/article/2">Cities focus on smarter public services and digital access</a>
+                <small>National • 07:45 AM</small>
+              </div>
+            </li>
+          
+            <li>
+              <span class="trend-number">03</span>
+              <div>
+                <a href="/article/4">Young athletes turn training data into a competitive advantage</a>
+                <small>Sports • 06:55 AM</small>
+              </div>
+            </li>
+          
+            <li>
+              <span class="trend-number">04</span>
+              <div>
+                <a href="/article/8">Web developers build faster interfaces with modern CSS and JavaScript</a>
+                <small>Technology • 09:15 PM</small>
+              </div>
+            </li>
+          
+        </ol>
+      </div>
+
+      <div class="sidebar-box newsletter">
+        <span class="eyebrow">DAILY BRIEF</span>
+        <h2>News that fits your day.</h2>
+        <p>Browse by category or use the search bar to find a story instantly.</p>
+        <a href="/category/technology" class="button">Explore Technology</a>
+      </div>
+    </aside>
+  </section>
+</main>
+
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <div class="footer-brand">DAILY PULSE</div>
+        <p>A responsive EJS news portal demo using local raw data. No database required.</p>
+      </div>
+      <div>
+        <h3>Sections</h3>
+        <div class="footer-links">
+          
+            <a href="/category/national">National</a>
+          
+            <a href="/category/world">World</a>
+          
+            <a href="/category/technology">Technology</a>
+          
+            <a href="/category/business">Business</a>
+          
+            <a href="/category/sports">Sports</a>
+          
+        </div>
+      </div>
+      <div>
+        <h3>Project</h3>
+        <p>Built with Node.js, Express, EJS, CSS Grid, Flexbox and media queries.</p>
+      </div>
+    </div>
+    <div class="container copyright">© 2026 Daily Pulse • Demo project</div>
+  </footer>
+  <script src="./public/js/app.js"></script>
 </body>
 </html>
+

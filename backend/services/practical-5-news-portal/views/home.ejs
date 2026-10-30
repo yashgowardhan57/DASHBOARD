@@ -1,0 +1,105 @@
+<%- include("partials/header", { title: activeCategory === "All" ? "Daily Pulse — News Portal" : activeCategory + " — Daily Pulse" }) %>
+
+<main>
+  <section class="container breaking">
+    <span class="breaking-label">BREAKING</span>
+    <div class="ticker">
+      <div class="ticker-track">
+        <span>Latest updates, technology, business, sports and world news — all in one place.</span>
+        <span>Stay informed with Daily Pulse.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="container page-heading">
+    <div>
+      <span class="eyebrow">TODAY'S EDITION</span>
+      <h1><%= activeCategory === "All" ? "Top Stories" : activeCategory + " News" %></h1>
+      <p>Fresh stories, quick reads and the topics people are following today.</p>
+    </div>
+  </section>
+
+  <% if (activeCategory === "All") { %>
+  <section class="container hero-grid">
+    <% const hero = news[0]; %>
+    <a class="hero-card" href="/article/<%= hero.id %>">
+      <img src="<%= hero.image %>" alt="<%= hero.title %>">
+      <div class="hero-overlay">
+        <span class="category-pill"><%= hero.category %></span>
+        <h2><%= hero.title %></h2>
+        <p><%= hero.summary %></p>
+        <span class="read-more">Read full story →</span>
+      </div>
+    </a>
+
+    <div class="side-stories">
+      <% news.slice(1, 4).forEach(item => { %>
+        <a class="compact-card" href="/article/<%= item.id %>">
+          <img src="<%= item.image %>" alt="<%= item.title %>">
+          <div>
+            <span class="mini-category"><%= item.category %></span>
+            <h3><%= item.title %></h3>
+            <small><%= item.time %></small>
+          </div>
+        </a>
+      <% }) %>
+    </div>
+  </section>
+  <% } %>
+
+  <section class="container content-layout">
+    <div class="news-section">
+      <div class="section-title">
+        <h2><%= activeCategory === "All" ? "Latest News" : activeCategory + " Stories" %></h2>
+        <span><%= news.length %> stories</span>
+      </div>
+
+      <% if (news.length === 0) { %>
+        <div class="empty-state">No stories found in this section.</div>
+      <% } %>
+
+      <div class="news-grid">
+        <% news.forEach(item => { %>
+          <article class="news-card">
+            <a href="/article/<%= item.id %>" class="card-image">
+              <img src="<%= item.image %>" alt="<%= item.title %>" loading="lazy">
+              <% if (item.trending) { %><span class="trending-badge">TRENDING</span><% } %>
+            </a>
+            <div class="card-body">
+              <span class="mini-category"><%= item.category %></span>
+              <h3><a href="/article/<%= item.id %>"><%= item.title %></a></h3>
+              <p><%= item.summary %></p>
+              <div class="card-meta"><span><%= item.author %></span><span><%= item.time %></span></div>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    </div>
+
+    <aside class="sidebar">
+      <div class="sidebar-box">
+        <div class="section-title small"><h2>Trending Now</h2></div>
+        <ol class="trending-list">
+          <% trending.slice(0, 5).forEach((item, index) => { %>
+            <li>
+              <span class="trend-number"><%= String(index + 1).padStart(2, "0") %></span>
+              <div>
+                <a href="/article/<%= item.id %>"><%= item.title %></a>
+                <small><%= item.category %> • <%= item.time %></small>
+              </div>
+            </li>
+          <% }) %>
+        </ol>
+      </div>
+
+      <div class="sidebar-box newsletter">
+        <span class="eyebrow">DAILY BRIEF</span>
+        <h2>News that fits your day.</h2>
+        <p>Browse by category or use the search bar to find a story instantly.</p>
+        <a href="/category/technology" class="button">Explore Technology</a>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<%- include("partials/footer") %>

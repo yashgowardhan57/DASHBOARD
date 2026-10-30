@@ -1,380 +1,437 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--
+  =============================================================================
+  Practical 4
+  Experiment Title: Create an Animated Login and Registration Page
+  Real-Life Scenario: A company wants a modern authentication page with smooth 
+                      animations and transitions.
+  Concepts Covered: CSS Animations, Transitions, Keyframes
+  =============================================================================
+  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ONYX | Animated Authentication Page</title>
+  <link rel="stylesheet" href="styles.css">
+
+  <!--
+    API_BASE: When hosted on Netlify pointing to a Render backend, replace the
+    empty string below with your Render URL, e.g.:
+      window.__API_BASE__ = 'https://practical-4-auth.onrender.com';
+    Leave it as '' when running locally with `npm start` (same-origin).
+  -->
+  <script>
+    window.__API_BASE__ = window.location.port === '3001' ? '' : (window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://dashboard-3-lobf.onrender.com');
+  </script>
   <script>
     if (!window.location.pathname.endsWith('/') && !window.location.pathname.split('/').pop().includes('.')) {
       window.location.replace(window.location.pathname + '/' + window.location.search + window.location.hash);
     }
   </script>
-  <meta name="description" content="Animated Login and Registration System with Node.js, Express, and PostgreSQL" />
-  <title>Practical 4 — Animated Login &amp; Registration (NexusAuth)</title>
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  
-  <link rel="stylesheet" href="public/css/auth.css" />
-  <style>
-    /* Additional Enhancements for Practical 4 Standalone & Live Gateway */
-    .status-pill-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      max-width: 520px;
-      margin-bottom: 1.25rem;
-      gap: 0.75rem;
-    }
-    .backend-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--border-subtle);
-      padding: 0.35rem 0.75rem;
-      border-radius: 9999px;
-    }
-    .backend-badge.online .badge-dot {
-      background: #10B981;
-      box-shadow: 0 0 8px #10B981;
-    }
-    .badge-dot.standalone {
-      background: #F59E0B;
-      box-shadow: 0 0 8px #F59E0B;
-    }
-    .btn-guide-toggle {
-      background: transparent;
-      border: none;
-      color: var(--text-dim);
-      font-size: 0.75rem;
-      cursor: pointer;
-      text-decoration: underline;
-      transition: var(--transition);
-    }
-    .btn-guide-toggle:hover {
-      color: #fff;
-    }
-    .demo-hint-box {
-      background: rgba(229, 9, 20, 0.06);
-      border: 1px dashed rgba(229, 9, 20, 0.3);
-      border-radius: var(--radius-sm);
-      padding: 0.65rem 0.85rem;
-      margin-top: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-    .demo-hint-btn {
-      background: var(--accent-red);
-      color: #fff;
-      border: none;
-      padding: 0.25rem 0.6rem;
-      border-radius: 4px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: var(--transition);
-    }
-    .demo-hint-btn:hover {
-      background: var(--accent-red-hover);
-    }
-    /* Modal for Server Architecture */
-    .server-guide-modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(8px);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-    }
-    .server-guide-box {
-      background: var(--bg-surface-elevated);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 2rem;
-      max-width: 620px;
-      width: 100%;
-      max-height: 85vh;
-      overflow-y: auto;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.6);
-    }
-    .guide-code {
-      background: #000;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 0.85rem 1rem;
-      font-family: var(--font-mono);
-      font-size: 0.8125rem;
-      color: #38BDF8;
-      line-height: 1.6;
-      margin: 0.75rem 0;
-      overflow-x: auto;
-    }
-    .guide-code .comment { color: #64748B; }
-  </style>
 </head>
-<body class="auth-body">
-  <!-- Back Link to Practical Hub -->
-  <a href="../../index.html" class="back-link" id="backToHub">
-    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-      <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
-    </svg>
-    Back to Practical Hub
+<body>
+  <!-- Back to Dashboard -->
+  <a href="/index.html" class="back-to-hub" aria-label="Back to Practical Hub">
+    ← Back to Hub
   </a>
   <script>
-    var hubBtn = document.getElementById('backToHub');
-    if (hubBtn) {
-      hubBtn.href = (window.location.protocol === 'file:' || !window.location.pathname.startsWith('/practicals')) ? '../../index.html' : '/index.html';
+    if (window.location.protocol === 'file:') {
+      var hub = document.querySelector('.back-to-hub');
+      if (hub) hub.href = '../../index.html';
     }
   </script>
 
-  <!-- Ambient Glow Background Accents -->
-  <div class="ambient-glow glow-top"></div>
-  <div class="ambient-glow glow-bottom"></div>
 
-  <main class="auth-container">
-    <!-- Brand Header -->
-    <div class="auth-brand">
-      <div class="brand-badge">
-        <span class="badge-dot"></span>
-        Practical 4 &bull; Full-Stack Authentication Gateway
-      </div>
-      <h1 class="brand-title">Nexus<span>Auth</span></h1>
-      <p class="brand-subtitle">Node.js + Express + PostgreSQL Session Security</p>
-    </div>
 
-    <!-- Status Pill Row -->
-    <div class="status-pill-row">
-      <div class="backend-badge" id="backendStatusBadge">
-        <span class="badge-dot standalone" id="statusDot"></span>
-        <span id="statusText">Checking Backend Status...</span>
-      </div>
-      <button type="button" class="btn-guide-toggle" id="openGuideBtn">PostgreSQL Setup Guide</button>
-    </div>
+  <!-- Ambient Animated Background Lights -->
+  <div class="ambient-glow glow-1" aria-hidden="true"></div>
+  <div class="ambient-glow glow-2" aria-hidden="true"></div>
 
-    <!-- Auth Card -->
+  <!-- Real-time PostgreSQL Status Indicator -->
+  <div class="db-status-pill" id="dbStatusPill" title="PostgreSQL Live Status">
+    <span class="db-status-dot pulse"></span>
+    <span class="db-status-text" id="dbStatusText">PostgreSQL: Connecting...</span>
+  </div>
+
+  <!-- Notification Toast Container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <!-- Main Floating Card Container -->
+  <main class="auth-wrapper">
     <div class="auth-card" id="authCard">
-      <!-- Tabs for Login / Register -->
-      <div class="auth-tabs" role="tablist">
-        <button type="button" class="tab-btn active" id="tabLogin" role="tab" aria-selected="true">
-          Sign In
-        </button>
-        <button type="button" class="tab-btn" id="tabRegister" role="tab" aria-selected="false">
-          Create Account
-        </button>
-        <div class="tab-indicator" id="tabIndicator"></div>
-      </div>
-
-      <!-- Alerts -->
-      <div class="alert alert-error" id="serverAlert" role="alert" style="display: none;"></div>
-      <div class="alert alert-error" id="clientAlert" role="alert" style="display: none;"></div>
-
-      <!-- 1. Login Form Panel -->
-      <div class="form-panel active" id="loginPanel">
-        <form class="auth-form" id="loginForm" novalidate>
-          <div class="form-group">
-            <label for="loginEmail" class="form-label">Email Address</label>
-            <div class="input-wrapper">
-              <svg class="input-icon" width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
-                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
-              </svg>
-              <input type="email" id="loginEmail" name="email" class="form-input" placeholder="student@example.com" value="yash.gowardhan@svpcet.edu.in" required autocomplete="email" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <div class="label-row">
-              <label for="loginPassword" class="form-label">Password</label>
-              <span class="hint-text">Minimum 6 chars</span>
-            </div>
-            <div class="input-wrapper">
-              <svg class="input-icon" width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
-              </svg>
-              <input type="password" id="loginPassword" name="password" class="form-input" placeholder="••••••••" value="Password123!" required autocomplete="current-password" />
-              <button type="button" class="pw-toggle" data-target="loginPassword" aria-label="Toggle password visibility">
-                <svg class="eye-open" width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-                  <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
-                </svg>
-                <svg class="eye-closed" width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style="display:none;">
-                  <path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clip-rule="evenodd"/>
-                  <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-
-          <button type="submit" class="btn-submit" id="loginBtn">
-            <span class="btn-text">Sign In</span>
-            <span class="btn-loader" style="display:none;"></span>
-          </button>
-
-          <div class="demo-hint-box">
-            <span>Demo: <code>yash.gowardhan@svpcet.edu.in</code></span>
-            <button type="button" class="demo-hint-btn" id="quickFillBtn">Quick Fill</button>
-          </div>
-        </form>
-      </div>
-
-      <!-- 2. Register Form Panel -->
-      <div class="form-panel" id="registerPanel" style="display: none;">
-        <form class="auth-form" id="registerForm" novalidate>
-          <div class="form-group">
-            <label for="regName" class="form-label">Full Name</label>
-            <div class="input-wrapper">
-              <svg class="input-icon" width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
-              </svg>
-              <input type="text" id="regName" name="name" class="form-input" placeholder="Your Name" required autocomplete="name" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="regEmail" class="form-label">Email Address</label>
-            <div class="input-wrapper">
-              <svg class="input-icon" width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
-                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
-              </svg>
-              <input type="email" id="regEmail" name="email" class="form-input" placeholder="student@example.com" required autocomplete="email" />
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="regPassword" class="form-label">Password</label>
-            <div class="input-wrapper">
-              <svg class="input-icon" width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
-              </svg>
-              <input type="password" id="regPassword" name="password" class="form-input" placeholder="At least 6 characters" required autocomplete="new-password" />
-              <button type="button" class="pw-toggle" data-target="regPassword" aria-label="Toggle password visibility">
-                <svg class="eye-open" width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-                  <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
-                </svg>
-                <svg class="eye-closed" width="18" height="18" viewBox="0 0 20 20" fill="currentColor" style="display:none;">
-                  <path fill-rule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clip-rule="evenodd"/>
-                  <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z"/>
-                </svg>
-              </button>
-            </div>
-            <!-- Strength meter -->
-            <div class="pw-strength" id="pwStrength">
-              <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
-              <span class="strength-label" id="strengthLabel">Enter password</span>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="regConfirmPassword" class="form-label">Confirm Password</label>
-            <div class="input-wrapper">
-              <svg class="input-icon" width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-              </svg>
-              <input type="password" id="regConfirmPassword" name="confirmPassword" class="form-input" placeholder="Repeat password" required autocomplete="new-password" />
-            </div>
-          </div>
-
-          <button type="submit" class="btn-submit" id="registerBtn">
-            <span class="btn-text">Create Account</span>
-            <span class="btn-loader" style="display:none;"></span>
-          </button>
-        </form>
-      </div>
-
-      <!-- 3. Authenticated Session View -->
-      <div class="session-panel" id="sessionPanel" style="display: none;">
-        <div class="profile-header">
-          <div class="profile-avatar-large" id="sessionAvatar">YG</div>
-          <div class="profile-details">
-            <h2 class="profile-user-name" id="sessionUserName">Yash Gowardhan</h2>
-            <p class="profile-user-email" id="sessionUserEmail">yash.gowardhan@svpcet.edu.in</p>
-            <span class="role-pill">Verified Account</span>
-          </div>
-        </div>
-
-        <div class="session-info-grid">
-          <div class="session-stat">
-            <span class="stat-label">User ID (Database Key)</span>
-            <span class="stat-value font-mono" id="sessionUserId">#101</span>
-          </div>
-          <div class="session-stat">
-            <span class="stat-label">Authentication Method</span>
-            <span class="stat-value">Bcrypt Hashed + Session</span>
-          </div>
-          <div class="session-stat">
-            <span class="stat-label">Session Security</span>
-            <span class="stat-value">HttpOnly Cookie (24h TTL)</span>
-          </div>
-          <div class="session-stat">
-            <span class="stat-label">Database Status</span>
-            <span class="stat-value text-green" id="sessionDbStatus">PostgreSQL Connected</span>
-          </div>
-        </div>
-
-        <div class="card-actions-row" style="margin-top: 1.5rem;">
-          <button type="button" class="btn-logout" id="logoutBtn">
-            <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/>
+      
+      <!-- ========================================== -->
+      <!-- LEFT PANEL: Brand Showcase & Features      -->
+      <!-- ========================================== -->
+      <aside class="showcase-panel">
+        
+        <!-- Brand Logo -->
+        <header class="brand-header">
+          <div class="brand-logo-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" stroke-width="2"/>
+              <circle cx="12" cy="12" r="3.5" fill="currentColor"/>
             </svg>
-            Sign Out of Session
-          </button>
-        </div>
-      </div>
+          </div>
+          <span class="brand-name">ONYX</span>
+        </header>
 
-      <!-- Security Meta Footer -->
-      <div class="auth-security-meta">
-        <div class="meta-item">
-          <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-          Bcrypt 12-Round Hashing
+        <!-- Headline & Tagline -->
+        <div class="showcase-content">
+          <div class="eyebrow-badge">
+            <span class="badge-icon">✦</span>
+            <span class="badge-text">SECURE ACCESS</span>
+          </div>
+
+          <h1 class="showcase-title">
+            Your account.<br>
+            Your control.
+          </h1>
+
+          <p class="showcase-desc">
+            A modern authentication experience designed with smooth animations, transitions and secure access.
+          </p>
+
+          <!-- 3 Feature Bullets -->
+          <ul class="feature-list">
+            <li class="feature-item">
+              <div class="feature-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="m9 12 2 2 4-4"/>
+                </svg>
+              </div>
+              <div class="feature-text">
+                <h3 class="feature-title">Secure Authentication</h3>
+                <p class="feature-subtitle">Safe and protected account access.</p>
+              </div>
+            </li>
+
+            <li class="feature-item">
+              <div class="feature-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                </svg>
+              </div>
+              <div class="feature-text">
+                <h3 class="feature-title">Smooth Experience</h3>
+                <p class="feature-subtitle">Fast transitions and animations.</p>
+              </div>
+            </li>
+
+            <li class="feature-item">
+              <div class="feature-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                  <line x1="8" y1="21" x2="16" y2="21"/>
+                  <line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+              </div>
+              <div class="feature-text">
+                <h3 class="feature-title">Responsive Design</h3>
+                <p class="feature-subtitle">Works perfectly on all devices.</p>
+              </div>
+            </li>
+          </ul>
         </div>
-        <div class="meta-item">
-          <svg width="14" height="14" viewBox="0 0 20 20" fill="currentColor"><path d="M3 12v3c0 1.657 3.134 3 7 3s7-1.343 7-3v-3c0 1.657-3.134 3-7 3s-7-1.343-7-3z"/><path d="M3 7v3c0 1.657 3.134 3 7 3s7-1.343 7-3V7c0 1.657-3.134 3-7 3S3 8.657 3 7z"/><path d="M17 5c0 1.657-3.134 3-7 3S3 6.657 3 5s3.134-3 7-3 7 1.343 7 3z"/></svg>
-          PostgreSQL Session Store
+
+        <!-- Left Panel Footer -->
+        <footer class="showcase-footer">
+          <span class="copyright">© 2026 ONYX</span>
+          <div class="footer-links">
+            <a href="#privacy" class="footer-link">Privacy</a>
+            <span class="footer-link-divider"></span>
+            <a href="#terms" class="footer-link">Terms</a>
+          </div>
+        </footer>
+      </aside>
+
+      <!-- ========================================== -->
+      <!-- RIGHT PANEL: Animated Form Container      -->
+      <!-- ========================================== -->
+      <section class="form-panel">
+        
+        <!-- ======================================== -->
+        <!-- STATE 1: SIGN IN FORM                    -->
+        <!-- ======================================== -->
+        <div class="form-container active" id="signInContainer">
+          <header class="form-header">
+            <span class="form-eyebrow">WELCOME BACK</span>
+            <h2 class="form-title">Sign In</h2>
+            <p class="form-subtitle">Enter your details to continue.</p>
+          </header>
+
+          <form class="auth-form" id="signInForm" autocomplete="on" novalidate>
+            <!-- Email Field -->
+            <div class="form-group">
+              <label for="signInEmail" class="form-label">Email Address</label>
+              <div class="input-wrapper">
+                <span class="input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                  </svg>
+                </span>
+                <input 
+                  type="email" 
+                  id="signInEmail" 
+                  name="email" 
+                  class="form-input" 
+                  placeholder="name@business.com" 
+                  required
+                >
+              </div>
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-group">
+              <label for="signInPassword" class="form-label">Password</label>
+              <div class="input-wrapper">
+                <span class="input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                </span>
+                <input 
+                  type="password" 
+                  id="signInPassword" 
+                  name="password" 
+                  class="form-input" 
+                  placeholder="Enter your password" 
+                  required
+                >
+                <button type="button" class="password-toggle" id="toggleSignInPassword" aria-label="Toggle password visibility">
+                  <svg class="eye-icon show" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                  <svg class="eye-icon hide hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                    <line x1="1" y1="1" x2="23" y2="23"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Options Row (Remember me + Forgot Password) -->
+            <div class="form-row-options">
+              <label class="custom-checkbox-container">
+                <input type="checkbox" id="rememberMeCheckbox">
+                <span class="custom-checkmark"></span>
+                <span class="checkbox-label">Remember me</span>
+              </label>
+              <a href="#forgot" class="forgot-link" id="forgotPasswordLink">Forgot password?</a>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary" id="signInSubmitBtn">
+              <span class="btn-text">Sign In &rarr;</span>
+              <span class="btn-spinner hidden"></span>
+            </button>
+
+            <!-- Divider -->
+            <div class="auth-divider">
+              <span class="divider-line"></span>
+              <span class="divider-text">OR CONTINUE WITH</span>
+              <span class="divider-line"></span>
+            </div>
+
+            <!-- Social Buttons -->
+            <div class="social-row">
+              <button type="button" class="btn btn-social" id="googleBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24">
+                  <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.9C6.2 7.2 8.9 5 12 5z"/>
+                  <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"/>
+                  <path fill="#FBBC05" d="M5.3 14.7c-.2-.7-.4-1.5-.4-2.3s.1-1.6.4-2.3L1.6 7.2C.6 9.2 0 11.5 0 14s.6 4.8 1.6 6.8l3.7-2.9z"/>
+                  <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.2-6.7-5.3L1.6 16c1.9 3.8 5.8 7 10.4 7z"/>
+                </svg>
+                <span>Google</span>
+              </button>
+
+              <button type="button" class="btn btn-social" id="githubBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                </svg>
+                <span>GitHub</span>
+              </button>
+            </div>
+
+            <!-- Switcher Link to Registration -->
+            <div class="form-switch-prompt">
+              <span>Don't have an account?</span>
+              <button type="button" class="switch-link" id="toRegisterBtn">Create Account</button>
+            </div>
+          </form>
         </div>
-      </div>
+
+        <!-- ======================================== -->
+        <!-- STATE 2: CREATE ACCOUNT (REGISTRATION)  -->
+        <!-- ======================================== -->
+        <div class="form-container" id="registerContainer">
+          <header class="form-header">
+            <span class="form-eyebrow">GET STARTED</span>
+            <h2 class="form-title">Create Account</h2>
+            <p class="form-subtitle">Create your account in a few seconds.</p>
+          </header>
+
+          <form class="auth-form" id="registerForm" autocomplete="on" novalidate>
+            <!-- Full Name Field -->
+            <div class="form-group">
+              <label for="registerName" class="form-label">Full Name</label>
+              <div class="input-wrapper">
+                <span class="input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                  </svg>
+                </span>
+                <input 
+                  type="text" 
+                  id="registerName" 
+                  name="name" 
+                  class="form-input" 
+                  placeholder="Your full name" 
+                  required
+                >
+              </div>
+            </div>
+
+            <!-- Email Address Field -->
+            <div class="form-group">
+              <label for="registerEmail" class="form-label">Email Address</label>
+              <div class="input-wrapper">
+                <span class="input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                  </svg>
+                </span>
+                <input 
+                  type="email" 
+                  id="registerEmail" 
+                  name="email" 
+                  class="form-input" 
+                  placeholder="name@business.com" 
+                  required
+                >
+              </div>
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-group">
+              <label for="registerPassword" class="form-label">Password</label>
+              <div class="input-wrapper">
+                <span class="input-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                  </svg>
+                </span>
+                <input 
+                  type="password" 
+                  id="registerPassword" 
+                  name="password" 
+                  class="form-input" 
+                  placeholder="Create a password" 
+                  required
+                >
+                <button type="button" class="password-toggle" id="toggleRegisterPassword" aria-label="Toggle password visibility">
+                  <svg class="eye-icon show" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                  <svg class="eye-icon hide hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                    <line x1="1" y1="1" x2="23" y2="23"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Password Requirement Hint -->
+            <div class="password-requirement">
+              <span class="requirement-icon" id="lengthCheckIcon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </span>
+              <span class="requirement-text">Use at least 8 characters</span>
+            </div>
+
+            <!-- Terms and Privacy Checkbox -->
+            <div class="form-row-terms">
+              <label class="custom-checkbox-container terms-label">
+                <input type="checkbox" id="termsCheckbox" required>
+                <span class="custom-checkmark"></span>
+                <span class="checkbox-label">
+                  I agree to the <a href="#terms" class="inline-link">Terms of Service</a> and <a href="#privacy" class="inline-link">Privacy Policy</a>
+                </span>
+              </label>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary" id="registerSubmitBtn">
+              <span class="btn-text">Create Account</span>
+              <span class="btn-spinner hidden"></span>
+            </button>
+
+            <!-- Switcher Link to Sign In -->
+            <div class="form-switch-prompt">
+              <span>Already have an account?</span>
+              <button type="button" class="switch-link" id="toSignInBtn">Sign In</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- ======================================== -->
+        <!-- STATE 3: AUTHENTICATED USER DASHBOARD    -->
+        <!-- ======================================== -->
+        <div class="form-container" id="authenticatedContainer">
+          <div class="auth-success-card">
+            <div class="success-icon-badge">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+            </div>
+
+            <span class="form-eyebrow">SESSION ACTIVE</span>
+            <h2 class="form-title" id="welcomeUserHeading">Welcome Back!</h2>
+            <p class="form-subtitle">Authenticated through PostgreSQL database.</p>
+
+            <div class="profile-details-box">
+              <div class="profile-detail-item">
+                <span class="detail-label">Name:</span>
+                <span class="detail-value" id="profileName">-</span>
+              </div>
+              <div class="profile-detail-item">
+                <span class="detail-label">Email:</span>
+                <span class="detail-value" id="profileEmail">-</span>
+              </div>
+              <div class="profile-detail-item">
+                <span class="detail-label">Database ID:</span>
+                <span class="detail-value" id="profileId">-</span>
+              </div>
+              <div class="profile-detail-item">
+                <span class="detail-label">Status:</span>
+                <span class="detail-value active-badge">Verified (PostgreSQL)</span>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-primary" id="signOutBtn">
+              <span class="btn-text">Sign Out</span>
+            </button>
+          </div>
+        </div>
+
+      </section>
+
     </div>
   </main>
 
-  <!-- Server Architecture & Launch Modal -->
-  <div class="server-guide-modal" id="serverGuideModal">
-    <div class="server-guide-box">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-        <h2 style="font-size:1.15rem; color:#fff;">Live PostgreSQL &amp; Express Server Guide</h2>
-        <button type="button" id="closeGuideBtn" style="background:transparent; border:none; color:#888; font-size:1.5rem; cursor:pointer;">&times;</button>
-      </div>
-      <p style="font-size:0.875rem; color:var(--text-muted); margin-bottom:1rem;">
-        This practical includes a complete Node.js + Express + PostgreSQL backend. To run the full-stack server locally:
-      </p>
-      <div class="guide-code">
-        <span class="comment"># 1. From workspace root, start the auth server</span><br/>
-        cd backend/services/practical-4-authentication<br/>
-        npm install<br/><br/>
-        <span class="comment"># 2. Configure database credentials</span><br/>
-        copy .env.example .env<br/><br/>
-        <span class="comment"># 3. Start the server (Port 3001)</span><br/>
-        npm start
-      </div>
-      <p style="font-size:0.8125rem; color:var(--text-dim); margin-top:0.75rem;">
-        When started, the page will automatically detect the server and connect with live database persistence.
-      </p>
-    </div>
-  </div>
-
-  <script src="../../js/config.js"></script>
-  <script src="public/js/auth.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
+
