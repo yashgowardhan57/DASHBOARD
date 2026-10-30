@@ -1,15 +1,21 @@
 /**
- * Practical 4: Animated Login & Registration Page
- * Technology: Vanilla JavaScript (ES6+), Fetch API, CSS Transitions
- *
- * API_BASE_URL:
- *   - When hosted on Netlify (static), set this to your Render backend URL.
- *   - When running locally with `npm start`, leave it as '' (same-origin).
- *
- * Set the window.__API_BASE__ variable in index.html or use the RENDER_URL below.
+ * Practical 4: Animated Login & Registration Page (ONYX Gateway)
+ * Technology: Vanilla JavaScript (ES6+), Fetch API, CSS Transitions, Local Demo Fallback
  */
 
-const API_BASE = window.__API_BASE__ || '';
+// Intelligently determine API base URL
+const API_BASE = (function() {
+  if (typeof window !== 'undefined' && window.__API_BASE__ !== undefined && window.__API_BASE__ !== '') {
+    return window.__API_BASE__;
+  }
+  if (typeof window !== 'undefined') {
+    if (window.location.port === '3001' || window.location.port === '3000') return '';
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      return 'http://localhost:3001';
+    }
+  }
+  return '';
+})();
 
 document.addEventListener('DOMContentLoaded', () => {
   // DOM Elements - Containers
@@ -53,85 +59,105 @@ document.addEventListener('DOMContentLoaded', () => {
   const profileEmail = document.getElementById('profileEmail');
   const profileId = document.getElementById('profileId');
 
-  // Social Buttons
-  const googleBtn = document.getElementById('googleBtn');
-  const githubBtn = document.getElementById('githubBtn');
-  const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+  // =========================================================================
+  // Demo Mode Local Storage Helper
+  // =========================================================================
+  function getDemoUsers() {
+    try {
+      const stored = localStorage.getItem('onyx_demo_accounts');
+      if (stored) return JSON.parse(stored);
+    } catch (_) {}
+    return [
+      { id: 101, name: 'Yash Gowardhan', email: 'yash@example.com', password: 'password123', created_at: new Date().toISOString() },
+      { id: 102, name: 'Demo User', email: 'demo@onyx.local', password: 'password123', created_at: new Date().toISOString() }
+    ];
+  }
 
-  // =========================================================================
-  // 1. Restore "Remember Me" email from localStorage
-  // =========================================================================
-  const savedEmail = localStorage.getItem('onyx_saved_email');
-  if (savedEmail && signInEmailInput && rememberMeCheckbox) {
-    signInEmailInput.value = savedEmail;
-    rememberMeCheckbox.checked = true;
+  function saveDemoUsers(users) {
+    try {
+      localStorage.setItem('onyx_demo_accounts', JSON.stringify(users));
+    } catch (_) {}
   }
 
   // =========================================================================
-  // 2. Smooth Form Transitions
+  // 1. Initial State & Auto-fill Saved Email
+  // =========================================================================
+  const savedEmail = localStorage.getItem('onyx_saved_email');
+  if (savedEmail && signInEmailInput) {
+    signInEmailInput.value = savedEmail;
+    if (rememberMeCheckbox) rememberMeCheckbox.checked = true;
+  }
+
+  // =========================================================================
+  // 2. Smooth Form Switching Animations
   // =========================================================================
   function switchForm(target) {
     [signInContainer, registerContainer, authenticatedContainer].forEach(c => {
-      if (c) c.classList.remove('active');
+      if (!c) return;
+      c.classList.remove('active');
+      c.style.display = 'none';
     });
 
-    if (target === 'register') registerContainer.classList.add('active');
-    else if (target === 'authenticated') authenticatedContainer.classList.add('active');
-    else signInContainer.classList.add('active');
+    let activeContainer;
+    if (target === 'register') activeContainer = registerContainer;
+    else if (target === 'authenticated') activeContainer = authenticatedContainer;
+    else activeContainer = signInContainer;
+
+    if (activeContainer) {
+      activeContainer.style.display = 'block';
+      void activeContainer.offsetWidth; // Force CSS reflow
+      activeContainer.classList.add('active');
+    }
   }
 
-  toRegisterBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    switchForm('register');
-  });
+  if (toRegisterBtn) {
+    toRegisterBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      switchForm('register');
+    });
+  }
 
-  toSignInBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    switchForm('signIn');
-  });
+  if (toSignInBtn) {
+    toSignInBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      switchForm('signIn');
+    });
+  }
 
-  signOutBtn.addEventListener('click', () => {
-    switchForm('signIn');
-    signInPasswordInput.value = '';
-    showToast('You have been signed out safely.', 'success');
-  });
+  if (signOutBtn) {
+    signOutBtn.addEventListener('click', () => {
+      showToast('You have been signed out safely.', 'success');
+      switchForm('signIn');
+      if (signInPasswordInput) signInPasswordInput.value = '';
+    });
+  }
 
   // =========================================================================
-  // 3. Password Show / Hide Toggle
+  // 3. Password Reveal Toggles
   // =========================================================================
-  function setupPasswordToggle(toggleBtn, passwordInput) {
-    if (!toggleBtn || !passwordInput) return;
-    toggleBtn.addEventListener('click', () => {
-      const isPassword = passwordInput.getAttribute('type') === 'password';
-      passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
-      const eyeShow = toggleBtn.querySelector('.eye-icon.show');
-      const eyeHide = toggleBtn.querySelector('.eye-icon.hide');
-      if (isPassword) {
-        eyeShow.classList.add('hidden');
-        eyeHide.classList.remove('hidden');
-      } else {
-        eyeShow.classList.remove('hidden');
-        eyeHide.classList.add('hidden');
-      }
+  function setupPasswordToggle(btn, input) {
+    if (!btn || !input) return;
+    btn.addEventListener('click', () => {
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+      const eyeOpen = btn.querySelector('.eye-open');
+      const eyeClosed = btn.querySelector('.eye-closed');
+      if (eyeOpen) eyeOpen.classList.toggle('hidden', isPassword);
+      if (eyeClosed) eyeClosed.classList.toggle('hidden', !isPassword);
     });
   }
 
   setupPasswordToggle(toggleSignInPassword, signInPasswordInput);
   setupPasswordToggle(toggleRegisterPassword, registerPasswordInput);
 
-  // Live password length check
   if (registerPasswordInput && passwordRequirement) {
     registerPasswordInput.addEventListener('input', () => {
-      if (registerPasswordInput.value.length >= 8) {
-        passwordRequirement.classList.add('valid');
-      } else {
-        passwordRequirement.classList.remove('valid');
-      }
+      passwordRequirement.classList.toggle('valid', registerPasswordInput.value.length >= 8);
     });
   }
 
   // =========================================================================
-  // 4. PostgreSQL Live Status Check
+  // 4. Live Connection & Status Check
   // =========================================================================
   async function checkDatabaseConnection() {
     try {
@@ -139,22 +165,29 @@ document.addEventListener('DOMContentLoaded', () => {
       if (response.ok) {
         const data = await response.json();
         if (data.connected) {
-          dbStatusDot.classList.remove('disconnected');
-          dbStatusDot.classList.add('connected');
-          dbStatusText.textContent = `PostgreSQL: ${data.database} (${data.registeredUsers} users)`;
+          if (dbStatusDot) {
+            dbStatusDot.className = 'db-status-dot connected';
+          }
+          if (dbStatusText) {
+            dbStatusText.textContent = `${data.database} (${data.registeredUsers} users)`;
+          }
           return;
         }
       }
       throw new Error('Disconnected');
-    } catch (err) {
-      dbStatusDot.classList.remove('connected');
-      dbStatusDot.classList.add('disconnected');
-      dbStatusText.textContent = 'PostgreSQL: Disconnected';
+    } catch (_) {
+      if (dbStatusDot) {
+        dbStatusDot.className = 'db-status-dot demo';
+      }
+      if (dbStatusText) {
+        const count = getDemoUsers().length;
+        dbStatusText.textContent = `Demo Mode (Server Offline • ${count} accounts active)`;
+      }
     }
   }
 
   checkDatabaseConnection();
-  setInterval(checkDatabaseConnection, 15000);
+  setInterval(checkDatabaseConnection, 12000);
 
   // =========================================================================
   // 5. Toast Notification System
@@ -179,99 +212,161 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 4000);
   }
 
+  function handleLoginSuccess(user, message) {
+    if (rememberMeCheckbox && rememberMeCheckbox.checked && signInEmailInput) {
+      localStorage.setItem('onyx_saved_email', signInEmailInput.value.trim());
+    } else {
+      localStorage.removeItem('onyx_saved_email');
+    }
+
+    showToast(message || `Welcome back, ${user.name}!`, 'success');
+
+    if (user) {
+      if (welcomeUserHeading) welcomeUserHeading.textContent = `Welcome, ${user.name}!`;
+      if (profileName) profileName.textContent = user.name;
+      if (profileEmail) profileEmail.textContent = user.email;
+      if (profileId) profileId.textContent = `#${user.id}`;
+    }
+    switchForm('authenticated');
+  }
+
   // =========================================================================
-  // 6. Sign In Form — POST /api/login → Neon PostgreSQL via Render
+  // 6. Sign In Form — Live Server with Resilient Demo Fallback
   // =========================================================================
-  signInForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  if (signInForm) {
+    signInForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-    const email = signInEmailInput.value.trim();
-    const password = signInPasswordInput.value;
+      const email = signInEmailInput ? signInEmailInput.value.trim() : '';
+      const password = signInPasswordInput ? signInPasswordInput.value : '';
 
-    if (!email) { showToast('Please enter your email address.', 'error'); return; }
-    if (!password) { showToast('Please enter your password.', 'error'); return; }
+      if (!email) { showToast('Please enter your email address.', 'error'); return; }
+      if (!password) { showToast('Please enter your password.', 'error'); return; }
 
-    setButtonLoading(signInSubmitBtn, true);
+      setButtonLoading(signInSubmitBtn, true);
 
-    try {
-      const response = await fetch(`${API_BASE}/api/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      const result = await response.json();
+      // Attempt live server first
+      try {
+        const response = await fetch(`${API_BASE}/api/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const result = await response.json();
 
-      if (response.ok && result.success) {
-        if (rememberMeCheckbox.checked) {
-          localStorage.setItem('onyx_saved_email', email);
+        if (response.ok && result.success) {
+          handleLoginSuccess(result.user, result.message);
+          return;
         } else {
-          localStorage.removeItem('onyx_saved_email');
+          showToast(result.message || 'Invalid credentials. Please verify your email and password.', 'error');
+          return;
         }
+      } catch (err) {
+        console.warn('[Authentication] Live server unreachable, falling back to local demo mode:', err.message);
+        
+        // Demo fallback verification
+        const demoUsers = getDemoUsers();
+        const normalized = email.toLowerCase();
+        const matched = demoUsers.find(u => u.email.toLowerCase() === normalized);
 
-        showToast(result.message, 'success');
-
-        if (result.user) {
-          welcomeUserHeading.textContent = `Welcome, ${result.user.name}!`;
-          profileName.textContent = result.user.name;
-          profileEmail.textContent = result.user.email;
-          profileId.textContent = `#${result.user.id}`;
+        if (matched) {
+          if (matched.password === password) {
+            handleLoginSuccess(matched, `Signed in as ${matched.name} (Demo Mode)`);
+          } else {
+            showToast('Incorrect password for demo account.', 'error');
+          }
+        } else {
+          showToast('No account found. Sign up or try demo: yash@example.com / password123', 'error');
         }
-        switchForm('authenticated');
-      } else {
-        showToast(result.message || 'Invalid credentials.', 'error');
+      } finally {
+        setButtonLoading(signInSubmitBtn, false);
       }
-    } catch (err) {
-      console.error('Login error:', err);
-      showToast('Cannot reach the server. Please check your connection.', 'error');
-    } finally {
-      setButtonLoading(signInSubmitBtn, false);
-    }
-  });
+    });
+  }
 
   // =========================================================================
-  // 7. Register Form — POST /api/register → Neon PostgreSQL via Render
+  // 7. Register Form — Live Server with Resilient Demo Fallback
   // =========================================================================
-  registerForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  if (registerForm) {
+    registerForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-    const name = document.getElementById('registerName').value.trim();
-    const email = document.getElementById('registerEmail').value.trim();
-    const password = registerPasswordInput.value;
-    const termsChecked = document.getElementById('termsCheckbox').checked;
+      const nameInput = document.getElementById('registerName');
+      const emailInput = document.getElementById('registerEmail');
+      const termsInput = document.getElementById('termsCheckbox');
 
-    if (!name) { showToast('Please enter your full name.', 'error'); return; }
-    if (!email) { showToast('Please enter your email address.', 'error'); return; }
-    if (password.length < 8) { showToast('Password must be at least 8 characters.', 'error'); return; }
-    if (!termsChecked) { showToast('Please agree to the Terms of Service & Privacy Policy.', 'error'); return; }
+      const name = nameInput ? nameInput.value.trim() : '';
+      const email = emailInput ? emailInput.value.trim() : '';
+      const password = registerPasswordInput ? registerPasswordInput.value : '';
+      const termsChecked = termsInput ? termsInput.checked : true;
 
-    setButtonLoading(registerSubmitBtn, true);
+      if (!name) { showToast('Please enter your full name.', 'error'); return; }
+      if (!email) { showToast('Please enter your email address.', 'error'); return; }
+      if (password.length < 8) { showToast('Password must be at least 8 characters.', 'error'); return; }
+      if (!termsChecked) { showToast('Please agree to the Terms of Service & Privacy Policy.', 'error'); return; }
 
-    try {
-      const response = await fetch(`${API_BASE}/api/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password })
-      });
-      const result = await response.json();
+      setButtonLoading(registerSubmitBtn, true);
 
-      if (response.ok && result.success) {
-        showToast(result.message, 'success');
-        switchForm('signIn');
-        signInEmailInput.value = email;
-        signInPasswordInput.value = '';
-        signInPasswordInput.focus();
-        registerForm.reset();
-        passwordRequirement.classList.remove('valid');
-      } else {
-        showToast(result.message || 'Registration failed. Please check your inputs.', 'error');
+      // Attempt live server first
+      try {
+        const response = await fetch(`${API_BASE}/api/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          showToast(result.message || 'Account created successfully! Welcome to ONYX.', 'success');
+          switchForm('signIn');
+          if (signInEmailInput) signInEmailInput.value = email;
+          if (signInPasswordInput) {
+            signInPasswordInput.value = '';
+            signInPasswordInput.focus();
+          }
+          registerForm.reset();
+          if (passwordRequirement) passwordRequirement.classList.remove('valid');
+          return;
+        } else {
+          showToast(result.message || 'Registration failed. Please check your inputs.', 'error');
+          return;
+        }
+      } catch (err) {
+        console.warn('[Registration] Live server unreachable, saving to local demo storage:', err.message);
+
+        // Demo fallback registration
+        const demoUsers = getDemoUsers();
+        const normalized = email.toLowerCase();
+
+        if (demoUsers.some(u => u.email.toLowerCase() === normalized)) {
+          showToast('An account with this email already exists. Please sign in.', 'error');
+        } else {
+          const newUser = {
+            id: demoUsers.length + 101,
+            name,
+            email: normalized,
+            password,
+            created_at: new Date().toISOString()
+          };
+          demoUsers.push(newUser);
+          saveDemoUsers(demoUsers);
+
+          showToast('Account created in Demo Mode! You can now sign in.', 'success');
+          switchForm('signIn');
+          if (signInEmailInput) signInEmailInput.value = email;
+          if (signInPasswordInput) {
+            signInPasswordInput.value = '';
+            signInPasswordInput.focus();
+          }
+          registerForm.reset();
+          if (passwordRequirement) passwordRequirement.classList.remove('valid');
+          checkDatabaseConnection();
+        }
+      } finally {
+        setButtonLoading(registerSubmitBtn, false);
       }
-    } catch (err) {
-      console.error('Registration error:', err);
-      showToast('Cannot reach the server. Please check your connection.', 'error');
-    } finally {
-      setButtonLoading(registerSubmitBtn, false);
-    }
-  });
+    });
+  }
 
   // =========================================================================
   // 8. Helpers
@@ -283,24 +378,5 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.disabled = isLoading;
     if (spinner) spinner.classList.toggle('hidden', !isLoading);
     if (textSpan) textSpan.style.opacity = isLoading ? '0.4' : '1';
-  }
-
-  if (googleBtn) {
-    googleBtn.addEventListener('click', () => {
-      showToast('Google OAuth: Redirect initiated.', 'success');
-    });
-  }
-
-  if (githubBtn) {
-    githubBtn.addEventListener('click', () => {
-      showToast('GitHub OAuth: Redirect initiated.', 'success');
-    });
-  }
-
-  if (forgotPasswordLink) {
-    forgotPasswordLink.addEventListener('click', (e) => {
-      e.preventDefault();
-      showToast('Password reset link sent to your registered email address.', 'success');
-    });
   }
 });

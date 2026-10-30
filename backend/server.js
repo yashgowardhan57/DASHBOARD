@@ -65,6 +65,54 @@ app.get('/api/students', (req, res) => {
 });
 
 // GET /api/stats
+
+// ---- Practical 4 Auth Endpoints (Unified Gateway) ----
+const gatewayUsers = [
+  { id: 101, name: 'Yash Gowardhan', email: 'yash@example.com', password: 'password123', created_at: new Date().toISOString() },
+  { id: 102, name: 'Admin Demo', email: 'admin@onyx.local', password: 'password123', created_at: new Date().toISOString() }
+];
+
+app.post('/api/register', async (req, res) => {
+  const { name, email, password } = req.body;
+  if (!name || !email || !password) {
+    return res.status(400).json({ success: false, message: 'All fields are required.' });
+  }
+  const normalizedEmail = email.trim().toLowerCase();
+  if (gatewayUsers.some(u => u.email.toLowerCase() === normalizedEmail)) {
+    return res.status(409).json({ success: false, message: 'An account with this email already exists.' });
+  }
+  const newUser = {
+    id: gatewayUsers.length + 101,
+    name: name.trim(),
+    email: normalizedEmail,
+    password,
+    created_at: new Date().toISOString()
+  };
+  gatewayUsers.push(newUser);
+  res.status(201).json({
+    success: true,
+    message: 'Account created successfully! Welcome to ONYX.',
+    user: { id: newUser.id, name: newUser.name, email: newUser.email, created_at: newUser.created_at }
+  });
+});
+
+app.post('/api/login', async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ success: false, message: 'Please provide email and password.' });
+  }
+  const normalizedEmail = email.trim().toLowerCase();
+  const user = gatewayUsers.find(u => u.email.toLowerCase() === normalizedEmail);
+  if (!user || user.password !== password) {
+    return res.status(401).json({ success: false, message: 'Invalid credentials. Please verify your email and password.' });
+  }
+  res.status(200).json({
+    success: true,
+    message: `Welcome back, ${user.name}! Signed in successfully.`,
+    user: { id: user.id, name: user.name, email: user.email, created_at: user.created_at }
+  });
+});
+
 app.get('/api/stats', (req, res) => {
   if (!studentData) return res.status(503).json({ success: false, error: 'Student stats unavailable' });
   res.json({ success: true, data: studentData.getStats() });

@@ -9,11 +9,12 @@ const PORT = process.env.PORT || 3001;
 
 // ─── CORS: Allow Netlify frontend + local dev ───────────────────────────────
 const ALLOWED_ORIGINS = [
+  'http://localhost:3000',
   'http://localhost:3001',
   'http://localhost:5500',
-  'http://127.0.0.1:5500',
-  // Add your Netlify domain here after deployment, e.g.:
-  // 'https://your-practical-hub.netlify.app'
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:3001',
+  'http://127.0.0.1:5500'
 ];
 
 app.use((req, res, next) => {
@@ -32,34 +33,44 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 
 // ─── PostgreSQL Connection Pool ──────────────────────────────────────────────
-// Supports both DATABASE_URL (Neon/Render/Supabase) and individual env vars
 let poolConfig;
 
 if (process.env.DATABASE_URL) {
-  // Cloud: Neon, Supabase, Railway, ElephantSQL all provide DATABASE_URL
   poolConfig = {
     connectionString: process.env.DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false // Required for Neon / Supabase / most cloud Postgres
-    }
+    ssl: { rejectUnauthorized: false }
   };
   console.log('🌐 [PostgreSQL] Using DATABASE_URL (Cloud Connection)');
 } else {
-  // Local development fallback
   poolConfig = {
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT, 10) || 5432,
     database: process.env.DB_NAME || 'postgres',
     user: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD || 'admin123'
+    password: process.env.DB_PASSWORD || 'admin123',
+    connectionTimeoutMillis: 2000
   };
-  console.log('💻 [PostgreSQL] Using individual DB_* env vars (Local)');
+  console.log('💻 [PostgreSQL] Configured for host:', poolConfig.host, 'port:', poolConfig.port);
 }
 
 const pool = new Pool(poolConfig);
 
 let isDatabaseConnected = false;
 let dbErrorMessage = '';
+
+// In-memory fallback data store in case PostgreSQL is offline
+const inMemoryUsers = [
+  { id: 101, name: 'Yash Gowardhan', email: 'yash@example.com', password: '', created_at: new Date().toISOString() },
+  { id: 102, name: 'Admin Demo', email: 'admin@onyx.local', password: '', created_at: new Date().toISOString() }
+];
+
+(async () => {
+  try {
+    const hash = await bcrypt.hash('password123', 10);
+    inMemoryUsers[0].password = hash;
+    inMemoryUsers[1].password = hash;
+  } catch (_) {}
+})();
 
 // Auto-create table & verify connection on startup
 async function initDatabase() {
@@ -87,40 +98,42 @@ async function initDatabase() {
   } catch (err) {
     isDatabaseConnected = false;
     dbErrorMessage = err.message;
-    console.error('❌ [PostgreSQL] Connection failed:', err.message);
+    console.warn('⚠️ [PostgreSQL] Local database not reachable:', err.message);
+    console.log('💡 [Authentication] Running in resilient In-Memory Fallback Mode.');
   }
 }
 
 initDatabase();
 
+// ─── Health check probe for Dashboard ───────────────────────────────────────
+app.get('/api/health', (req, res) => res.json({ status: 'ok', service: 'practical-4-auth', db: isDatabaseConnected ? 'postgres' : 'in-memory' }));
+
 // ─── GET /api/status ─────────────────────────────────────────────────────────
-
-// Health check probe for Dashboard
-app.get('/api/health', (req, res) => res.json({ status: 'ok', service: 'practical-4-auth' }));
-
 app.get('/api/status', async (req, res) => {
-  if (!isDatabaseConnected) {
-    return res.status(503).json({
-      connected: false,
-      message: 'PostgreSQL database disconnected',
-      error: dbErrorMessage
-    });
-  }
-  try {
-    const result = await pool.query('SELECT COUNT(*) AS count FROM users');
-    const dbLabel = process.env.DATABASE_URL
-      ? 'Neon Cloud PostgreSQL'
-      : (process.env.DB_NAME || 'postgres');
+  if (isDatabaseConnected) {
+    try {
+      const result = await pool.query('SELECT COUNT(*) AS count FROM users');
+      const dbLabel = process.env.DATABASE_URL
+        ? 'Neon Cloud PostgreSQL'
+        : (process.env.DB_NAME || 'postgres');
 
-    res.json({
-      connected: true,
-      database: dbLabel,
-      registeredUsers: parseInt(result.rows[0].count, 10),
-      timestamp: new Date().toISOString()
-    });
-  } catch (err) {
-    res.status(500).json({ connected: false, error: err.message });
+      return res.json({
+        connected: true,
+        database: dbLabel,
+        registeredUsers: parseInt(result.rows[0].count, 10),
+        timestamp: new Date().toISOString()
+      });
+    } catch (err) {
+      isDatabaseConnected = false;
+    }
   }
+
+  res.json({
+    connected: true,
+    database: 'In-Memory Mode (Start PostgreSQL for persistent DB)',
+    registeredUsers: inMemoryUsers.length,
+    timestamp: new Date().toISOString()
+  });
 });
 
 // ─── POST /api/register ───────────────────────────────────────────────────────
@@ -140,38 +153,64 @@ app.post('/api/register', async (req, res) => {
   if (!password || password.length < 8)
     return res.status(400).json({ success: false, message: 'Password must be at least 8 characters.' });
 
-  try {
-    const normalizedEmail = email.trim().toLowerCase();
+  const normalizedEmail = email.trim().toLowerCase();
 
-    const existing = await pool.query(
-      'SELECT id FROM users WHERE LOWER(email) = $1 LIMIT 1;',
-      [normalizedEmail]
-    );
-    if (existing.rows.length > 0)
-      return res.status(409).json({
-        success: false,
-        message: 'An account with this email already exists. Please sign in instead.'
+  if (isDatabaseConnected) {
+    try {
+      const existing = await pool.query(
+        'SELECT id FROM users WHERE LOWER(email) = $1 LIMIT 1;',
+        [normalizedEmail]
+      );
+      if (existing.rows.length > 0)
+        return res.status(409).json({
+          success: false,
+          message: 'An account with this email already exists. Please sign in instead.'
+        });
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const result = await pool.query(
+        `INSERT INTO users (name, email, password)
+         VALUES ($1, $2, $3)
+         RETURNING id, name, email, created_at;`,
+        [name.trim(), normalizedEmail, hashedPassword]
+      );
+      const newUser = result.rows[0];
+      console.log(`[DB] Registered: ${newUser.name} <${newUser.email}> ID#${newUser.id}`);
+
+      return res.status(201).json({
+        success: true,
+        message: 'Account created successfully! Welcome to ONYX.',
+        user: { id: newUser.id, name: newUser.name, email: newUser.email, created_at: newUser.created_at }
       });
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const result = await pool.query(
-      `INSERT INTO users (name, email, password)
-       VALUES ($1, $2, $3)
-       RETURNING id, name, email, created_at;`,
-      [name.trim(), normalizedEmail, hashedPassword]
-    );
-    const newUser = result.rows[0];
-    console.log(`[DB] Registered: ${newUser.name} <${newUser.email}> ID#${newUser.id}`);
-
-    return res.status(201).json({
-      success: true,
-      message: 'Account created successfully! Welcome to ONYX.',
-      user: { id: newUser.id, name: newUser.name, email: newUser.email, created_at: newUser.created_at }
-    });
-  } catch (err) {
-    console.error('[DB Error] Registration:', err.message);
-    return res.status(500).json({ success: false, message: 'Database error during registration.' });
+    } catch (err) {
+      console.warn('[PostgreSQL Error, falling back to in-memory]:', err.message);
+      isDatabaseConnected = false;
+    }
   }
+
+  // In-Memory Fallback
+  if (inMemoryUsers.some(u => u.email.toLowerCase() === normalizedEmail)) {
+    return res.status(409).json({
+      success: false,
+      message: 'An account with this email already exists. Please sign in instead.'
+    });
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const newUser = {
+    id: inMemoryUsers.length + 101,
+    name: name.trim(),
+    email: normalizedEmail,
+    password: hashedPassword,
+    created_at: new Date().toISOString()
+  };
+  inMemoryUsers.push(newUser);
+
+  return res.status(201).json({
+    success: true,
+    message: 'Account created successfully! (In-Memory Session)',
+    user: { id: newUser.id, name: newUser.name, email: newUser.email, created_at: newUser.created_at }
+  });
 });
 
 // ─── POST /api/login ─────────────────────────────────────────────────────────
@@ -184,37 +223,63 @@ app.post('/api/login', async (req, res) => {
   if (!password)
     return res.status(400).json({ success: false, message: 'Please enter your password.' });
 
-  try {
-    const normalizedEmail = email.trim().toLowerCase();
-    const result = await pool.query(
-      'SELECT id, name, email, password, created_at FROM users WHERE LOWER(email) = $1 LIMIT 1;',
-      [normalizedEmail]
-    );
+  const normalizedEmail = email.trim().toLowerCase();
 
-    if (result.rows.length === 0)
-      return res.status(401).json({
-        success: false,
-        message: 'No account found with this email. Please check your credentials or create an account.'
+  if (isDatabaseConnected) {
+    try {
+      const result = await pool.query(
+        'SELECT id, name, email, password, created_at FROM users WHERE LOWER(email) = $1 LIMIT 1;',
+        [normalizedEmail]
+      );
+
+      if (result.rows.length === 0)
+        return res.status(401).json({
+          success: false,
+          message: 'No account found with this email. Please check your credentials or create an account.'
+        });
+
+      const user = result.rows[0];
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch)
+        return res.status(401).json({
+          success: false,
+          message: 'Incorrect password. Please verify and try again.'
+        });
+
+      console.log(`[DB] Authenticated: ${user.name} <${user.email}> ID#${user.id}`);
+      return res.status(200).json({
+        success: true,
+        message: `Welcome back, ${user.name}! Signed in successfully.`,
+        user: { id: user.id, name: user.name, email: user.email, created_at: user.created_at }
       });
-
-    const user = result.rows[0];
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
-      return res.status(401).json({
-        success: false,
-        message: 'Incorrect password. Please verify and try again.'
-      });
-
-    console.log(`[DB] Authenticated: ${user.name} <${user.email}> ID#${user.id}`);
-    return res.status(200).json({
-      success: true,
-      message: `Welcome back, ${user.name}! Signed in successfully.`,
-      user: { id: user.id, name: user.name, email: user.email, created_at: user.created_at }
-    });
-  } catch (err) {
-    console.error('[DB Error] Login:', err.message);
-    return res.status(500).json({ success: false, message: 'Database error during sign in.' });
+    } catch (err) {
+      console.warn('[PostgreSQL Error, falling back to in-memory]:', err.message);
+      isDatabaseConnected = false;
+    }
   }
+
+  // In-Memory Fallback
+  const user = inMemoryUsers.find(u => u.email.toLowerCase() === normalizedEmail);
+  if (!user) {
+    return res.status(401).json({
+      success: false,
+      message: 'No account found with this email. Please check your credentials or create an account.'
+    });
+  }
+
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) {
+    return res.status(401).json({
+      success: false,
+      message: 'Incorrect password. Please verify and try again.'
+    });
+  }
+
+  return res.status(200).json({
+    success: true,
+    message: `Welcome back, ${user.name}! Signed in successfully.`,
+    user: { id: user.id, name: user.name, email: user.email, created_at: user.created_at }
+  });
 });
 
 // ─── Fallback: serve index.html ───────────────────────────────────────────────
@@ -224,7 +289,7 @@ app.get('*', (req, res) => {
 
 // ─── Start Server ─────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  const dbMode = process.env.DATABASE_URL ? 'Neon Cloud PostgreSQL' : 'Local PostgreSQL';
+  const dbMode = isDatabaseConnected ? (process.env.DATABASE_URL ? 'Neon Cloud PostgreSQL' : 'Local PostgreSQL') : 'In-Memory Fallback';
   console.log('\n======================================================');
   console.log('🚀  Practical 4: Animated Authentication — RUNNING');
   console.log(`📡  URL:      http://localhost:${PORT}`);

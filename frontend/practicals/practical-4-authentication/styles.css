@@ -257,6 +257,11 @@ body {
   animation: pulseDot 2s infinite;
 }
 
+.db-status-dot.demo {
+  background-color: #f59e0b;
+  animation: pulseDot 2s infinite;
+}
+
 .db-status-dot.disconnected {
   background-color: var(--error-color);
 }
