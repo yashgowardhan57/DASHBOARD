@@ -42,21 +42,38 @@ if (process.env.DATABASE_URL) {
   };
   console.log('🌐 [PostgreSQL] Using DATABASE_URL (Cloud Connection)');
 } else {
+  const isRemote = Boolean(
+    process.env.DB_SSL === 'true' ||
+    (process.env.DB_HOST && !['localhost', '127.0.0.1'].includes(process.env.DB_HOST))
+  );
+
   poolConfig = {
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT, 10) || 5432,
     database: process.env.DB_NAME || 'postgres',
     user: process.env.DB_USER || 'postgres',
     password: process.env.DB_PASSWORD || 'admin123',
-    connectionTimeoutMillis: 2000
+    connectionTimeoutMillis: 5000,
+    ssl: isRemote ? { rejectUnauthorized: false } : false
   };
   console.log('💻 [PostgreSQL] Configured for host:', poolConfig.host, 'port:', poolConfig.port);
 }
 
-const pool = new Pool(poolConfig);
+let pool = new Pool(poolConfig);
 
 let isDatabaseConnected = false;
 let dbErrorMessage = '';
+
+// Helper to label database type dynamically
+function getDbLabel() {
+  if (!isDatabaseConnected) return 'In-Memory Fallback';
+  const url = process.env.DATABASE_URL || '';
+  const host = process.env.DB_HOST || '';
+  if (url.includes('supabase') || host.includes('supabase')) return 'Supabase PostgreSQL';
+  if (url.includes('neon') || host.includes('neon')) return 'Neon Cloud PostgreSQL';
+  if (url || (host && !['localhost', '127.0.0.1'].includes(host))) return 'Cloud PostgreSQL';
+  return 'Local PostgreSQL';
+}
 
 // In-memory fallback data store in case PostgreSQL is offline
 const inMemoryUsers = [
@@ -74,10 +91,8 @@ const inMemoryUsers = [
 
 // Auto-create table & verify connection on startup
 async function initDatabase() {
-  try {
-    const client = await pool.connect();
-    isDatabaseConnected = true;
-
+  async function connectAndInit(targetPool) {
+    const client = await targetPool.connect();
     await client.query(`
       CREATE TABLE IF NOT EXISTS users (
         id         SERIAL PRIMARY KEY,
@@ -87,18 +102,49 @@ async function initDatabase() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `);
+    client.release();
+  }
+
+  try {
+    await connectAndInit(pool);
+    isDatabaseConnected = true;
 
     const dbInfo = process.env.DATABASE_URL
       ? new URL(process.env.DATABASE_URL).hostname
       : (process.env.DB_HOST || 'localhost');
 
-    console.log(`✅ [PostgreSQL] Connected to: ${dbInfo}`);
+    console.log(`✅ [PostgreSQL] Connected to: ${dbInfo} (${getDbLabel()})`);
     console.log('✅ [PostgreSQL] "users" table verified and ready.');
-    client.release();
   } catch (err) {
+    // If direct Supabase IPv6 domain fails on IPv4 networks, attempt IPv4 pooler fallback
+    const dbUrl = process.env.DATABASE_URL || '';
+    const match = dbUrl.match(/@db\.([a-z0-9]+)\.supabase\.co:(\d+)\/([^?]+)/i);
+    if (match) {
+      const projectRef = match[1];
+      const parsed = new URL(dbUrl);
+      const user = parsed.username === 'postgres' ? `postgres.${projectRef}` : parsed.username;
+      const poolerUrl = `postgresql://${user}:${encodeURIComponent(parsed.password)}@aws-1-eu-central-1.pooler.supabase.com:5432${parsed.pathname}`;
+
+      console.warn('⚠️ [PostgreSQL] Direct IPv6 address unreachable; falling back to Supabase IPv4 Pooler...');
+      try {
+        const fallbackPool = new Pool({
+          connectionString: poolerUrl,
+          ssl: { rejectUnauthorized: false }
+        });
+        await connectAndInit(fallbackPool);
+        pool = fallbackPool;
+        isDatabaseConnected = true;
+        console.log(`✅ [PostgreSQL] Connected via Supabase IPv4 Pooler (${getDbLabel()})`);
+        console.log('✅ [PostgreSQL] "users" table verified and ready.');
+        return;
+      } catch (fallbackErr) {
+        console.warn('⚠️ [PostgreSQL] Supabase pooler fallback failed:', fallbackErr.message);
+      }
+    }
+
     isDatabaseConnected = false;
     dbErrorMessage = err.message;
-    console.warn('⚠️ [PostgreSQL] Local database not reachable:', err.message);
+    console.warn('⚠️ [PostgreSQL] Database not reachable:', err.message);
     console.log('💡 [Authentication] Running in resilient In-Memory Fallback Mode.');
   }
 }
@@ -113,13 +159,9 @@ app.get('/api/status', async (req, res) => {
   if (isDatabaseConnected) {
     try {
       const result = await pool.query('SELECT COUNT(*) AS count FROM users');
-      const dbLabel = process.env.DATABASE_URL
-        ? 'Neon Cloud PostgreSQL'
-        : (process.env.DB_NAME || 'postgres');
-
       return res.json({
         connected: true,
-        database: dbLabel,
+        database: getDbLabel(),
         registeredUsers: parseInt(result.rows[0].count, 10),
         timestamp: new Date().toISOString()
       });
@@ -289,11 +331,10 @@ app.get('*', (req, res) => {
 
 // ─── Start Server ─────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
-  const dbMode = isDatabaseConnected ? (process.env.DATABASE_URL ? 'Neon Cloud PostgreSQL' : 'Local PostgreSQL') : 'In-Memory Fallback';
   console.log('\n======================================================');
   console.log('🚀  Practical 4: Animated Authentication — RUNNING');
   console.log(`📡  URL:      http://localhost:${PORT}`);
-  console.log(`🗄️  Database: ${dbMode}`);
+  console.log(`🗄️  Database: ${getDbLabel()}`);
   console.log(`🌍  ENV:      ${process.env.NODE_ENV || 'development'}`);
   console.log('======================================================\n');
 });
